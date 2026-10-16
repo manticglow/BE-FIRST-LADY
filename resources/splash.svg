@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2732 2732">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#fbf7ef"/>
+      <stop offset="100%" stop-color="#f6eee0"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c9a96e"/>
+      <stop offset="100%" stop-color="#7d613b"/>
+    </linearGradient>
+  </defs>
+
+  <!-- خلفية كريميّة -->
+  <rect width="2732" height="2732" fill="url(#bg)"/>
+
+  <!-- زخرفة إطار ذهبيّة خفيفة -->
+  <circle cx="1366" cy="1366" r="700" fill="none" stroke="url(#gold)" stroke-width="1" opacity="0.2"/>
+  <circle cx="1366" cy="1366" r="620" fill="none" stroke="url(#gold)" stroke-width="2" opacity="0.3"/>
+
+  <!-- اللوقو -->
+  <g transform="translate(1366, 1200)">
+    <!-- زهرة -->
+    <path d="M 0,-180 Q -30,-165 -30,-135 Q -30,-112 0,-97 Q 30,-112 30,-135 Q 30,-165 0,-180 Z"
+          fill="url(#gold)" opacity="0.8"/>
+    <circle cx="0" cy="-135" r="9" fill="#fbf7ef"/>
+
+    <!-- Be First Lady -->
+    <text x="0" y="60"
+          font-family="'Cormorant Garamond', serif"
+          font-size="200"
+          font-style="italic"
+          font-weight="500"
+          fill="#7d613b"
+          text-anchor="middle">Be First Lady</text>
+
+    <text x="0" y="150"
+          font-family="'Cinzel', serif"
+          font-size="42"
+          font-weight="500"
+          fill="#c9a96e"
+          letter-spacing="18"
+          text-anchor="middle">SPA · SALON</text>
+  </g>
+
+  <!-- شعار الهويّة بالعربي -->
+  <text x="1366" y="1700"
+        font-family="'Amiri', serif"
+        font-size="80"
+        fill="#7d613b"
+        text-anchor="middle"
+        opacity="0.8">نعتني بكِ لتُزهري</text>
+
+  <!-- خط فاصل -->
+  <line x1="1266" y1="1780" x2="1466" y2="1780" stroke="url(#gold)" stroke-width="2"/>
+
+  <text x="1366" y="1850"
+        font-family="'Cinzel', serif"
+        font-size="28"
+        fill="#c9a96e"
+        letter-spacing="8"
+        text-anchor="middle">A SANCTUARY FOR YOU TO BLOOM</text>
+</svg>

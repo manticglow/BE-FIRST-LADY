@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7d613b"/>
+      <stop offset="100%" stop-color="#2a1c10"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f6eee0"/>
+      <stop offset="50%" stop-color="#c9a96e"/>
+      <stop offset="100%" stop-color="#7d613b"/>
+    </linearGradient>
+  </defs>
+
+  <!-- خلفية -->
+  <rect width="1024" height="1024" fill="url(#bg)" rx="192"/>
+
+  <!-- دائرة ذهبيّة -->
+  <circle cx="512" cy="512" r="320" fill="none" stroke="url(#gold)" stroke-width="8" opacity="0.5"/>
+
+  <!-- حرف B مزخرف -->
+  <g transform="translate(512, 512)">
+    <!-- زهرة علويّة -->
+    <path d="M 0,-240 Q -40,-220 -40,-180 Q -40,-150 0,-130 Q 40,-150 40,-180 Q 40,-220 0,-240 Z"
+          fill="url(#gold)" opacity="0.9"/>
+    <circle cx="0" cy="-180" r="12" fill="#fbf7ef"/>
+
+    <!-- الحرف B بخط Cormorant Italic -->
+    <text x="0" y="80"
+          font-family="'Cormorant Garamond', 'Playfair Display', serif"
+          font-size="440"
+          font-style="italic"
+          font-weight="500"
+          fill="url(#gold)"
+          text-anchor="middle"
+          dominant-baseline="middle">B</text>
+  </g>
+
+  <!-- نص صغير -->
+  <text x="512" y="880"
+        font-family="'Cinzel', 'Trajan', serif"
+        font-size="48"
+        font-weight="600"
+        fill="#c9a96e"
+        letter-spacing="12"
+        text-anchor="middle">FIRST LADY</text>
+</svg>
