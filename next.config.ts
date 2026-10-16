@@ -11,6 +11,16 @@ const config: NextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts'],
   },
+  // تجاهل حزم Capacitor أثناء بناء الويب — تُستخدم فقط في التطبيق الناتيف
+  webpack: (config, { webpack }) => {
+    config.plugins = config.plugins || [];
+    config.plugins.push(
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^@capacitor\/|^@capawesome\//,
+      })
+    );
+    return config;
+  },
 };
 
 export default config;
