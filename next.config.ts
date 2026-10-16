@@ -5,7 +5,6 @@ const config: NextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
-      // Supabase storage (للصور المرفوعة من الأدمن)
       { protocol: 'https', hostname: '**.supabase.co' },
     ],
   },
