@@ -124,27 +124,28 @@ export default function CartClient({ services }: { services: Service[] }) {
 
 // ═══════════════════════════════════════════════════════════
 
+function slugify(name: string): string {
+  return name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
 function CartItemCard({ service, onRemove }: { service: Service; onRemove: () => void }) {
-  const img = service.image_url || `/images/services/${(service as any).slug || 'default'}.jpg`;
+  const img = service.image_url || `/images/services/${slugify(service.name_en)}.jpg`;
 
   return (
     <div className="bg-white rounded-2xl border border-cream-200 overflow-hidden flex gap-3 shadow-sm">
       {/* صورة */}
       <div className="relative w-24 h-24 md:w-28 md:h-28 bg-gradient-to-br from-gold-light/10 to-cream-100 shrink-0">
-        {service.image_url && (
-          <Image
-            src={img}
-            alt={service.name_ar}
-            fill
-            className="object-cover"
-            sizes="112px"
-          />
-        )}
-        {!service.image_url && (
-          <div className="w-full h-full flex items-center justify-center text-gold-deep/30">
-            <Sparkles className="w-8 h-8" />
-          </div>
-        )}
+        <Image
+          src={img}
+          alt={service.name_ar}
+          fill
+          className="object-cover"
+          sizes="112px"
+          onError={(e: any) => { e.currentTarget.style.display = 'none'; }}
+        />
+        <div className="absolute inset-0 flex items-center justify-center text-gold-deep/30 pointer-events-none -z-10">
+          <Sparkles className="w-8 h-8" />
+        </div>
       </div>
 
       {/* معلومات */}
