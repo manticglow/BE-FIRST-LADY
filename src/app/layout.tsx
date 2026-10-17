@@ -3,6 +3,7 @@ import { Amiri, Cairo, Cormorant_Garamond, Cinzel } from 'next/font/google';
 import { Toaster } from 'sonner';
 import PWARegister from '@/components/ui/PWARegister';
 import NativeShell from '@/components/mobile/NativeShell';
+import AppSplash from '@/components/mobile/AppSplash';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import CartFab from '@/components/cart/CartFab';
 import BookingSuccessModal from '@/components/booking/BookingSuccessModal';
@@ -99,7 +100,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       dir="rtl"
       className={`${amiri.variable} ${cairo.variable} ${cormorant.variable} ${cinzel.variable}`}
     >
-      <body className="min-h-screen bg-brand-radial bg-fixed pb-20 md:pb-0">
+      <body className="min-h-screen bg-cream-50 md:bg-brand-radial md:bg-fixed pb-20 md:pb-0">
+        <AppSplash />
         {children}
         <BookingSuccessModal />
         <CartFab />
