@@ -42,6 +42,42 @@ const CATEGORY_ICONS: Record<string, string> = {
   'makeup':     '/images/icons/facial.png',
 };
 
+// صور معرض الأعمال الجاهزة · لإعادة الاستخدام كـfallback
+const GALLERY_IMAGES = [
+  '/images/gallery/bridal-look.jpg',
+  '/images/gallery/bridal-makeup.jpg',
+  '/images/gallery/bun-styling.jpg',
+  '/images/gallery/burgundy-mani.jpg',
+  '/images/gallery/evening-glam.jpg',
+  '/images/gallery/eyes-detail-poster.jpg',
+  '/images/gallery/eyes-makeup-poster.jpg',
+  '/images/gallery/french-mani.jpg',
+  '/images/gallery/gold-mani.jpg',
+  '/images/gallery/hairstyle.jpg',
+  '/images/gallery/hollywood-waves.jpg',
+  '/images/gallery/lashes-poster.jpg',
+];
+
+// بديل ذكي للخدمة حسب فئتها
+function pickFallbackImage(categorySlug?: string): string {
+  const byCat: Record<string, string[]> = {
+    'nails':      ['/images/gallery/french-mani.jpg', '/images/gallery/burgundy-mani.jpg', '/images/gallery/gold-mani.jpg'],
+    'makeup':     ['/images/gallery/bridal-makeup.jpg', '/images/gallery/eyes-makeup-poster.jpg', '/images/gallery/evening-glam.jpg', '/images/gallery/eyes-detail-poster.jpg'],
+    'hair-style': ['/images/gallery/bun-styling.jpg', '/images/gallery/hollywood-waves.jpg', '/images/gallery/hairstyle.jpg'],
+    'hair-cut':   ['/images/gallery/hairstyle.jpg', '/images/gallery/bun-styling.jpg'],
+    'blow-dry':   ['/images/gallery/hollywood-waves.jpg', '/images/gallery/hairstyle.jpg'],
+    'hair-color': ['/images/gallery/hollywood-waves.jpg', '/images/gallery/hairstyle.jpg'],
+    'hair-treat': ['/images/gallery/hairstyle.jpg'],
+    'brows':      ['/images/gallery/lashes-poster.jpg', '/images/gallery/eyes-detail-poster.jpg'],
+    'facial':     ['/images/gallery/bridal-look.jpg', '/images/gallery/evening-glam.jpg'],
+    'massage':    ['/images/gallery/evening-glam.jpg'],
+    'bath':       ['/images/gallery/evening-glam.jpg'],
+  };
+  const list = (categorySlug && byCat[categorySlug]) || GALLERY_IMAGES;
+  // اختاري صورة ثابتة حسب الـcategory (بدل عشوائي)
+  return list[0];
+}
+
 export default function MobileHomeApp({ categories, services, packages, user, todayOffers = [] }: Props) {
   const [heroIndex, setHeroIndex] = useState(0);
   const heroRef = useRef<HTMLDivElement>(null);
@@ -297,20 +333,26 @@ function slugify(name: string): string {
     .replace(/^-|-$/g, '');
 }
 
-function ServiceAppCard({ service }: { service: Service }) {
+function ServiceAppCard({ service }: { service: Service & { category?: any } }) {
   const localImg = `/images/services/${slugify(service.name_en)}.jpg`;
+  const categorySlug = service.category?.slug;
+  const fallbackImg = pickFallbackImage(categorySlug);
+  // الأولوية: image_url من DB → ملف محلي → معرض الأعمال
   const img = service.image_url || localImg;
-  // لا نقدر نعرف إذا كان الملف المحلي موجود · فنعرضه ونخفيه بـonError
-  const hasImage = !!service.image_url;
 
   return (
-    <AddToCartServiceCard service={service} img={img} hasImage={hasImage || true} />
+    <AddToCartServiceCard
+      service={service}
+      img={img}
+      fallbackImg={fallbackImg}
+    />
   );
 }
 
-function AddToCartServiceCard({ service, img, hasImage }: { service: Service; img: string; hasImage: boolean }) {
+function AddToCartServiceCard({ service, img, fallbackImg }: { service: Service; img: string; fallbackImg: string }) {
   const cart = useCart();
   const inCart = cart.has(service.id);
+  const [currentSrc, setCurrentSrc] = useState(img);
 
   function handleAdd(e: React.MouseEvent) {
     e.preventDefault();
