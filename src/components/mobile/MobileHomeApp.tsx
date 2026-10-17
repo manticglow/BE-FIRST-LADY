@@ -13,9 +13,11 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { toast } from 'sonner';
 import { Search, MapPin, MessageCircle, User, ChevronLeft, Clock, Star, Plus } from 'lucide-react';
 import type { Category, Service, Package } from '@/types/database';
 import { formatPrice, formatDuration, waLink } from '@/lib/utils';
+import { useCart } from '@/hooks/useCart';
 
 interface Props {
   categories: Category[];
@@ -279,26 +281,50 @@ function ServiceCarousel({ services }: { services: Service[] }) {
 }
 
 function ServiceAppCard({ service }: { service: Service }) {
-  const img = `/images/services/${service.slug || 'default'}.jpg`;
+  const img = service.image_url || `/images/services/${(service as any).slug || 'default'}.jpg`;
+  const hasImage = !!service.image_url;
+
+  return (
+    <AddToCartServiceCard service={service} img={img} hasImage={hasImage} />
+  );
+}
+
+function AddToCartServiceCard({ service, img, hasImage }: { service: Service; img: string; hasImage: boolean }) {
+  const cart = useCart();
+  const inCart = cart.has(service.id);
+
+  function handleAdd(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (inCart) {
+      cart.remove(service.id);
+      toast('تم الإزالة من السلة', { icon: '🗑️' });
+    } else {
+      cart.add(service.id);
+      toast.success(`أُضيفت للسلة · ${cart.count + 1} خدمات 🌸`);
+    }
+  }
+
   return (
     <Link
       href={`/booking?service=${service.id}`}
-      className="snap-start flex-shrink-0 w-56 bg-cream-50 rounded-3xl overflow-hidden border border-cream-100 active:scale-95 transition-transform"
+      className="snap-start flex-shrink-0 w-56 bg-white rounded-3xl overflow-hidden border border-cream-100 active:scale-95 transition-transform shadow-sm"
     >
       {/* الصورة */}
-      <div className="relative aspect-square">
-        <Image
-          src={img}
-          alt={service.name_ar}
-          fill
-          className="object-cover"
-          sizes="224px"
-          onError={(e: any) => { e.target.style.display = 'none'; }}
-        />
-        {/* fallback — خلفية ذهبية مع أيقونة */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gold-light/15 to-cream-100 flex items-center justify-center -z-10">
-          <Star className="w-10 h-10 text-gold-deep/30" />
-        </div>
+      <div className="relative aspect-square bg-gradient-to-br from-gold-light/15 to-cream-100">
+        {hasImage ? (
+          <Image
+            src={img}
+            alt={service.name_ar}
+            fill
+            className="object-cover"
+            sizes="224px"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <Star className="w-10 h-10 text-gold-deep/30" />
+          </div>
+        )}
       </div>
 
       {/* المحتوى */}
@@ -327,10 +353,26 @@ function ServiceAppCard({ service }: { service: Service }) {
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-1 bg-gold-light/80 text-ink text-xs font-bold py-2 rounded-xl">
-          <Plus className="w-3.5 h-3.5" />
-          احجزي الآن
-        </div>
+        <button
+          onClick={handleAdd}
+          className={`w-full flex items-center justify-center gap-1 text-xs font-bold py-2 rounded-xl transition-colors ${
+            inCart
+              ? 'bg-gold-deep text-cream-50'
+              : 'bg-gold-light/80 text-ink hover:bg-gold-light'
+          }`}
+        >
+          {inCart ? (
+            <>
+              <Star className="w-3.5 h-3.5 fill-current" />
+              في السلة
+            </>
+          ) : (
+            <>
+              <Plus className="w-3.5 h-3.5" />
+              أضيفي للسلة
+            </>
+          )}
+        </button>
       </div>
     </Link>
   );
