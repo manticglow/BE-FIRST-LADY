@@ -18,6 +18,7 @@ import { formatPrice, formatDuration } from '@/lib/utils';
 import TimeSlotPicker from './TimeSlotPicker';
 import CouponField from './CouponField';
 import GiftCardField from './GiftCardField';
+import LoyaltyField from './LoyaltyField';
 import StaffPicker from './StaffPicker';
 import { useCart } from '@/hooks/useCart';
 
@@ -51,6 +52,9 @@ interface BookingState {
   gift_card_amount: number;
   // الاختصاصية
   staff_id: string | null;
+  // نقاط الولاء
+  loyalty_discount: number;
+  loyalty_points_used: number;
 }
 
 export default function BookingWizard({ categories, services, packages, user }: Props) {
@@ -76,6 +80,8 @@ export default function BookingWizard({ categories, services, packages, user }: 
     gift_card_code: '',
     gift_card_amount: 0,
     staff_id: null,
+    loyalty_discount: 0,
+    loyalty_points_used: 0,
   });
 
   // تحميل الخدمات من: الـURL أولاً · ثم السلة في localStorage
@@ -185,6 +191,7 @@ export default function BookingWizard({ categories, services, packages, user }: 
           coupon_code: state.coupon_code || undefined,
           gift_card_code: state.gift_card_code || undefined,
           staff_id: state.staff_id,
+          loyalty_points_used: state.loyalty_points_used || undefined,
         }),
       });
 
@@ -248,6 +255,7 @@ export default function BookingWizard({ categories, services, packages, user }: 
             chosenPackage={chosenPackage}
             subtotal={subtotal}
             duration={totalDuration}
+            user={user}
           />
         )}
       </div>
@@ -722,7 +730,7 @@ function StepContact({ state, setState }: { state: BookingState; setState: (s: a
 // الخطوة 4 — التأكيد
 // ═══════════════════════════════════════════════════════════
 function StepConfirm({
-  state, setState, chosenServices, chosenPackage, subtotal, duration,
+  state, setState, chosenServices, chosenPackage, subtotal, duration, user,
 }: {
   state: BookingState;
   setState: (s: any) => void;
@@ -730,8 +738,9 @@ function StepConfirm({
   chosenPackage: Package | null;
   subtotal: number;
   duration: number;
+  user: Profile | null;
 }) {
-  const total = Math.max(0, subtotal - state.coupon_discount - state.gift_card_amount);
+  const total = Math.max(0, subtotal - state.coupon_discount - state.gift_card_amount - state.loyalty_discount);
   return (
     <div>
       <h2 className="font-ar-display text-xl font-bold text-gold-deep mb-1">
@@ -810,9 +819,20 @@ function StepConfirm({
           onCleared={() => setState({ ...state, gift_card_code: '', gift_card_amount: 0 })}
         />
 
+        {/* نقاط الولاء — للعميلات المسجّلات فقط */}
+        {user && !state.is_gift && (user.loyalty_points || 0) >= 50 && (
+          <LoyaltyField
+            availablePoints={user.loyalty_points || 0}
+            subtotal={Math.max(0, subtotal - state.coupon_discount - state.gift_card_amount)}
+            value={state.loyalty_discount}
+            onApplied={(sarDiscount, pointsUsed) => setState({ ...state, loyalty_discount: sarDiscount, loyalty_points_used: pointsUsed })}
+            onCleared={() => setState({ ...state, loyalty_discount: 0, loyalty_points_used: 0 })}
+          />
+        )}
+
         {/* الإجمالي */}
         <div className="bg-gradient-to-l from-gold-deep to-ink rounded-2xl p-5 text-cream-50">
-          {(state.coupon_discount > 0 || state.gift_card_amount > 0) && (
+          {(state.coupon_discount > 0 || state.gift_card_amount > 0 || state.loyalty_discount > 0) && (
             <div className="flex items-center justify-between text-sm pb-2 mb-2 border-b border-gold-light/30">
               <span className="text-gold-light">المجموع قبل الخصم</span>
               <span className="font-en-display line-through text-gold-light">
@@ -833,6 +853,14 @@ function StepConfirm({
               <span className="text-success">🎁 بطاقة ({state.gift_card_code})</span>
               <span className="font-en-display text-success">
                 - {formatPrice(state.gift_card_amount)}
+              </span>
+            </div>
+          )}
+          {state.loyalty_discount > 0 && (
+            <div className="flex items-center justify-between text-sm mb-2">
+              <span className="text-success">✨ نقاط ولاء ({state.loyalty_points_used})</span>
+              <span className="font-en-display text-success">
+                - {formatPrice(state.loyalty_discount)}
               </span>
             </div>
           )}
