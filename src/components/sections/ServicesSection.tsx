@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { ChevronDown, Clock, Plus } from 'lucide-react';
 import { formatPrice, formatDuration } from '@/lib/utils';
 import type { Category, Service } from '@/types/database';
@@ -121,10 +122,13 @@ function ServiceCard({ service }: { service: Service }) {
           </div>
         </div>
       </div>
-      <button className="mt-3 w-full inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-gold-deep bg-cream-50 hover:bg-cream-100 py-2 rounded-lg transition-colors">
+            <Link
+        href={`/booking?service=${service.id}`}
+        className="mt-3 w-full inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-gold-deep bg-cream-50 hover:bg-cream-100 py-2 rounded-lg transition-colors"
+      >
         <Plus className="w-3.5 h-3.5" />
-        <span>أضيفي للسلة</span>
-      </button>
+        <span>أضيفي واحجزي</span>
+      </Link>
     </div>
   );
 }
