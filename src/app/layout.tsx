@@ -4,6 +4,7 @@ import { Toaster } from 'sonner';
 import PWARegister from '@/components/ui/PWARegister';
 import NativeShell from '@/components/mobile/NativeShell';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+import CartFab from '@/components/cart/CartFab';
 import './globals.css';
 
 // ═══════ الخطوط (محمّلة محلياً عبر next/font) ═══════
@@ -99,6 +100,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body className="min-h-screen bg-brand-radial bg-fixed pb-20 md:pb-0">
         {children}
+        <CartFab />
         <MobileBottomNav />
         <NativeShell />
         <PWARegister />
