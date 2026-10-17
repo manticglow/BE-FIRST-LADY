@@ -13,7 +13,7 @@ import { Mail, Lock, Loader2 } from 'lucide-react';
 function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const next = params.get('next') || '/account';
+  const next = params.get('redirect') || params.get('next') || '/account';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
