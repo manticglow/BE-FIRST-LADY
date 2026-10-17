@@ -27,6 +27,17 @@ export default async function AccountPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login?next=/account');
 
+  // تحقّق من الدور · لوحة العميلة فقط للعميلات
+  const { data: roleCheck } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  if (roleCheck && ['owner', 'manager', 'staff'].includes(roleCheck.role)) {
+    redirect('/admin');
+  }
+
   const [{ data: profile }, { data: bookings }] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', user.id).single(),
     supabase.from('bookings').select('*, items:booking_items(*)')
@@ -51,7 +62,7 @@ export default async function AccountPage() {
       <Header />
       <main className="min-h-screen bg-cream-50 pt-20 md:pt-24">
         <div className="max-w-5xl mx-auto px-4 py-8 md:py-12">
-                    {/* ترحيب + زر الخروج */}
+          {/* ترحيب + زر الخروج */}
           <div className="mb-8 flex items-start justify-between gap-4">
             <div>
               <h1 className="font-ar-display text-3xl md:text-4xl font-bold text-gold-deep">
@@ -198,21 +209,21 @@ function LoyaltyCard({ points, tier, totalSpent }: { points: number; tier: strin
   const remaining = info.next ? info.next - totalSpent : 0;
 
   return (
-    <div className={`bg-gradient-to-l ${info.color} text-white rounded-3xl p-6 mb-6 shadow-lg relative overflow-hidden`}>
+    <div className={`bg-gradient-to-l ${info.color} text-white rounded-3xl p-5 md:p-6 mb-6 shadow-lg relative overflow-hidden`}>
       <div className="absolute top-0 right-0 opacity-10">
-        <Sparkles className="w-32 h-32" />
+        <Sparkles className="w-24 h-24 md:w-32 md:h-32" />
       </div>
-      <div className="relative z-10 grid md:grid-cols-3 gap-4 items-center">
+      <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-start md:items-center">
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Award className="w-5 h-5" />
-            <span className="font-en-label text-[10px] tracking-[0.3em]">LOYALTY TIER</span>
+          <div className="flex items-center gap-2 mb-1 md:mb-2">
+            <Award className="w-4 h-4 md:w-5 md:h-5" />
+            <span className="font-en-label text-[9px] md:text-[10px] tracking-[0.3em]">LOYALTY TIER</span>
           </div>
-          <div className="font-ar-display text-3xl font-bold">عضوة {info.label}</div>
+          <div className="font-ar-display text-2xl md:text-3xl font-bold">عضوة {info.label}</div>
         </div>
         <div>
           <div className="text-xs opacity-80 mb-1">نقاطكِ</div>
-          <div className="font-en-display text-4xl font-bold">{points.toLocaleString()}</div>
+          <div className="font-en-display text-3xl md:text-4xl font-bold">{points.toLocaleString()}</div>
           <div className="text-xs opacity-80 mt-1">كل 10 ر.س = نقطة</div>
         </div>
         <div>
