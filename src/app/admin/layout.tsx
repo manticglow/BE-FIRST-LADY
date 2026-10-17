@@ -10,7 +10,7 @@ import { createClient } from '@/lib/supabase/server';
 import {
   LayoutDashboard, CalendarCheck, Users, Scissors, Image as ImageIcon,
   BarChart3, Settings, LogOut, Package, UserCircle, Tag, Star, Shield,
-  Clock, Umbrella, Gift, Boxes, Banknote, Bell,
+  Clock, Umbrella, Gift, Boxes, Banknote, Bell, BellRing,
 } from 'lucide-react';
 import NotificationBell from '@/components/admin/NotificationBell';
 import GlobalSearch from '@/components/admin/GlobalSearch';
@@ -19,6 +19,7 @@ import ThemeToggle from '@/components/admin/ThemeToggle';
 const SIDEBAR = [
   { href: '/admin',             label: 'الرئيسية',   icon: LayoutDashboard, roles: ['owner', 'manager', 'staff'] },
   { href: '/admin/bookings',    label: 'الحجوزات',   icon: CalendarCheck,   roles: ['owner', 'manager', 'staff'] },
+  { href: '/admin/reminders',   label: 'التذكيرات',  icon: BellRing,        roles: ['owner', 'manager'] },
   { href: '/admin/attendance',  label: 'الحضور',     icon: Clock,           roles: ['owner', 'manager'] },
   { href: '/admin/leaves',      label: 'الإجازات',   icon: Umbrella,        roles: ['owner', 'manager'] },
   { href: '/admin/customers',   label: 'العميلات',   icon: Users,           roles: ['owner', 'manager'] },
