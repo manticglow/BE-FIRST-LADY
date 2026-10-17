@@ -19,6 +19,7 @@ import TimeSlotPicker from './TimeSlotPicker';
 import CouponField from './CouponField';
 import GiftCardField from './GiftCardField';
 import StaffPicker from './StaffPicker';
+import { useCart } from '@/hooks/useCart';
 
 interface Props {
   categories: Category[];
@@ -54,6 +55,7 @@ interface BookingState {
 
 export default function BookingWizard({ categories, services, packages, user }: Props) {
   const router = useRouter();
+  const cart = useCart();
   const [step, setStep] = useState<Step>(1);
   const [submitting, setSubmitting] = useState(false);
 
@@ -76,26 +78,31 @@ export default function BookingWizard({ categories, services, packages, user }: 
     staff_id: null,
   });
 
-  // قراءة service أو package من الرابط للـpre-select من زر الإضافة والحجز
+  // تحميل الخدمات من: الـURL أولاً · ثم السلة في localStorage
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     const serviceParam = params.get('service');
     const packageParam = params.get('package');
+
     if (serviceParam) {
       const ids = serviceParam.split(',').filter((id) => services.some((s) => s.id === id));
       if (ids.length > 0) {
         setState((prev) => ({ ...prev, selectedServices: ids, selectedPackageId: null }));
-        toast.success('تم إضافة الخدمة · أكملي حجزك 🌸');
       }
     } else if (packageParam) {
       if (packages.some((p) => p.id === packageParam)) {
         setState((prev) => ({ ...prev, selectedPackageId: packageParam, selectedServices: [] }));
-        toast.success('تم اختيار الباقة · أكملي حجزك 🌸');
+      }
+    } else if (cart.hydrated && cart.items.length > 0) {
+      // لو ما فيه URL param · حمّلي من السلة
+      const validIds = cart.items.filter((id) => services.some((s) => s.id === id));
+      if (validIds.length > 0) {
+        setState((prev) => ({ ...prev, selectedServices: validIds, selectedPackageId: null }));
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [cart.hydrated]);
 
   // الحسابات
   const chosenServices = useMemo(
@@ -189,6 +196,8 @@ export default function BookingWizard({ categories, services, packages, user }: 
       } else {
         toast.success('تم إرسال طلب الحجز بنجاح 🌸');
       }
+      // أفرغي السلة بعد الحجز الناجح
+      cart.clear();
       router.push(user ? '/account' : `/?booked=${data.booking_number}`);
       router.refresh();
     } catch (err: any) {
