@@ -144,8 +144,8 @@ export default function BookingsTable({
 
   return (
     <div className="space-y-4">
-      {/* فلاتر الحالة */}
-      <div className="flex flex-wrap gap-2 items-center">
+      {/* فلاتر الحالة · أفقية ومتحركة على الموبايل */}
+      <div className="flex gap-2 items-center overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap pb-2 md:pb-0 scrollbar-hide">
         <Link
           href="/admin/bookings"
           className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
@@ -170,8 +170,8 @@ export default function BookingsTable({
       </div>
 
       {/* بحث + تصدير */}
-      <div className="flex items-center gap-2">
-        <form onSubmit={handleSearch} className="relative flex-1">
+      <div className="flex items-stretch gap-2">
+        <form onSubmit={handleSearch} className="relative flex-1 min-w-0">
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-soft" />
           <input
             type="search"
@@ -184,11 +184,11 @@ export default function BookingsTable({
         <a
           href="/api/admin/export/bookings"
           download
-          className="btn-outline flex items-center gap-2 !py-2 !px-4 text-sm shrink-0"
+          className="btn-outline flex items-center justify-center gap-1.5 !py-2 !px-3 md:!px-4 text-sm shrink-0"
           title="تصدير Excel"
         >
           <Download className="w-4 h-4" />
-          Excel
+          <span className="hidden sm:inline">Excel</span>
         </a>
       </div>
 
