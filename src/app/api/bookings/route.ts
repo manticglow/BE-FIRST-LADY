@@ -37,7 +37,10 @@ const bookingSchema = z.object({
   gift_message: z.string().max(300).optional(),
   coupon_code: z.string().optional(),
   gift_card_code: z.string().optional(),
+  loyalty_points_used: z.number().int().min(0).optional(),
 });
+
+const POINTS_PER_SAR = 10; // كل 10 نقاط = 1 ريال
 
 function normalizePhone(phone: string): string {
   const digits = phone.replace(/[^0-9]/g, '');
@@ -223,7 +226,27 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const total = Math.max(0, subtotal - couponDiscount - giftCardAmount);
+    // نقاط الولاء ───────────
+    let loyaltyDiscount = 0;
+    let loyaltyPointsUsed = 0;
+    if (data.loyalty_points_used && data.loyalty_points_used > 0 && userData?.user?.id) {
+      const { data: userProfile } = await admin
+        .from('profiles')
+        .select('loyalty_points')
+        .eq('id', userData.user.id)
+        .single();
+
+      const availablePoints = Number(userProfile?.loyalty_points || 0);
+      const subtotalAfter = Math.max(0, subtotal - couponDiscount - giftCardAmount);
+      const maxPointsUsable = Math.min(availablePoints, subtotalAfter * POINTS_PER_SAR, data.loyalty_points_used);
+
+      if (maxPointsUsable >= POINTS_PER_SAR) {
+        loyaltyPointsUsed = Math.floor(maxPointsUsable / POINTS_PER_SAR) * POINTS_PER_SAR;
+        loyaltyDiscount = loyaltyPointsUsed / POINTS_PER_SAR;
+      }
+    }
+
+    const total = Math.max(0, subtotal - couponDiscount - giftCardAmount - loyaltyDiscount);
 
     // أنشئ الحجز ───────────
     const { data: booking, error: bookErr } = await admin
@@ -268,6 +291,25 @@ export async function POST(request: NextRequest) {
     const items = itemsData.map((i) => ({ ...i, booking_id: booking.id }));
     const { error: itemsErr } = await admin.from('booking_items').insert(items);
     if (itemsErr) console.error('Items error:', itemsErr);
+
+    // اخصمي نقاط الولاء المستخدمة ───────────
+    if (loyaltyPointsUsed > 0 && userData?.user?.id) {
+      await admin.rpc('deduct_loyalty_points', {
+        p_user_id: userData.user.id,
+        p_points: loyaltyPointsUsed,
+      }).throwOnError().then(() => {}, async () => {
+        // fallback: تحديث مباشر لو الـRPC مو موجود
+        const { data: cur } = await admin
+          .from('profiles')
+          .select('loyalty_points')
+          .eq('id', userData.user.id)
+          .single();
+        const newBalance = Math.max(0, Number(cur?.loyalty_points || 0) - loyaltyPointsUsed);
+        await admin.from('profiles')
+          .update({ loyalty_points: newBalance })
+          .eq('id', userData.user.id);
+      });
+    }
 
     // سجّل استخدام بطاقة الهدية ───────────
     if (giftCardId && giftCardAmount > 0) {
