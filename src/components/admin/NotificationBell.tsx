@@ -1,10 +1,15 @@
 /**
- * NotificationBell — جرس الإشعارات مع polling كل 30 ثانية
+ * NotificationBell — جرس الإشعارات مع:
+ *   - polling كل 30 ثانية
+ *   - صوت تنبيه عند حجز جديد (Web Audio · بدون ملف)
+ *   - إشعار نظام (Browser Notification) للمتصفح
+ *   - تذكير متكرر كل 3 دقائق لو فيه حجز معلّق
+ *   - اهتزاز للجوال
  */
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Bell, X } from 'lucide-react';
+import { Bell, X, Volume2, VolumeX, BellRing } from 'lucide-react';
 import Link from 'next/link';
 
 interface Notification {
@@ -17,28 +22,140 @@ interface Notification {
   time: string;
 }
 
+const SOUND_ENABLED_KEY = 'bfl_sound_enabled';
+const REMINDER_INTERVAL_MS = 3 * 60 * 1000; // 3 دقائق
+
 export default function NotificationBell() {
   const [items, setItems] = useState<Notification[]>([]);
   const [count, setCount] = useState(0);
   const [open, setOpen] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [notifPermission, setNotifPermission] = useState<NotificationPermission>('default');
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const prevCountRef = useRef<number>(0);
+  const firstLoadRef = useRef<boolean>(true);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const reminderIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    try {
+      setSoundEnabled(localStorage.getItem(SOUND_ENABLED_KEY) === 'true');
+    } catch {}
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      setNotifPermission(Notification.permission);
+    }
+  }, []);
+
+  function playAlertSound() {
+    if (!soundEnabled) return;
+    try {
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
+      const ctx = audioCtxRef.current;
+      if (ctx.state === 'suspended') ctx.resume();
+      const frequencies = [880, 1046, 1318];
+      frequencies.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        const start = ctx.currentTime + i * 0.15;
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.3, start + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.3);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(start);
+        osc.stop(start + 0.3);
+      });
+    } catch (err) {
+      console.warn('[NotificationBell] تعذّر تشغيل الصوت', err);
+    }
+  }
+
+  function vibrate() {
+    try {
+      if ('vibrate' in navigator) navigator.vibrate([200, 100, 200]);
+    } catch {}
+  }
+
+  function showSystemNotification(title: string, body: string, href: string) {
+    try {
+      if (!('Notification' in window)) return;
+      if (Notification.permission !== 'granted') return;
+      const n = new Notification(title, {
+        body,
+        icon: '/icons/icon-192.png',
+        badge: '/icons/icon-96.png',
+        tag: 'bfl-booking',
+        requireInteraction: true,
+      });
+      n.onclick = () => {
+        window.focus();
+        window.location.href = href;
+        n.close();
+      };
+    } catch {}
+  }
+
+  function startReminder() {
+    stopReminder();
+    reminderIntervalRef.current = setInterval(() => {
+      if (count > 0) {
+        playAlertSound();
+        vibrate();
+        showSystemNotification(
+          '⏰ تذكير — حجوزات بانتظار إجراء',
+          `لديكِ ${count} ${count === 1 ? 'إشعار' : 'إشعارات'} بانتظار المراجعة`,
+          '/admin/bookings?status=pending'
+        );
+      }
+    }, REMINDER_INTERVAL_MS);
+  }
+
+  function stopReminder() {
+    if (reminderIntervalRef.current) {
+      clearInterval(reminderIntervalRef.current);
+      reminderIntervalRef.current = null;
+    }
+  }
 
   async function load() {
     try {
       const res = await fetch('/api/admin/notifications');
       const data = await res.json();
-      setItems(data.notifications || []);
-      setCount(data.count || 0);
+      const newItems: Notification[] = data.notifications || [];
+      const newCount: number = data.count || 0;
+
+      if (!firstLoadRef.current && newCount > prevCountRef.current) {
+        const latest = newItems[0];
+        if (latest) {
+          playAlertSound();
+          vibrate();
+          showSystemNotification(`🔔 ${latest.title}`, latest.subtitle, latest.href);
+        }
+      }
+
+      prevCountRef.current = newCount;
+      firstLoadRef.current = false;
+      setItems(newItems);
+      setCount(newCount);
+
+      if (newCount > 0 && !reminderIntervalRef.current) startReminder();
+      else if (newCount === 0 && reminderIntervalRef.current) stopReminder();
     } catch {}
   }
 
   useEffect(() => {
     load();
-    const interval = setInterval(load, 30000); // كل 30 ثانية
-    return () => clearInterval(interval);
-  }, []);
+    const interval = setInterval(load, 30000);
+    return () => {
+      clearInterval(interval);
+      stopReminder();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [soundEnabled]);
 
-  // إغلاق عند النقر خارج
   useEffect(() => {
     function handler(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -57,13 +174,40 @@ export default function NotificationBell() {
     return `${Math.floor(diff / 86400)}ي`;
   }
 
+  async function toggleSound() {
+    const next = !soundEnabled;
+    try { localStorage.setItem(SOUND_ENABLED_KEY, String(next)); } catch {}
+    setSoundEnabled(next);
+    if (next) {
+      try {
+        if (!audioCtxRef.current) {
+          audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        }
+        if (audioCtxRef.current.state === 'suspended') await audioCtxRef.current.resume();
+        const osc = audioCtxRef.current.createOscillator();
+        const gain = audioCtxRef.current.createGain();
+        osc.frequency.value = 1046;
+        gain.gain.setValueAtTime(0.2, audioCtxRef.current.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtxRef.current.currentTime + 0.2);
+        osc.connect(gain).connect(audioCtxRef.current.destination);
+        osc.start();
+        osc.stop(audioCtxRef.current.currentTime + 0.2);
+      } catch {}
+      if ('Notification' in window && Notification.permission === 'default') {
+        const perm = await Notification.requestPermission();
+        setNotifPermission(perm);
+      }
+    }
+  }
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setOpen(!open)}
         className="relative p-2 hover:bg-white/10 rounded-lg transition-colors text-cream-100"
+        title="الإشعارات"
       >
-        <Bell className="w-5 h-5" />
+        {count > 0 ? <BellRing className="w-5 h-5 animate-pulse" /> : <Bell className="w-5 h-5" />}
         {count > 0 && (
           <span className="absolute -top-1 -right-1 bg-danger text-white text-[10px] font-bold min-w-[18px] h-[18px] rounded-full flex items-center justify-center px-1 animate-pulse">
             {count > 99 ? '99+' : count}
@@ -73,12 +217,34 @@ export default function NotificationBell() {
 
       {open && (
         <div className="absolute left-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-cream-200 overflow-hidden z-[100] max-h-[500px] flex flex-col">
-          <div className="px-4 py-3 border-b border-cream-200 bg-cream-50 flex items-center justify-between">
-            <h3 className="font-ar-display font-bold text-gold-deep">الإشعارات</h3>
+          <div className="px-4 py-3 border-b border-cream-200 bg-cream-50 flex items-center justify-between gap-2">
+            <h3 className="font-ar-display font-bold text-gold-deep flex-1">الإشعارات</h3>
+            <button
+              onClick={toggleSound}
+              className={`p-1.5 rounded-lg transition-colors ${
+                soundEnabled
+                  ? 'bg-success/15 text-success hover:bg-success/25'
+                  : 'bg-cream-100 text-ink-soft hover:bg-cream-200'
+              }`}
+              title={soundEnabled ? 'الصوت مفعّل' : 'فعّلي الصوت'}
+            >
+              {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+            </button>
             <button onClick={() => setOpen(false)} className="p-1 hover:bg-cream-100 rounded">
               <X className="w-4 h-4 text-ink-soft" />
             </button>
           </div>
+
+          {!soundEnabled && (
+            <div className="px-4 py-2 bg-amber-50 border-b border-amber-200 text-[11px] text-amber-900">
+              💡 اضغطي 🔇 لتفعيل الصوت والإشعارات · عشان ما يفوتك حجز
+            </div>
+          )}
+          {soundEnabled && notifPermission === 'denied' && (
+            <div className="px-4 py-2 bg-amber-50 border-b border-amber-200 text-[11px] text-amber-900">
+              ⚠️ إشعارات المتصفح معطّلة · فعّليها من إعدادات الموقع
+            </div>
+          )}
 
           <div className="overflow-y-auto flex-1">
             {items.length === 0 ? (
