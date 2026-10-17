@@ -9,7 +9,7 @@
  */
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Check, ChevronLeft, ChevronRight, Clock, Calendar, User, Phone, FileText, Loader2, Gift, Heart } from 'lucide-react';
@@ -49,32 +49,29 @@ interface BookingState {
   gift_card_code: string;
   gift_card_amount: number;
   // الاختصاصية
-  staff_id: string | null;
-}
-
-export default function BookingWizard({ categories, services, packages, user }: Props) {
-  const router = useRouter();
-  const [step, setStep] = useState<Step>(1);
-  const [submitting, setSubmitting] = useState(false);
-
-  const [state, setState] = useState<BookingState>({
-    selectedServices: [],
-    selectedPackageId: null,
-    booking_date: '',
-    booking_time: '',
-    customer_name: user?.full_name || '',
-    customer_phone: user?.phone || '',
-    customer_notes: '',
-    is_gift: false,
-    gift_from_name: user?.full_name || '',
-    gift_from_phone: user?.phone || '',
-    gift_message: '',
-    coupon_code: '',
-    coupon_discount: 0,
-    gift_card_code: '',
-    gift_card_amount: 0,
-    staff_id: null,
+     staff_id: null,
   });
+
+  // قراءة ?service=xxx أو ?package=xxx من الرابط للـpre-select من زر "أضيفي واحجزي"
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const serviceParam = params.get('service');
+    const packageParam = params.get('package');
+    if (serviceParam) {
+      const ids = serviceParam.split(',').filter((id) => services.some((s) => s.id === id));
+      if (ids.length > 0) {
+        setState((prev) => ({ ...prev, selectedServices: ids, selectedPackageId: null }));
+        toast.success('تم إضافة الخدمة · أكملي حجزك 🌸');
+      }
+    } else if (packageParam) {
+      if (packages.some((p) => p.id === packageParam)) {
+        setState((prev) => ({ ...prev, selectedPackageId: packageParam, selectedServices: [] }));
+        toast.success('تم اختيار الباقة · أكملي حجزك 🌸');
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // الحسابات
   const chosenServices = useMemo(
