@@ -11,7 +11,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { ShoppingBag } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 
-const HIDDEN_PATHS = ['/admin', '/booking', '/login', '/signup', '/account/attendance', '/account/leaves'];
+const HIDDEN_PATHS = ['/admin', '/booking', '/cart', '/login', '/signup', '/account/attendance', '/account/leaves'];
 
 export default function CartFab() {
   const cart = useCart();
@@ -22,15 +22,15 @@ export default function CartFab() {
   if (cart.count === 0) return null;
   if (pathname && HIDDEN_PATHS.some((p) => pathname.startsWith(p))) return null;
 
-  function goToBooking() {
-    router.push(`/booking?service=${cart.items.join(',')}`);
+  function goToCart() {
+    router.push('/cart');
   }
 
   return (
     <button
-      onClick={goToBooking}
+      onClick={goToCart}
       className="fixed bottom-24 md:bottom-6 right-4 z-40 bg-gradient-to-br from-gold-deep to-ink text-cream-50 pr-4 pl-5 py-3 rounded-full shadow-2xl shadow-gold-deep/40 flex items-center gap-2 hover:scale-105 active:scale-95 transition-transform animate-in slide-in-from-bottom-4"
-      aria-label={`إكمال الحجز · ${cart.count} خدمات في السلة`}
+      aria-label={`السلة · ${cart.count} خدمات`}
     >
       <div className="relative">
         <ShoppingBag className="w-5 h-5" />
@@ -38,7 +38,7 @@ export default function CartFab() {
           {cart.count}
         </span>
       </div>
-      <span className="font-ar-display font-bold text-sm">إكمال الحجز</span>
+      <span className="font-ar-display font-bold text-sm">عرض السلة</span>
     </button>
   );
 }
