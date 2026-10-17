@@ -58,24 +58,71 @@ const GALLERY_IMAGES = [
   '/images/gallery/lashes-poster.jpg',
 ];
 
-// بديل ذكي للخدمة حسب فئتها
-function pickFallbackImage(categorySlug?: string): string {
+// توزيع ذكي · نفس الخدمة دائماً تحصل على نفس الصورة
+function hashString(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) - h) + s.charCodeAt(i);
+  return Math.abs(h);
+}
+
+// بديل ذكي للخدمة · يفحص الاسم أولاً · ثم الفئة
+function pickFallbackImage(serviceId: string, nameEn: string, categorySlug?: string): string {
+  const name = nameEn.toLowerCase();
+
+  // 1️⃣ تطابق مباشر بكلمات مفتاحية (أدق · يسبق الفئة)
+  const keywordMap: Array<[string[], string[]]> = [
+    [['bridal', 'royal', 'luxury', 'premium', 'queen', 'princess'],
+      ['/images/gallery/bridal-look.jpg', '/images/gallery/bridal-makeup.jpg', '/images/gallery/evening-glam.jpg']],
+    [['stone', 'hot stone'],
+      ['/images/gallery/evening-glam.jpg', '/images/gallery/bridal-look.jpg']],
+    [['deep tissue', 'deep', 'tissue', 'therapeutic', 'medical'],
+      ['/images/gallery/evening-glam.jpg', '/images/gallery/bun-styling.jpg']],
+    [['hollywood', 'waves', 'curls', 'curl'],
+      ['/images/gallery/hollywood-waves.jpg']],
+    [['bun', 'updo', 'knot'],
+      ['/images/gallery/bun-styling.jpg']],
+    [['french'],
+      ['/images/gallery/french-mani.jpg']],
+    [['gold', 'golden'],
+      ['/images/gallery/gold-mani.jpg']],
+    [['burgundy', 'red', 'cherry'],
+      ['/images/gallery/burgundy-mani.jpg']],
+    [['lashes', 'lash', 'eyelash'],
+      ['/images/gallery/lashes-poster.jpg']],
+    [['eyes', 'eye'],
+      ['/images/gallery/eyes-detail-poster.jpg', '/images/gallery/eyes-makeup-poster.jpg']],
+    [['evening', 'glam', 'night'],
+      ['/images/gallery/evening-glam.jpg']],
+  ];
+
+  for (const [keywords, images] of keywordMap) {
+    if (keywords.some((k) => name.includes(k))) {
+      return images[hashString(serviceId) % images.length];
+    }
+  }
+
+  // 2️⃣ fallback حسب الفئة (مع تنويع بالـhash)
   const byCat: Record<string, string[]> = {
     'nails':      ['/images/gallery/french-mani.jpg', '/images/gallery/burgundy-mani.jpg', '/images/gallery/gold-mani.jpg'],
-    'makeup':     ['/images/gallery/bridal-makeup.jpg', '/images/gallery/eyes-makeup-poster.jpg', '/images/gallery/evening-glam.jpg', '/images/gallery/eyes-detail-poster.jpg'],
+    'makeup':     ['/images/gallery/bridal-makeup.jpg', '/images/gallery/eyes-makeup-poster.jpg', '/images/gallery/evening-glam.jpg', '/images/gallery/eyes-detail-poster.jpg', '/images/gallery/bridal-look.jpg'],
     'hair-style': ['/images/gallery/bun-styling.jpg', '/images/gallery/hollywood-waves.jpg', '/images/gallery/hairstyle.jpg'],
     'hair-cut':   ['/images/gallery/hairstyle.jpg', '/images/gallery/bun-styling.jpg'],
     'blow-dry':   ['/images/gallery/hollywood-waves.jpg', '/images/gallery/hairstyle.jpg'],
-    'hair-color': ['/images/gallery/hollywood-waves.jpg', '/images/gallery/hairstyle.jpg'],
-    'hair-treat': ['/images/gallery/hairstyle.jpg'],
+    'hair-color': ['/images/gallery/hollywood-waves.jpg', '/images/gallery/hairstyle.jpg', '/images/gallery/bun-styling.jpg'],
+    'hair-treat': ['/images/gallery/hairstyle.jpg', '/images/gallery/hollywood-waves.jpg'],
     'brows':      ['/images/gallery/lashes-poster.jpg', '/images/gallery/eyes-detail-poster.jpg'],
-    'facial':     ['/images/gallery/bridal-look.jpg', '/images/gallery/evening-glam.jpg'],
-    'massage':    ['/images/gallery/evening-glam.jpg'],
-    'bath':       ['/images/gallery/evening-glam.jpg'],
+    'facial':     ['/images/gallery/bridal-look.jpg', '/images/gallery/evening-glam.jpg', '/images/gallery/bridal-makeup.jpg'],
+    'massage':    ['/images/gallery/evening-glam.jpg', '/images/gallery/bridal-look.jpg', '/images/gallery/bun-styling.jpg'],
+    'bath':       ['/images/gallery/bridal-look.jpg', '/images/gallery/evening-glam.jpg'],
   };
-  const list = (categorySlug && byCat[categorySlug]) || GALLERY_IMAGES;
-  // اختاري صورة ثابتة حسب الـcategory (بدل عشوائي)
-  return list[0];
+
+  if (categorySlug && byCat[categorySlug]) {
+    const list = byCat[categorySlug];
+    return list[hashString(serviceId) % list.length];
+  }
+
+  // 3️⃣ آخر fallback · أي صورة من المعرض (مع تنويع)
+  return GALLERY_IMAGES[hashString(serviceId) % GALLERY_IMAGES.length];
 }
 
 export default function MobileHomeApp({ categories, services, packages, user, todayOffers = [] }: Props) {
@@ -266,6 +313,36 @@ export default function MobileHomeApp({ categories, services, packages, user, to
           <ServiceCarousel services={massageServices} />
         </section>
       )}
+
+      {/* ═══ معرض أعمالنا ═══ */}
+      <section className="pt-6">
+        <div className="px-4 mb-3">
+          <h2 className="font-ar-display text-lg font-bold text-gold-deep">معرض أعمالنا</h2>
+          <p className="text-[11px] text-ink-soft mt-0.5">لمسات بناتنا الفخيمة ✨</p>
+        </div>
+        <GalleryStrip />
+      </section>
+    </div>
+  );
+}
+
+function GalleryStrip() {
+  return (
+    <div className="flex gap-2 overflow-x-auto scrollbar-hide px-4 snap-x">
+      {GALLERY_IMAGES.map((src, i) => (
+        <div
+          key={i}
+          className="snap-start flex-shrink-0 w-32 h-40 rounded-2xl overflow-hidden shadow-sm border border-cream-200 relative active:scale-95 transition-transform"
+        >
+          <Image
+            src={src}
+            alt={`عمل ${i + 1}`}
+            fill
+            className="object-cover"
+            sizes="128px"
+          />
+        </div>
+      ))}
     </div>
   );
 }
@@ -336,7 +413,7 @@ function slugify(name: string): string {
 function ServiceAppCard({ service }: { service: Service & { category?: any } }) {
   const localImg = `/images/services/${slugify(service.name_en)}.jpg`;
   const categorySlug = service.category?.slug;
-  const fallbackImg = pickFallbackImage(categorySlug);
+  const fallbackImg = pickFallbackImage(service.id, service.name_en, categorySlug);
   // الأولوية: image_url من DB → ملف محلي → معرض الأعمال
   const img = service.image_url || localImg;
 
@@ -371,19 +448,16 @@ function AddToCartServiceCard({ service, img, fallbackImg }: { service: Service;
       href={`/booking?service=${service.id}`}
       className="snap-start flex-shrink-0 w-56 bg-white rounded-3xl overflow-hidden border border-cream-100 active:scale-95 transition-transform shadow-sm"
     >
-      {/* الصورة */}
+      {/* الصورة · لو ما لقت الملف المحلي · ترجع لصورة من معرض الأعمال */}
       <div className="relative aspect-square bg-gradient-to-br from-gold-light/15 to-cream-100">
         <Image
-          src={img}
+          src={currentSrc}
           alt={service.name_ar}
           fill
           className="object-cover"
           sizes="224px"
-          onError={(e: any) => { e.currentTarget.style.display = 'none'; }}
+          onError={() => { if (currentSrc !== fallbackImg) setCurrentSrc(fallbackImg); }}
         />
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none -z-10">
-          <Star className="w-10 h-10 text-gold-deep/30" />
-        </div>
       </div>
 
       {/* المحتوى */}
