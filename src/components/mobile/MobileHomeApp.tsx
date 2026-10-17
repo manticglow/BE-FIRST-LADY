@@ -280,12 +280,21 @@ function ServiceCarousel({ services }: { services: Service[] }) {
   );
 }
 
+// توليد slug من name_en للربط مع ملف الصورة
+function slugify(name: string): string {
+  return name.toLowerCase().trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
 function ServiceAppCard({ service }: { service: Service }) {
-  const img = service.image_url || `/images/services/${(service as any).slug || 'default'}.jpg`;
+  const localImg = `/images/services/${slugify(service.name_en)}.jpg`;
+  const img = service.image_url || localImg;
+  // لا نقدر نعرف إذا كان الملف المحلي موجود · فنعرضه ونخفيه بـonError
   const hasImage = !!service.image_url;
 
   return (
-    <AddToCartServiceCard service={service} img={img} hasImage={hasImage} />
+    <AddToCartServiceCard service={service} img={img} hasImage={hasImage || true} />
   );
 }
 
@@ -312,19 +321,17 @@ function AddToCartServiceCard({ service, img, hasImage }: { service: Service; im
     >
       {/* الصورة */}
       <div className="relative aspect-square bg-gradient-to-br from-gold-light/15 to-cream-100">
-        {hasImage ? (
-          <Image
-            src={img}
-            alt={service.name_ar}
-            fill
-            className="object-cover"
-            sizes="224px"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <Star className="w-10 h-10 text-gold-deep/30" />
-          </div>
-        )}
+        <Image
+          src={img}
+          alt={service.name_ar}
+          fill
+          className="object-cover"
+          sizes="224px"
+          onError={(e: any) => { e.currentTarget.style.display = 'none'; }}
+        />
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none -z-10">
+          <Star className="w-10 h-10 text-gold-deep/30" />
+        </div>
       </div>
 
       {/* المحتوى */}
