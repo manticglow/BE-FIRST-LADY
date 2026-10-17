@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Phone, Calendar, Clock, MoreVertical, Search, Gift, Send, Star, Printer, Download } from 'lucide-react';
+import { Phone, Calendar, Clock, MoreVertical, Search, Gift, Send, Star, Printer, Download, MessageCircle, Bell } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { toast } from 'sonner';
 import { formatPrice, waLink } from '@/lib/utils';
@@ -67,6 +67,46 @@ export default function BookingsTable({
     const phone = b.customer_phone.replace(/\D/g, '').replace(/^0/, '966');
     window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
     toast.success('فُتح الواتساب لإرسال رابط التقييم ⭐');
+  }
+
+  // تأكيد الحجز عبر واتساب (للحجوزات المعلّقة/المؤكّدة)
+  function sendConfirmation(b: BookingWithGift) {
+    const serviceNames = b.items?.map((i) => i.service_name).join('، ') || 'الخدمة المختارة';
+    const message = encodeURIComponent(
+      `السلام عليكم ${b.customer_name} 🌸\n\n` +
+      `تم تأكيد حجزكِ في Be First Lady:\n\n` +
+      `📅 التاريخ: ${b.booking_date}\n` +
+      `🕒 الوقت: ${b.booking_time.slice(0, 5)}\n` +
+      `💆‍♀️ الخدمة: ${serviceNames}\n` +
+      `💰 الإجمالي: ${Number(b.total).toLocaleString('ar-SA')} ر.س\n` +
+      `#️⃣ رقم الحجز: ${b.booking_number}\n\n` +
+      `نشرّف بزيارتكِ 💛\n` +
+      `المدينة المنوّرة`
+    );
+    const phone = b.customer_phone.replace(/\D/g, '').replace(/^0/, '966');
+    window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+    toast.success('فُتح الواتساب لإرسال التأكيد 📱');
+    // لو كان معلّق · أكّديه تلقائياً
+    if (b.status === 'pending') {
+      updateStatus(b.id, 'confirmed');
+    }
+  }
+
+  // تذكير بالموعد (قبل الموعد بـ24 ساعة · يدوي)
+  function sendReminder(b: BookingWithGift) {
+    const serviceNames = b.items?.map((i) => i.service_name).join('، ') || 'الخدمة المختارة';
+    const message = encodeURIComponent(
+      `صباح الخير ${b.customer_name} ✨\n\n` +
+      `تذكير بموعدكِ بكرا في Be First Lady:\n\n` +
+      `📅 ${b.booking_date}\n` +
+      `🕒 الساعة ${b.booking_time.slice(0, 5)}\n` +
+      `💆‍♀️ ${serviceNames}\n\n` +
+      `نشوفكِ بإذن الله 💛\n` +
+      `لو احتجتِ تعديل أو إلغاء · رجاءً أعلمينا الآن`
+    );
+    const phone = b.customer_phone.replace(/\D/g, '').replace(/^0/, '966');
+    window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+    toast.success('فُتح الواتساب للتذكير 🔔');
   }
 
   // إرسال الدعوة واتساب للمستقبِلة + تسجيل الوقت
@@ -235,6 +275,26 @@ export default function BookingsTable({
                     </td>
                     <td className="p-3">
                       <div className="flex items-center gap-1">
+                        {/* زر التأكيد عبر واتساب — للحجوزات المعلّقة والمؤكّدة */}
+                        {(b.status === 'pending' || b.status === 'confirmed') && !b.is_gift && (
+                          <button
+                            onClick={() => sendConfirmation(b)}
+                            className="p-1.5 hover:bg-green-100 rounded-md text-green-600"
+                            title={b.status === 'pending' ? 'تأكيد الحجز عبر واتساب' : 'إعادة إرسال التأكيد'}
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                          </button>
+                        )}
+                        {/* زر التذكير — للحجوزات المؤكّدة فقط */}
+                        {b.status === 'confirmed' && (
+                          <button
+                            onClick={() => sendReminder(b)}
+                            className="p-1.5 hover:bg-amber-100 rounded-md text-amber-600"
+                            title="إرسال تذكير بالموعد"
+                          >
+                            <Bell className="w-4 h-4" />
+                          </button>
+                        )}
                         {b.is_gift && (
                           <button
                             onClick={() => sendInvitation(b)}
