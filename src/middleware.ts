@@ -5,8 +5,8 @@
  * - /admin/users   → owner فقط
  * - /admin/reports → owner فقط
  * - /admin/settings → owner فقط
- * - /account       → مسجلين دخول
- * - /account/attendance → staff/manager/owner
+ * - /account       → العميلات فقط (الإداريات تتحوّل لـ/admin)
+ * - /account/attendance و /account/leaves → staff/manager/owner
  */
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
@@ -46,12 +46,10 @@ export async function middleware(request: NextRequest) {
       .eq('id', user.id)
       .single();
 
-    // غير مسجّل في profiles أو role غير مسموح
     if (!profile || !['owner', 'manager', 'staff'].includes(profile.role)) {
       return NextResponse.redirect(new URL('/', request.url));
     }
 
-    // صلاحيات دقيقة
     if (OWNER_ONLY.some((p) => path.startsWith(p)) && profile.role !== 'owner') {
       return NextResponse.redirect(new URL('/admin', request.url));
     }
@@ -60,7 +58,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // حماية /account/attendance — للموظفات فقط
+  // حماية /account/attendance — للموظفات/المديرات/المالكة فقط
   if (path.startsWith('/account/attendance')) {
     if (!user) {
       return NextResponse.redirect(new URL('/login?redirect=/account/attendance', request.url));
@@ -70,10 +68,25 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/account', request.url));
     }
   }
-
-  // حماية /account ───────────
-  if (path.startsWith('/account') && !user) {
-    return NextResponse.redirect(new URL(`/login?redirect=${path}`, request.url));
+  // حماية /account/leaves — للموظفات/المديرات/المالكة فقط
+  else if (path.startsWith('/account/leaves')) {
+    if (!user) {
+      return NextResponse.redirect(new URL('/login?redirect=/account/leaves', request.url));
+    }
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+    if (!profile || !['staff', 'manager', 'owner'].includes(profile.role)) {
+      return NextResponse.redirect(new URL('/account', request.url));
+    }
+  }
+  // حماية باقي /account/* — للعميلات فقط · الإداريات تحوّل تلقائياً لـ/admin
+  else if (path.startsWith('/account')) {
+    if (!user) {
+      return NextResponse.redirect(new URL(`/login?redirect=${path}`, request.url));
+    }
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+    if (profile && ['owner', 'manager', 'staff'].includes(profile.role)) {
+      return NextResponse.redirect(new URL('/admin', request.url));
+    }
   }
 
   return response;
