@@ -27,18 +27,19 @@ interface Props {
   todayOffers?: { title: string; subtitle: string; href: string; image: string }[];
 }
 
-const CATEGORY_IMAGES: Record<string, string> = {
-  'massage':    '/images/categories/massage.jpg',
-  'bath':       '/images/categories/bath.jpg',
-  'facial':     '/images/categories/facial.jpg',
-  'nails':      '/images/categories/nails.jpg',
-  'brows':      '/images/categories/facial.jpg',
-  'hair-color': '/images/categories/hair.jpg',
-  'hair-cut':   '/images/categories/hair.jpg',
-  'blow-dry':   '/images/categories/hair.jpg',
-  'hair-style': '/images/categories/hair.jpg',
-  'hair-treat': '/images/categories/hair.jpg',
-  'makeup':     '/images/categories/facial.jpg',
+// الأيقونات من الموقع · في /public/images/icons/
+const CATEGORY_ICONS: Record<string, string> = {
+  'massage':    '/images/icons/massage.png',
+  'bath':       '/images/icons/bath.png',
+  'facial':     '/images/icons/facial.png',
+  'nails':      '/images/icons/nails.png',
+  'brows':      '/images/icons/facial.png',
+  'hair-color': '/images/icons/hair-color.png',
+  'hair-cut':   '/images/icons/hair-cut.png',
+  'blow-dry':   '/images/icons/blow-dry.png',
+  'hair-style': '/images/icons/hair-style.png',
+  'hair-treat': '/images/icons/hair-treat.png',
+  'makeup':     '/images/icons/facial.png',
 };
 
 export default function MobileHomeApp({ categories, services, packages, user, todayOffers = [] }: Props) {
@@ -248,23 +249,32 @@ function SectionHeader({ title, href }: { title: string; href: string }) {
 }
 
 function CategoryTile({ category }: { category: Category }) {
-  const img = CATEGORY_IMAGES[category.slug] || '/images/categories/default.jpg';
+  const icon = CATEGORY_ICONS[category.slug];
   return (
     <Link
       href={`/services#${category.slug}`}
-      className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-sm active:scale-95 transition-transform"
+      className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-cream-50 to-cream-100 border border-gold-light/20 shadow-sm active:scale-95 transition-transform p-4 flex flex-col items-center justify-center gap-2 group hover:border-gold-light/50"
     >
-      <Image
-        src={img}
-        alt={category.name_ar}
-        fill
-        className="object-cover"
-        sizes="(max-width: 768px) 50vw, 25vw"
-      />
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/80 via-ink/40 to-transparent p-3">
-        <div className="font-ar-display font-bold text-cream-50 text-sm">
-          {category.name_ar}
+      {icon ? (
+        <div className="w-14 h-14 rounded-full bg-white/70 flex items-center justify-center p-2 group-hover:scale-110 transition-transform">
+          <Image
+            src={icon}
+            alt={category.name_ar}
+            width={44}
+            height={44}
+            className="object-contain"
+          />
         </div>
+      ) : (
+        <div className="w-14 h-14 rounded-full bg-gold-light/15 flex items-center justify-center text-2xl">
+          {category.icon || '✨'}
+        </div>
+      )}
+      <div className="font-ar-display font-bold text-gold-deep text-sm text-center">
+        {category.name_ar}
+      </div>
+      <div className="text-[9px] font-en-label tracking-[0.2em] text-gold-light uppercase">
+        {category.name_en}
       </div>
     </Link>
   );
