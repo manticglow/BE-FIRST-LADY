@@ -2,9 +2,10 @@
  * ServicesSection — قسم الخدمات في الصفحة الرئيسية (ديسكتوب + جوال)
  * ═══════════════════════════════════════════════════════════
  * - بطاقات فاخرة بالصور · متطابقة مع التطبيق
- * - وصف مختصر · سعر · "أضيفي للسلة"
+ * - 🌸 بتلات متساقطة ناعمة (من موقعنا القديم)
+ * - وصف يبان دائماً (من قاعدة البيانات أو احتياطي أنيق)
+ * - سعر · "أضيفي للسلة" (يتطلّب دخول)
  * - اضغطي البطاقة → صفحة التفاصيل
- * - تتطلّب تسجيل دخول للسلة
  */
 'use client';
 
@@ -16,6 +17,7 @@ import { toast } from 'sonner';
 import { ChevronDown, Clock, Star, Plus, Check } from 'lucide-react';
 import { formatPrice, formatDuration } from '@/lib/utils';
 import { useCart } from '@/hooks/useCart';
+import Petals from '@/components/ui/Petals';
 import type { Category, Service } from '@/types/database';
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -40,6 +42,21 @@ const GALLERY_FALLBACKS = [
   '/images/gallery/hollywood-waves.jpg', '/images/gallery/lashes-poster.jpg',
 ];
 
+/* ═══ وصف احتياطي ناعم حسب الفئة ═══ */
+const CATEGORY_DESCRIPTIONS: Record<string, string> = {
+  'massage':    'جلسة استرخاء فاخرة بأيدٍ خبيرة · تخفّف التوتر وتجدّد الطاقة',
+  'bath':       'تجربة استحمام ملكيّة تنعّم بشرتك وتترك عطراً يدوم',
+  'facial':     'عناية مكثّفة ببشرتك · إشراقة طبيعية ونعومة فاخرة',
+  'nails':      'لمسة أنثويّة أنيقة لأظافرك · ألوان راقية وتفاصيل دقيقة',
+  'brows':      'تنسيق وتصميم حواجب يبرز ملامحك بأناقة',
+  'hair-color': 'لون شعر عصري وفاخر يناسب إطلالتك ومزاجك',
+  'hair-cut':   'قصّة شعر مدروسة من خبراء التصفيف · أناقة تدوم',
+  'blow-dry':   'تجفيف وتنعيم احترافي يبرز لمعان شعرك',
+  'hair-style': 'تسريحة شعر فاخرة لإطلالتك المميّزة',
+  'hair-treat': 'علاج تجديدي عميق يعيد الحيوية والنعومة لشعرك',
+  'makeup':     'ميك اب احترافي يبرز جمالك الطبيعي',
+};
+
 function slugify(n: string) {
   return n.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
@@ -50,11 +67,23 @@ function hashString(s: string): number {
   return Math.abs(h);
 }
 
+/** يرجّع وصف — من البيانات أو احتياطي ناعم */
+function getDescription(service: Service & { category?: Category | null }): string {
+  if (service.description_ar && service.description_ar.trim()) {
+    return service.description_ar;
+  }
+  const slug = service.category?.slug;
+  if (slug && CATEGORY_DESCRIPTIONS[slug]) {
+    return CATEGORY_DESCRIPTIONS[slug];
+  }
+  return 'تجربة فاخرة بأيدي خبيرات في بي فيرست ليدي · لحظات تدلّل حقيقي';
+}
+
 export default function ServicesSection({
   categories, services, isLoggedIn = false,
 }: {
   categories: Category[];
-  services: Service[];
+  services: (Service & { category?: Category | null })[];
   isLoggedIn?: boolean;
 }) {
   const [openCat, setOpenCat] = useState<string | null>(categories[0]?.id || null);
@@ -105,7 +134,7 @@ export default function ServicesSection({
                   </div>
                 </button>
 
-                {/* الخدمات · بطاقات فاخرة */}
+                {/* الخدمات · بطاقات فاخرة بالبتلات */}
                 <div className={`grid transition-[grid-template-rows] duration-500 ease-out ${isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
                   <div className="overflow-hidden">
                     <div className="p-4 pt-0 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -132,13 +161,20 @@ function CategoryIcon({ slug, fallback }: { slug: string; fallback: string | nul
   return <span className="text-2xl">{fallback || '✨'}</span>;
 }
 
-function ServiceCard({ service, isLoggedIn }: { service: Service; isLoggedIn: boolean }) {
+function ServiceCard({
+  service, isLoggedIn,
+}: {
+  service: Service & { category?: Category | null };
+  isLoggedIn: boolean;
+}) {
   const cart = useCart();
   const router = useRouter();
   const inCart = cart.has(service.id);
   const localImg = `/images/services/${slugify(service.name_en)}.jpg`;
   const fallbackImg = GALLERY_FALLBACKS[hashString(service.id) % GALLERY_FALLBACKS.length];
   const [imgSrc, setImgSrc] = useState(service.image_url || localImg);
+  const description = getDescription(service);
+  const rating = (4.6 + (hashString(service.id) % 5) * 0.08).toFixed(1); // ثابت لكل خدمة
 
   function handleAdd(e: React.MouseEvent) {
     e.preventDefault();
@@ -160,53 +196,68 @@ function ServiceCard({ service, isLoggedIn }: { service: Service; isLoggedIn: bo
   return (
     <Link
       href={`/services/${service.id}`}
-      className={`group bg-white rounded-2xl overflow-hidden border transition-all hover:shadow-lg hover:-translate-y-0.5 ${
-        inCart ? 'border-gold-deep shadow-sm' : 'border-cream-200'
+      className={`group relative bg-white rounded-2xl overflow-hidden border transition-all duration-500 hover:shadow-xl hover:shadow-gold-deep/10 hover:-translate-y-1 ${
+        inCart ? 'border-gold-deep shadow-md shadow-gold-deep/10' : 'border-cream-200 hover:border-gold-light/50'
       }`}
     >
-      {/* الصورة */}
-      <div className="relative aspect-[4/3] bg-gradient-to-br from-gold-light/15 to-cream-100 overflow-hidden">
+      {/* الصورة · مع shimmer وبتلات */}
+      <div className="relative aspect-[4/3] bg-gradient-to-br from-gold-light/15 to-cream-100 overflow-hidden card-shimmer">
         <Image
           src={imgSrc}
           alt={service.name_ar}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           onError={() => { if (imgSrc !== fallbackImg) setImgSrc(fallbackImg); }}
         />
+
+        {/* 🌸 طبقة البتلات */}
+        <Petals />
+
+        {/* تدرّج سفلي لتباين النص فوق الصورة */}
+        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
+
         {/* تقييم في الزاوية */}
-        <div className="absolute top-2 right-2 flex items-center gap-1 bg-white/90 backdrop-blur text-ink text-xs font-bold px-2 py-0.5 rounded-full">
+        <div className="absolute top-2.5 right-2.5 flex items-center gap-1 bg-white/95 backdrop-blur text-ink text-xs font-bold px-2.5 py-1 rounded-full shadow-sm z-10">
           <Star className="w-3 h-3 text-gold-deep fill-gold-deep" />
-          <span className="font-en-display">{(4.5 + Math.random() * 0.5).toFixed(1)}</span>
+          <span className="font-en-display">{rating}</span>
         </div>
+
+        {/* شارة "في السلة" */}
+        {inCart && (
+          <div className="absolute top-2.5 left-2.5 bg-gold-deep text-cream-50 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm z-10 flex items-center gap-1">
+            <Check className="w-3 h-3" />
+            في السلة
+          </div>
+        )}
       </div>
 
       {/* المحتوى */}
-      <div className="p-4">
-        <div className="flex items-center justify-between mb-1.5">
+      <div className="p-4 relative">
+        <div className="flex items-start justify-between gap-2 mb-1">
           <h4 className="font-ar-display font-bold text-ink text-base line-clamp-1 flex-1">
             {service.name_ar}
           </h4>
-          <div className="flex items-center gap-1 text-xs text-ink-soft shrink-0">
+          <div className="flex items-center gap-1 text-xs text-ink-soft shrink-0 bg-cream-50 px-2 py-0.5 rounded-full">
             <Clock className="w-3 h-3" />
             <span className="font-en-display">{formatDuration(service.duration_min)}</span>
           </div>
         </div>
-        <p className="font-en-display italic text-xs text-gold-light mb-2">{service.name_en}</p>
+        <p className="font-en-display italic text-xs text-gold-light mb-2.5 line-clamp-1">
+          {service.name_en}
+        </p>
 
-        {/* الوصف */}
-        {service.description_ar && (
-          <p className="text-xs text-ink-soft line-clamp-2 leading-relaxed mb-3 min-h-[2.3rem]">
-            {service.description_ar}
-          </p>
-        )}
+        {/* الوصف · يبان دائماً */}
+        <p className="text-xs text-ink-soft line-clamp-2 leading-relaxed mb-3 min-h-[2.3rem]">
+          {description}
+        </p>
 
-        {/* السعر */}
-        <div className="flex items-baseline justify-between pt-2 border-t border-cream-100 mb-3">
-          <span className="text-[10px] text-ink-soft">
+        {/* السعر · بشريط ذهبي ناعم */}
+        <div className="flex items-baseline justify-between pt-2.5 border-t border-cream-100 mb-3">
+          <span className="text-[10px] text-ink-soft tracking-wide">
             {service.price_from ? 'تبدأ من' : 'السعر'}
           </span>
-          <span className="font-en-display font-bold text-lg text-gold-deep">
+          <span className="font-en-display font-bold text-lg bg-gradient-to-l from-gold-deep to-gold-light bg-clip-text text-transparent">
             {formatPrice(service.price, { showFrom: false })}
           </span>
         </div>
@@ -214,10 +265,10 @@ function ServiceCard({ service, isLoggedIn }: { service: Service; isLoggedIn: bo
         {/* زر الإضافة */}
         <button
           onClick={handleAdd}
-          className={`w-full inline-flex items-center justify-center gap-1.5 text-xs font-bold py-2.5 rounded-xl transition-colors ${
+          className={`w-full inline-flex items-center justify-center gap-1.5 text-xs font-bold py-2.5 rounded-xl transition-all ${
             inCart
-              ? 'bg-gold-deep text-cream-50 hover:bg-ink'
-              : 'bg-cream-50 text-gold-deep border border-gold-light/40 hover:bg-gold-light/10'
+              ? 'bg-gold-deep text-cream-50 hover:bg-ink shadow-sm shadow-gold-deep/20'
+              : 'bg-cream-50 text-gold-deep border border-gold-light/40 hover:bg-gold-light/10 hover:border-gold-deep/60'
           }`}
         >
           {inCart ? (
