@@ -14,7 +14,29 @@ import {
 } from 'lucide-react';
 import { formatPrice, formatDuration } from '@/lib/utils';
 import { useCart } from '@/hooks/useCart';
+import Petals from '@/components/ui/Petals';
 import type { Service, Category } from '@/types/database';
+
+const CATEGORY_DESCRIPTIONS: Record<string, string> = {
+  'massage':    'جلسة استرخاء فاخرة بأيدٍ خبيرة · تخفّف التوتر وتجدّد الطاقة',
+  'bath':       'تجربة استحمام ملكيّة تنعّم بشرتك وتترك عطراً يدوم',
+  'facial':     'عناية مكثّفة ببشرتك · إشراقة طبيعية ونعومة فاخرة',
+  'nails':      'لمسة أنثويّة أنيقة لأظافرك · ألوان راقية وتفاصيل دقيقة',
+  'brows':      'تنسيق وتصميم حواجب يبرز ملامحك بأناقة',
+  'hair-color': 'لون شعر عصري وفاخر يناسب إطلالتك ومزاجك',
+  'hair-cut':   'قصّة شعر مدروسة من خبراء التصفيف · أناقة تدوم',
+  'blow-dry':   'تجفيف وتنعيم احترافي يبرز لمعان شعرك',
+  'hair-style': 'تسريحة شعر فاخرة لإطلالتك المميّزة',
+  'hair-treat': 'علاج تجديدي عميق يعيد الحيوية والنعومة لشعرك',
+  'makeup':     'ميك اب احترافي يبرز جمالك الطبيعي',
+};
+
+function getDescription(service: Service & { category?: Category }): string {
+  if (service.description_ar && service.description_ar.trim()) return service.description_ar;
+  const slug = service.category?.slug;
+  if (slug && CATEGORY_DESCRIPTIONS[slug]) return CATEGORY_DESCRIPTIONS[slug];
+  return 'تجربة فاخرة بأيدي خبيرات في بي فيرست ليدي · لحظات تدلّل حقيقي تستحقينها';
+}
 
 interface Review {
   id: string;
@@ -92,8 +114,8 @@ export default function ServiceDetailClient({ service, reviews, avgRating, isLog
         </Link>
       </div>
 
-      {/* ═══ الصورة الكبيرة ═══ */}
-      <div className="relative aspect-[4/3] md:aspect-[16/9] bg-gradient-to-br from-gold-light/15 to-cream-100 mx-4 rounded-3xl overflow-hidden mt-2 shadow-md">
+      {/* ═══ الصورة الكبيرة · مع بتلات ناعمة ═══ */}
+      <div className="group relative aspect-[4/3] md:aspect-[16/9] bg-gradient-to-br from-gold-light/15 to-cream-100 mx-4 rounded-3xl overflow-hidden mt-2 shadow-md">
         <Image
           src={imgSrc}
           alt={service.name_ar}
@@ -103,6 +125,8 @@ export default function ServiceDetailClient({ service, reviews, avgRating, isLog
           sizes="(max-width: 768px) 100vw, 768px"
           onError={() => setImgSrc('/images/gallery/bridal-look.jpg')}
         />
+        {/* 🌸 بتلات */}
+        <Petals count={6} />
       </div>
 
       {/* ═══ المحتوى ═══ */}
@@ -151,18 +175,16 @@ export default function ServiceDetailClient({ service, reviews, avgRating, isLog
           </div>
         </div>
 
-        {/* الوصف */}
-        {service.description_ar && (
-          <section className="mb-6">
-            <h2 className="font-ar-display text-lg font-bold text-ink mb-2 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-gold-deep" />
-              عن هذه الخدمة
-            </h2>
-            <p className="text-sm text-ink-soft leading-relaxed">
-              {service.description_ar}
-            </p>
-          </section>
-        )}
+        {/* الوصف · يبان دائماً */}
+        <section className="mb-6">
+          <h2 className="font-ar-display text-lg font-bold text-ink mb-2 flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-gold-deep" />
+            عن هذه الخدمة
+          </h2>
+          <p className="text-sm text-ink-soft leading-relaxed">
+            {getDescription(service)}
+          </p>
+        </section>
 
         {/* الملاحظات */}
         {service.notes_ar && (
