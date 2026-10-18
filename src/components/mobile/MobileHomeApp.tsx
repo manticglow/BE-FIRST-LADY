@@ -18,6 +18,7 @@ import { Search, MapPin, MessageCircle, User, ChevronLeft, Clock, Star, Plus, Ch
 import type { Category, Service, Package } from '@/types/database';
 import { formatPrice, formatDuration, waLink } from '@/lib/utils';
 import { useCart } from '@/hooks/useCart';
+import Petals from '@/components/ui/Petals';
 
 interface Props {
   categories: Category[];
@@ -448,21 +449,48 @@ function AddToCartServiceCard({ service, img, fallbackImg, isLoggedIn }: { servi
     }
   }
 
+  // وصف احتياطي حسب الفئة
+  const CAT_DESC: Record<string, string> = {
+    'massage': 'جلسة استرخاء فاخرة · تخفّف التوتر وتجدّد الطاقة',
+    'bath': 'تجربة استحمام ملكيّة · تنعّم بشرتك وتترك عطراً يدوم',
+    'facial': 'عناية مكثّفة ببشرتك · إشراقة طبيعية ونعومة',
+    'nails': 'لمسة أنثويّة أنيقة · ألوان راقية وتفاصيل دقيقة',
+    'hair-color': 'لون شعر عصري وفاخر يناسب إطلالتك',
+    'hair-cut': 'قصّة شعر مدروسة من خبراء التصفيف',
+    'blow-dry': 'تجفيف وتنعيم احترافي يبرز لمعان شعرك',
+    'hair-style': 'تسريحة شعر فاخرة لإطلالتك المميّزة',
+    'hair-treat': 'علاج تجديدي عميق · حيوية ونعومة',
+    'makeup': 'ميك اب احترافي يبرز جمالك الطبيعي',
+    'brows': 'تنسيق وتصميم حواجب يبرز ملامحك',
+  };
+  const dbDesc = (service as any).description_ar;
+  const catSlug = (service as any).category?.slug;
+  const description = (dbDesc && dbDesc.trim())
+    ? dbDesc
+    : (catSlug && CAT_DESC[catSlug])
+      ? CAT_DESC[catSlug]
+      : 'تجربة فاخرة بأيدي خبيرات بي فيرست ليدي';
+
+  // تقييم ثابت لكل خدمة (مش عشوائي)
+  const rating = (4.6 + ((service.id.charCodeAt(0) || 0) % 5) * 0.08).toFixed(1);
+
   return (
     <Link
       href={`/services/${service.id}`}
-      className="snap-start flex-shrink-0 w-60 bg-white rounded-3xl overflow-hidden border border-cream-100 active:scale-95 transition-transform shadow-sm hover:shadow-md"
+      className="snap-start flex-shrink-0 w-60 bg-white rounded-3xl overflow-hidden border border-cream-100 active:scale-95 transition-transform shadow-sm hover:shadow-md group"
     >
-      {/* الصورة · لو ما لقت الملف المحلي · ترجع لصورة من معرض الأعمال */}
-      <div className="relative aspect-square bg-gradient-to-br from-gold-light/15 to-cream-100">
+      {/* الصورة · مع بتلات متساقطة 🌸 */}
+      <div className="relative aspect-square bg-gradient-to-br from-gold-light/15 to-cream-100 overflow-hidden">
         <Image
           src={currentSrc}
           alt={service.name_ar}
           fill
-          className="object-cover"
+          className="object-cover group-hover:scale-110 transition-transform duration-700"
           sizes="240px"
           onError={() => { if (currentSrc !== fallbackImg) setCurrentSrc(fallbackImg); }}
         />
+        {/* 🌸 بتلات ناعمة */}
+        <Petals count={4} />
       </div>
 
       {/* المحتوى */}
@@ -471,7 +499,7 @@ function AddToCartServiceCard({ service, img, fallbackImg, isLoggedIn }: { servi
           <div className="flex items-center gap-1 text-xs">
             <Star className="w-3 h-3 text-gold-deep fill-gold-deep" />
             <span className="font-bold font-en-display text-ink">
-              {(4.5 + Math.random() * 0.5).toFixed(1)}
+              {rating}
             </span>
           </div>
           <div className="flex items-center gap-1 text-[10px] text-ink-soft">
@@ -484,12 +512,10 @@ function AddToCartServiceCard({ service, img, fallbackImg, isLoggedIn }: { servi
           {service.name_ar}
         </h3>
 
-        {/* الوصف */}
-        {(service as any).description_ar && (
-          <p className="text-[11px] text-ink-soft line-clamp-2 leading-relaxed mb-2 min-h-[2.2rem]">
-            {(service as any).description_ar}
-          </p>
-        )}
+        {/* الوصف · يبان دائماً */}
+        <p className="text-[11px] text-ink-soft line-clamp-2 leading-relaxed mb-2 min-h-[2.2rem]">
+          {description}
+        </p>
 
         <div className="flex items-baseline justify-between mb-2.5">
           <div className="text-[10px] text-ink-soft">تبدأ من</div>
