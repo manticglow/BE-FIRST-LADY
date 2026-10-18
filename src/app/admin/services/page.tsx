@@ -1,31 +1,31 @@
 /**
- * Admin — إدارة الخدمات
+ * Services Page — صفحة الخدمات الكاملة
  * ═══════════════════════════════════════════════════════════
- * - عرض كل الفئات والخدمات
- * - إضافة/تعديل/حذف/تفعيل عبر ServicesManager (Client Component)
+ * - عرض كل الخدمات مجمّعة بالفئات
+ * - كل خدمة قابلة للإضافة للسلة
+ * - يدعم الـanchor للتنقّل مباشرة لفئة (#massage)
  */
 import { createClient } from '@/lib/supabase/server';
-import ServicesManager from '@/components/admin/ServicesManager';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import ServicesListClient from '@/components/services/ServicesListClient';
 
 export const dynamic = 'force-dynamic';
 
-export default async function ServicesAdminPage() {
+export default async function ServicesPage() {
   const supabase = await createClient();
   const [{ data: categories }, { data: services }] = await Promise.all([
-    supabase.from('categories').select('*').order('display_order'),
-    supabase.from('services').select('*').order('display_order'),
+    supabase.from('categories').select('*').eq('is_active', true).order('display_order'),
+    supabase.from('services').select('*, category:categories(*)').eq('is_active', true).order('display_order'),
   ]);
 
   return (
-    <div className="p-6 md:p-8">
-      <div className="mb-6">
-        <h1 className="font-ar-display text-3xl font-bold text-gold-deep">الخدمات</h1>
-        <p className="text-ink-soft text-sm mt-1">
-          {services?.length || 0} خدمة في {categories?.length || 0} فئة · اضغطي ✏️ للتعديل، أو زر "إضافة" في كل فئة
-        </p>
-      </div>
-
-      <ServicesManager categories={categories || []} services={services || []} />
-    </div>
+    <>
+      <Header />
+      <main className="min-h-screen bg-cream-50 pt-20 md:pt-24 pb-28">
+        <ServicesListClient categories={categories || []} services={services || []} />
+      </main>
+      <Footer />
+    </>
   );
 }
