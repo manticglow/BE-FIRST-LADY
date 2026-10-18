@@ -2,6 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ═══════════════════════════════════════════════════════════
+   🌙 إجبار الوضع الفاتح — لا يتأثر بوضع الدارك في النظام
+   ═══════════════════════════════════════════════════════════
+   الموقع فاخر وتصميمه مبني على ألوان كريم/ذهبي — ما يناسب
+   الوضع الليلي للمتصفح/النظام (كان يسوّد الخطوط ويخليها غير مقروءة) */
+:root {
+  color-scheme: light only;
+  --background: #fbf7ef;
+  --foreground: #2a1c10;
+}
+
+html {
+  color-scheme: light only !important;
+  background: var(--background);
+}
+
+/* إجبار الخلفية والنص على الوضع الفاتح حتى لو المتصفح في Dark Mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: light only !important;
+    --background: #fbf7ef !important;
+    --foreground: #2a1c10 !important;
+  }
+  html, body {
+    background: #fbf7ef !important;
+    color: #2a1c10 !important;
+  }
+  /* المدخلات والنماذج — إجبار الوضع الفاتح */
+  input, textarea, select {
+    color-scheme: light !important;
+    background-color: #ffffff !important;
+    color: #2a1c10 !important;
+  }
+  input::placeholder, textarea::placeholder {
+    color: #8b7355 !important;
+    opacity: 0.6;
+  }
+}
+
+/* إجبار المدخلات دائماً — حتى في الوضع الفاتح للنظام */
+input, textarea, select {
+  color: #2a1c10;
+  background-color: #ffffff;
+}
+input::placeholder, textarea::placeholder {
+  color: #8b7355;
+  opacity: 0.6;
+}
+
+/* iOS auto-fill (الصفحات الذكية في Safari) — تخلّي الخلفية صفراء وتخفي النص */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
+  -webkit-text-fill-color: #2a1c10 !important;
+  caret-color: #2a1c10;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
@@ -11,6 +71,10 @@
     @apply font-ar-body text-ink bg-cream-100 antialiased;
     min-height: 100vh;
     overflow-x: hidden;
+    /* تحسين وضوح الخطوط العربية */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
   :lang(en), [dir="ltr"] {
     @apply font-en-display;
