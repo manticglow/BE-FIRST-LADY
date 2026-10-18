@@ -78,7 +78,7 @@ export default async function HomePage() {
           <LashesBannerSection />
           {gallery && <GallerySection items={gallery} />}
           {categories && services && (
-            <ServicesSection categories={categories} services={services} />
+            <ServicesSection categories={categories} services={services} isLoggedIn={!!user} />
           )}
           {reviews && <ReviewsSection reviews={reviews} />}
           <ContactSection />
