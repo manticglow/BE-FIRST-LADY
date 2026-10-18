@@ -51,3 +51,116 @@
     @apply block w-16 h-px mx-auto my-4 bg-gradient-to-r from-transparent via-gold-light to-transparent;
   }
 }
+
+/* إخفاء شريط التمرير مع إبقاء التمرير شغّال · مفيد للـchips الأفقية */
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   🌸 بتلات الورد المتساقطة · Floating Petals Animation
+   ═══════════════════════════════════════════════════════════
+   أنيميشن بتلات ناعمة تطفو وتختفي على بطاقات الخدمات
+   (مثل الموقع القديم) · تظهر عند hover على الديسكتوب
+   وتعمل تلقائي على الموبايل */
+
+@keyframes petal-float-1 {
+  0%   { transform: translate(0, -10%) rotate(0deg)   scale(0.9); opacity: 0; }
+  15%  { opacity: 0.8; }
+  50%  { transform: translate(20px, 50%) rotate(140deg) scale(1); opacity: 0.9; }
+  85%  { opacity: 0.6; }
+  100% { transform: translate(-10px, 120%) rotate(260deg) scale(0.8); opacity: 0; }
+}
+
+@keyframes petal-float-2 {
+  0%   { transform: translate(0, -15%) rotate(20deg)   scale(0.8); opacity: 0; }
+  20%  { opacity: 0.75; }
+  50%  { transform: translate(-25px, 55%) rotate(-120deg) scale(1); opacity: 0.85; }
+  80%  { opacity: 0.55; }
+  100% { transform: translate(15px, 125%) rotate(-280deg) scale(0.7); opacity: 0; }
+}
+
+@keyframes petal-float-3 {
+  0%   { transform: translate(0, -20%) rotate(-40deg)  scale(1); opacity: 0; }
+  25%  { opacity: 0.9; }
+  60%  { transform: translate(30px, 60%) rotate(90deg) scale(1.1); opacity: 0.8; }
+  100% { transform: translate(-5px, 130%) rotate(220deg) scale(0.9); opacity: 0; }
+}
+
+@keyframes petal-float-4 {
+  0%   { transform: translate(0, -5%) rotate(60deg)    scale(0.85); opacity: 0; }
+  18%  { opacity: 0.7; }
+  55%  { transform: translate(-15px, 70%) rotate(-60deg) scale(1); opacity: 0.9; }
+  100% { transform: translate(25px, 115%) rotate(-200deg) scale(0.75); opacity: 0; }
+}
+
+.petals-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
+  z-index: 2;
+}
+
+.petal {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  opacity: 0;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 1px 2px rgba(201, 162, 108, 0.3));
+}
+
+/* البتلات تشتغل تلقائي على الجوال (الموبايل أول) */
+@media (max-width: 767px) {
+  .petal { animation-play-state: running; }
+}
+
+/* على الديسكتوب — بس تظهر عند الهوفر */
+@media (min-width: 768px) {
+  .petal { animation-play-state: paused; }
+  .group:hover .petal { animation-play-state: running; }
+}
+
+/* البتلات بمواقع ومسارات مختلفة */
+.petal-1 { top: 0; left: 15%; animation: petal-float-1 5s ease-in-out infinite; animation-delay: 0s; }
+.petal-2 { top: 0; left: 45%; animation: petal-float-2 6.5s ease-in-out infinite; animation-delay: 1.2s; }
+.petal-3 { top: 0; left: 75%; animation: petal-float-3 5.8s ease-in-out infinite; animation-delay: 2.5s; }
+.petal-4 { top: 0; left: 30%; animation: petal-float-4 7s ease-in-out infinite; animation-delay: 3.3s; }
+.petal-5 { top: 0; left: 60%; animation: petal-float-1 6s ease-in-out infinite; animation-delay: 4s; }
+
+/* احترام تفضيلات تقليل الحركة */
+@media (prefers-reduced-motion: reduce) {
+  .petal { animation: none !important; opacity: 0 !important; }
+}
+
+/* تدرّج ذهبي ناعم على البطاقات */
+.card-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.card-shimmer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(201, 162, 108, 0.15) 50%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+  transition: transform 1s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+.group:hover .card-shimmer::before {
+  transform: translateX(100%);
+}
