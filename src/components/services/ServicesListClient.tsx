@@ -70,7 +70,7 @@ function pickFallback(serviceId: string, nameEn: string, catSlug?: string): stri
   return GALLERY[hashString(serviceId) % GALLERY.length];
 }
 
-export default function ServicesListClient({ categories, services }: { categories: Category[]; services: (Service & { category?: Category })[] }) {
+export default function ServicesListClient({ categories, services, isLoggedIn }: { categories: Category[]; services: (Service & { category?: Category })[]; isLoggedIn: boolean }) {
   const [activeCat, setActiveCat] = useState<string | null>(null);
   const [search, setSearch] = useState('');
 
@@ -155,7 +155,7 @@ export default function ServicesListClient({ categories, services }: { categorie
                 </span>
               </h2>
               <div className="grid md:grid-cols-2 gap-3">
-                {grouped[cat.slug].map((s) => <ServiceRow key={s.id} service={s} />)}
+                {grouped[cat.slug].map((s) => <ServiceRow key={s.id} service={s} isLoggedIn={isLoggedIn} />)}
               </div>
             </section>
           ))
@@ -179,7 +179,7 @@ function FilterPill({ label, active, onClick }: { label: string; active: boolean
   );
 }
 
-function ServiceRow({ service }: { service: Service & { category?: Category } }) {
+function ServiceRow({ service, isLoggedIn }: { service: Service & { category?: Category }; isLoggedIn: boolean }) {
   const cart = useCart();
   const inCart = cart.has(service.id);
   const localImg = `/images/services/${slugify(service.name_en)}.jpg`;
@@ -189,6 +189,11 @@ function ServiceRow({ service }: { service: Service & { category?: Category } })
   function handleToggle(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
+    if (!isLoggedIn) {
+      toast.error('لازم تسجّلي دخول أولاً', { icon: '🔒' });
+      setTimeout(() => { window.location.href = `/login?redirect=/services/${service.id}`; }, 800);
+      return;
+    }
     if (inCart) {
       cart.remove(service.id);
       toast('تم الإزالة من السلة', { icon: '🗑️' });
@@ -199,9 +204,12 @@ function ServiceRow({ service }: { service: Service & { category?: Category } })
   }
 
   return (
-    <div className={`bg-white rounded-2xl border overflow-hidden flex gap-3 shadow-sm transition-all ${
-      inCart ? 'border-gold-deep' : 'border-cream-200'
-    }`}>
+    <Link
+      href={`/services/${service.id}`}
+      className={`bg-white rounded-2xl border overflow-hidden flex gap-3 shadow-sm transition-all hover:shadow-md ${
+        inCart ? 'border-gold-deep' : 'border-cream-200'
+      }`}
+    >
       {/* صورة */}
       <div className="relative w-24 h-28 md:w-28 md:h-32 bg-gradient-to-br from-gold-light/15 to-cream-100 shrink-0">
         <Image
@@ -258,6 +266,6 @@ function ServiceRow({ service }: { service: Service & { category?: Category } })
           )}
         </button>
       </div>
-    </div>
+    </Link>
   );
 }
