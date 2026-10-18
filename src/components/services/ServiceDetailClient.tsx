@@ -199,12 +199,12 @@ export default function ServiceDetailClient({ service, reviews, avgRating, isLog
         </section>
       </div>
 
-      {/* ═══ أزرار ثابتة في الأسفل ═══ */}
+      {/* ═══ أزرار ثابتة في الأسفل · مع safe area للـiPhone والمتصفحات ═══ */}
       <div
-        className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-cream-200 pb-safe"
-        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 8px)' }}
+        className="fixed bottom-0 inset-x-0 z-50 bg-white/98 backdrop-blur-md border-t border-cream-200 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]"
+        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 12px)' }}
       >
-        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-2">
+        <div className="max-w-3xl mx-auto px-4 pt-3 flex items-center gap-2">
           {!isLoggedIn ? (
             <Link
               href={`/login?redirect=/services/${service.id}`}
