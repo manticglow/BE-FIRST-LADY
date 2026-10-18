@@ -139,7 +139,7 @@ export default function MobileHomeApp({ categories, services, packages, user, to
       subtitle: 'مساج استرخاء مميّز بأيدي خبيرات',
       href: '/booking',
       image: '/images/banners/relaxation.jpg',
-      fallback: '/images/gallery/evening-glam.jpg',
+      fallback: '/images/banners/evening-glam.jpg',
       gradient: 'from-amber-900/80 via-amber-800/60 to-rose-900/40',
     },
     {
