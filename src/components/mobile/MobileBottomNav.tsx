@@ -24,10 +24,15 @@ export default function MobileBottomNav() {
   const pathname = usePathname();
 
   // لا نعرضه في صفحات الأدمن أو تسجيل الدخول
+  // أخفي الشريط السفلي في الصفحات اللي عندها أزرار إجراء خاصة بها
+  const SERVICE_DETAIL_RE = /^\/services\/[^/]+$/;
   if (pathname?.startsWith('/admin') ||
       pathname?.startsWith('/login') ||
       pathname?.startsWith('/signup') ||
-      pathname?.startsWith('/legal')) {
+      pathname?.startsWith('/legal') ||
+      pathname?.startsWith('/booking') ||
+      pathname?.startsWith('/cart') ||
+      (pathname && SERVICE_DETAIL_RE.test(pathname))) {
     return null;
   }
 
