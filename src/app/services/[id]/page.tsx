@@ -63,7 +63,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-cream-50 pt-20 md:pt-24 pb-28">
+      <main className="min-h-screen bg-cream-50 pt-20 md:pt-24 pb-40">
         <ServiceDetailClient
           service={service}
           reviews={reviews}
