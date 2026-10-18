@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next';
 import { Amiri, Cairo, Cormorant_Garamond, Cinzel } from 'next/font/google';
 import { Toaster } from 'sonner';
 import PWARegister from '@/components/ui/PWARegister';
-import NativeShell from '@/components/mobile/NativeShell';
 import AppSplash from '@/components/mobile/AppSplash';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import CartFab from '@/components/cart/CartFab';
@@ -99,14 +98,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="ar"
       dir="rtl"
       className={`${amiri.variable} ${cairo.variable} ${cormorant.variable} ${cinzel.variable}`}
+      style={{ colorScheme: 'light' }}
     >
-      <body className="min-h-screen bg-cream-50 md:bg-brand-radial md:bg-fixed pb-20 md:pb-0">
+      <body className="min-h-screen bg-cream-50 md:bg-brand-radial md:bg-fixed pb-20 md:pb-0 text-ink">
         <AppSplash />
         {children}
         <BookingSuccessModal />
         <CartFab />
         <MobileBottomNav />
-        <NativeShell />
         <PWARegister />
         <Toaster
           position="top-center"
