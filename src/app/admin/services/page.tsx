@@ -14,16 +14,17 @@ export const dynamic = 'force-dynamic';
 
 export default async function ServicesPage() {
   const supabase = await createClient();
-  const [{ data: categories }, { data: services }] = await Promise.all([
+  const [{ data: categories }, { data: services }, { data: { user } }] = await Promise.all([
     supabase.from('categories').select('*').eq('is_active', true).order('display_order'),
     supabase.from('services').select('*, category:categories(*)').eq('is_active', true).order('display_order'),
+    supabase.auth.getUser(),
   ]);
 
   return (
     <>
       <Header />
       <main className="min-h-screen bg-cream-50 pt-20 md:pt-24 pb-28">
-        <ServicesListClient categories={categories || []} services={services || []} />
+        <ServicesListClient categories={categories || []} services={services || []} isLoggedIn={!!user} />
       </main>
       <Footer />
     </>
