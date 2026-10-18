@@ -14,7 +14,7 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { toast } from 'sonner';
-import { Search, MapPin, MessageCircle, User, ChevronLeft, Clock, Star, Plus } from 'lucide-react';
+import { Search, MapPin, MessageCircle, User, ChevronLeft, Clock, Star, Plus, Check } from 'lucide-react';
 import type { Category, Service, Package } from '@/types/database';
 import { formatPrice, formatDuration, waLink } from '@/lib/utils';
 import { useCart } from '@/hooks/useCart';
@@ -290,7 +290,7 @@ export default function MobileHomeApp({ categories, services, packages, user, to
           <div className="px-4">
             <SectionHeader title="أكثر الخدمات حجزاً" href="/services" />
           </div>
-          <ServiceCarousel services={topServices} />
+          <ServiceCarousel services={topServices} isLoggedIn={!!user} />
         </section>
       )}
 
@@ -300,7 +300,7 @@ export default function MobileHomeApp({ categories, services, packages, user, to
           <div className="px-4">
             <SectionHeader title="العناية بالأظافر" href="/services#nails" />
           </div>
-          <ServiceCarousel services={nailServices} />
+          <ServiceCarousel services={nailServices} isLoggedIn={!!user} />
         </section>
       )}
 
@@ -310,7 +310,7 @@ export default function MobileHomeApp({ categories, services, packages, user, to
           <div className="px-4">
             <SectionHeader title="مساج للسيدات" href="/services#massage" />
           </div>
-          <ServiceCarousel services={massageServices} />
+          <ServiceCarousel services={massageServices} isLoggedIn={!!user} />
         </section>
       )}
 
@@ -393,11 +393,11 @@ function CategoryTile({ category }: { category: Category }) {
   );
 }
 
-function ServiceCarousel({ services }: { services: Service[] }) {
+function ServiceCarousel({ services, isLoggedIn }: { services: Service[]; isLoggedIn: boolean }) {
   return (
     <div className="mt-3 flex gap-3 overflow-x-auto scrollbar-hide pr-4 pl-4 snap-x">
       {services.map((s) => (
-        <ServiceAppCard key={s.id} service={s} />
+        <ServiceAppCard key={s.id} service={s} isLoggedIn={isLoggedIn} />
       ))}
     </div>
   );
@@ -410,11 +410,10 @@ function slugify(name: string): string {
     .replace(/^-|-$/g, '');
 }
 
-function ServiceAppCard({ service }: { service: Service & { category?: any } }) {
+function ServiceAppCard({ service, isLoggedIn }: { service: Service & { category?: any }; isLoggedIn: boolean }) {
   const localImg = `/images/services/${slugify(service.name_en)}.jpg`;
   const categorySlug = service.category?.slug;
   const fallbackImg = pickFallbackImage(service.id, service.name_en, categorySlug);
-  // الأولوية: image_url من DB → ملف محلي → معرض الأعمال
   const img = service.image_url || localImg;
 
   return (
@@ -422,11 +421,12 @@ function ServiceAppCard({ service }: { service: Service & { category?: any } }) 
       service={service}
       img={img}
       fallbackImg={fallbackImg}
+      isLoggedIn={isLoggedIn}
     />
   );
 }
 
-function AddToCartServiceCard({ service, img, fallbackImg }: { service: Service; img: string; fallbackImg: string }) {
+function AddToCartServiceCard({ service, img, fallbackImg, isLoggedIn }: { service: Service; img: string; fallbackImg: string; isLoggedIn: boolean }) {
   const cart = useCart();
   const inCart = cart.has(service.id);
   const [currentSrc, setCurrentSrc] = useState(img);
@@ -434,6 +434,11 @@ function AddToCartServiceCard({ service, img, fallbackImg }: { service: Service;
   function handleAdd(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
+    if (!isLoggedIn) {
+      toast.error('لازم تسجّلي دخول أولاً', { icon: '🔒' });
+      setTimeout(() => { window.location.href = `/login?redirect=/services/${service.id}`; }, 800);
+      return;
+    }
     if (inCart) {
       cart.remove(service.id);
       toast('تم الإزالة من السلة', { icon: '🗑️' });
@@ -445,8 +450,8 @@ function AddToCartServiceCard({ service, img, fallbackImg }: { service: Service;
 
   return (
     <Link
-      href={`/booking?service=${service.id}`}
-      className="snap-start flex-shrink-0 w-56 bg-white rounded-3xl overflow-hidden border border-cream-100 active:scale-95 transition-transform shadow-sm"
+      href={`/services/${service.id}`}
+      className="snap-start flex-shrink-0 w-60 bg-white rounded-3xl overflow-hidden border border-cream-100 active:scale-95 transition-transform shadow-sm hover:shadow-md"
     >
       {/* الصورة · لو ما لقت الملف المحلي · ترجع لصورة من معرض الأعمال */}
       <div className="relative aspect-square bg-gradient-to-br from-gold-light/15 to-cream-100">
@@ -455,14 +460,14 @@ function AddToCartServiceCard({ service, img, fallbackImg }: { service: Service;
           alt={service.name_ar}
           fill
           className="object-cover"
-          sizes="224px"
+          sizes="240px"
           onError={() => { if (currentSrc !== fallbackImg) setCurrentSrc(fallbackImg); }}
         />
       </div>
 
       {/* المحتوى */}
       <div className="p-3">
-        <div className="flex items-center justify-between gap-2 mb-2">
+        <div className="flex items-center justify-between gap-2 mb-1.5">
           <div className="flex items-center gap-1 text-xs">
             <Star className="w-3 h-3 text-gold-deep fill-gold-deep" />
             <span className="font-bold font-en-display text-ink">
@@ -475,11 +480,18 @@ function AddToCartServiceCard({ service, img, fallbackImg }: { service: Service;
           </div>
         </div>
 
-        <h3 className="font-ar-display font-bold text-sm text-ink line-clamp-2 min-h-[2.5rem] mb-2">
+        <h3 className="font-ar-display font-bold text-sm text-ink line-clamp-1 mb-1">
           {service.name_ar}
         </h3>
 
-        <div className="flex items-baseline justify-between mb-3">
+        {/* الوصف */}
+        {(service as any).description_ar && (
+          <p className="text-[11px] text-ink-soft line-clamp-2 leading-relaxed mb-2 min-h-[2.2rem]">
+            {(service as any).description_ar}
+          </p>
+        )}
+
+        <div className="flex items-baseline justify-between mb-2.5">
           <div className="text-[10px] text-ink-soft">تبدأ من</div>
           <div className="font-en-display font-bold text-base text-gold-deep">
             {formatPrice(service.price, { showFrom: service.price_from })}
@@ -496,7 +508,7 @@ function AddToCartServiceCard({ service, img, fallbackImg }: { service: Service;
         >
           {inCart ? (
             <>
-              <Star className="w-3.5 h-3.5 fill-current" />
+              <Check className="w-3.5 h-3.5" />
               في السلة
             </>
           ) : (
