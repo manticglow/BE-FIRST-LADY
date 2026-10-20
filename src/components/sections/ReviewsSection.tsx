@@ -29,6 +29,27 @@ export default function ReviewsSection({ reviews }: { reviews: Review[] }) {
               {r.comment && (
                 <p className="text-sm text-ink leading-relaxed mb-4">"{r.comment}"</p>
               )}
+
+              {/* 📸 صور التقييم (قبل/بعد) */}
+              {Array.isArray((r as any).image_urls) && (r as any).image_urls.length > 0 && (
+                <div className="grid grid-cols-2 gap-2 mb-4">
+                  {(r as any).image_urls.slice(0, 4).map((url: string, i: number) => (
+                    <a
+                      key={i}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="relative aspect-square rounded-lg overflow-hidden border border-cream-200 group"
+                    >
+                      <img
+                        src={url}
+                        alt={`صورة ${i + 1}`}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                      />
+                    </a>
+                  ))}
+                </div>
+              )}
               {(r as any).admin_reply && (
                 <div className="bg-gold-light/10 border-r-2 border-gold-deep p-3 rounded-xl mb-4">
                   <div className="text-[10px] font-bold text-gold-deep uppercase mb-1">💛 ردّ Be First Lady</div>

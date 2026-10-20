@@ -11,6 +11,7 @@ const schema = z.object({
   booking_number: z.string().min(3),
   rating: z.number().int().min(1).max(5),
   comment: z.string().max(1000).optional(),
+  image_urls: z.array(z.string().url()).max(4).optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -57,6 +58,7 @@ export async function POST(req: NextRequest) {
     source: 'internal',
     is_approved: false,
     service_names: serviceNames,
+    image_urls: parsed.data.image_urls || [],
   }).select().single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });

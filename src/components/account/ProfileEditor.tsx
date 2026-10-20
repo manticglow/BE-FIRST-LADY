@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { User, Phone, Mail, Lock, Loader2 } from 'lucide-react';
+import { User, Phone, Mail, Lock, Loader2, Cake } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import type { Profile } from '@/types/database';
 
@@ -16,6 +16,7 @@ export default function ProfileEditor({ profile }: { profile: Profile }) {
     full_name: profile.full_name || '',
     phone: profile.phone || '',
     email: profile.email || '',
+    date_of_birth: (profile as any).date_of_birth || '',
   });
   const [passwords, setPasswords] = useState({ newPass: '', confirmPass: '' });
   const [busy, setBusy] = useState<string | null>(null);
@@ -93,6 +94,16 @@ export default function ProfileEditor({ profile }: { profile: Profile }) {
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
               className="inp font-en-display"
+            />
+          </Field>
+
+          <Field label="تاريخ ميلادكِ · لكوبون هديّة سنوية 🎂" icon={Cake}>
+            <input
+              type="date"
+              value={form.date_of_birth}
+              onChange={(e) => setForm({ ...form, date_of_birth: e.target.value })}
+              className="inp font-en-display"
+              max={new Date().toISOString().split('T')[0]}
             />
           </Field>
 

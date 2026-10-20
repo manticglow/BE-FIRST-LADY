@@ -298,6 +298,18 @@ function ReviewCard({ review }: { review: Review }) {
           {review.comment}
         </p>
       )}
+
+      {/* 📸 صور التقييم */}
+      {Array.isArray((review as any).image_urls) && (review as any).image_urls.length > 0 && (
+        <div className="grid grid-cols-4 gap-1.5 mt-3">
+          {(review as any).image_urls.slice(0, 4).map((url: string, i: number) => (
+            <a key={i} href={url} target="_blank" rel="noopener noreferrer"
+               className="aspect-square rounded-lg overflow-hidden border border-cream-200">
+              <img src={url} alt="" className="w-full h-full object-cover hover:scale-105 transition-transform" />
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
