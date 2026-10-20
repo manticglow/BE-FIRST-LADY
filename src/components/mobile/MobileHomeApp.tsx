@@ -19,6 +19,7 @@ import type { Category, Service, Package } from '@/types/database';
 import { formatPrice, formatDuration, waLink } from '@/lib/utils';
 import { useCart } from '@/hooks/useCart';
 import Petals from '@/components/ui/Petals';
+import HeartButton from '@/components/ui/HeartButton';
 
 interface Props {
   categories: Category[];
@@ -541,6 +542,11 @@ function AddToCartServiceCard({ service, img, fallbackImg, isLoggedIn }: { servi
         />
         {/* 🌸 بتلات ناعمة */}
         <Petals count={4} />
+
+        {/* ❤️ زر المفضّلة */}
+        <div className="absolute top-2 left-2 z-10">
+          <HeartButton serviceId={service.id} size="sm" variant="solid" />
+        </div>
       </div>
 
       {/* المحتوى */}
