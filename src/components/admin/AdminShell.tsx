@@ -17,7 +17,6 @@ import {
 } from 'lucide-react';
 import NotificationBell from '@/components/admin/NotificationBell';
 import GlobalSearch from '@/components/admin/GlobalSearch';
-import ThemeToggle from '@/components/admin/ThemeToggle';
 
 type Role = 'owner' | 'manager' | 'staff';
 
@@ -51,6 +50,13 @@ export default function AdminShell({ items, role, fullName, children }: Props) {
   useEffect(() => {
     setDrawerOpen(false);
   }, [pathname]);
+
+  // 🌙 إزالة أي بقايا للوضع الليلي القديم (إذا كانت المستخدمة فعّلته من قبل)
+  useEffect(() => {
+    const admin = document.querySelector('[data-admin-root]');
+    admin?.classList.remove('dark');
+    try { localStorage.removeItem('bfl_admin_theme'); } catch {}
+  }, []);
 
   // منع scroll الصفحة لمّا الـdrawer مفتوح
   useEffect(() => {
@@ -192,9 +198,6 @@ export default function AdminShell({ items, role, fullName, children }: Props) {
             <div className="flex items-center gap-1.5">
               <div className="bg-gold-deep rounded-lg flex items-center">
                 <NotificationBell />
-              </div>
-              <div className="bg-gold-deep rounded-lg">
-                <ThemeToggle />
               </div>
             </div>
           </div>
