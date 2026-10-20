@@ -13,6 +13,7 @@
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { sendBookingConfirmation } from '@/lib/integrations/whatsapp';
 
 const SAUDI_PHONE_REGEX = /^(?:\+?966|0)?5\d{8}$/;
 
@@ -334,6 +335,32 @@ export async function POST(request: NextRequest) {
         }
       });
     }
+
+    // ═══ إرسال تأكيد واتساب تلقائياً (ما يوقف العملية لو فشل) ═══
+    // نرسل بالخلفية حتى ما نأخّر الرد للعميلة
+    const notifyPhone = booking.is_gift ? parsed.data.customer_phone : booking.customer_phone;
+    const notifyName = booking.customer_name;
+
+    // تنسيق التاريخ والوقت بالعربي
+    const dateFormatted = new Date(booking.booking_date).toLocaleDateString('ar-SA', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+    });
+    const timeFormatted = booking.booking_time.slice(0, 5); // "15:00"
+
+    // fire-and-forget — ما ننتظر النتيجة
+    sendBookingConfirmation(
+      notifyPhone,
+      notifyName,
+      dateFormatted,
+      timeFormatted,
+      booking.booking_number
+    ).then((result) => {
+      if (!result.ok) {
+        console.warn('[WhatsApp confirm] Failed:', result.error);
+      }
+    }).catch((err) => {
+      console.warn('[WhatsApp confirm] Exception:', err);
+    });
 
     return NextResponse.json({
       ok: true,
