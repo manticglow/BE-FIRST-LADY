@@ -15,6 +15,7 @@ import {
 import { formatPrice, formatDuration } from '@/lib/utils';
 import { useCart } from '@/hooks/useCart';
 import Petals from '@/components/ui/Petals';
+import HeartButton from '@/components/ui/HeartButton';
 import type { Service, Category } from '@/types/database';
 
 const CATEGORY_DESCRIPTIONS: Record<string, string> = {
@@ -127,6 +128,11 @@ export default function ServiceDetailClient({ service, reviews, avgRating, isLog
         />
         {/* 🌸 بتلات */}
         <Petals count={6} />
+
+        {/* ❤️ زر المفضّلة · فوق يسار */}
+        <div className="absolute top-4 left-4 z-10">
+          <HeartButton serviceId={service.id} size="lg" variant="solid" />
+        </div>
       </div>
 
       {/* ═══ المحتوى ═══ */}
