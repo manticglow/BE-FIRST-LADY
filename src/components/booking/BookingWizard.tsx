@@ -27,6 +27,12 @@ interface Props {
   services: Service[];
   packages: Package[];
   user: Profile | null;
+  /** 🔁 إعادة حجز سابق · يملأ الخدمات والموظفة تلقائياً */
+  prefill?: {
+    serviceIds: string[];
+    staffId: string | null;
+    packageId: string | null;
+  } | null;
 }
 
 type Step = 1 | 2 | 3 | 4;
@@ -57,7 +63,7 @@ interface BookingState {
   loyalty_points_used: number;
 }
 
-export default function BookingWizard({ categories, services, packages, user }: Props) {
+export default function BookingWizard({ categories, services, packages, user, prefill }: Props) {
   const router = useRouter();
   const cart = useCart();
   const [step, setStep] = useState<Step>(1);
@@ -84,8 +90,20 @@ export default function BookingWizard({ categories, services, packages, user }: 
     loyalty_points_used: 0,
   });
 
-  // تحميل الخدمات من: الـURL أولاً · ثم السلة في localStorage
+  // تحميل الخدمات من: prefill (كرّري آخر حجز) أولاً · ثم URL · ثم السلة
   useEffect(() => {
+    // 🔁 إعادة حجز سابق · له الأولوية
+    if (prefill) {
+      const validServices = prefill.serviceIds.filter((id) => services.some((s) => s.id === id));
+      setState((prev) => ({
+        ...prev,
+        selectedServices: validServices,
+        selectedPackageId: prefill.packageId,
+        staff_id: prefill.staffId,
+      }));
+      return;
+    }
+
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     const serviceParam = params.get('service');
