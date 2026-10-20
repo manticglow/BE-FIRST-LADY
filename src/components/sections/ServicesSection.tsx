@@ -18,6 +18,7 @@ import { ChevronDown, Clock, Star, Plus, Check } from 'lucide-react';
 import { formatPrice, formatDuration } from '@/lib/utils';
 import { useCart } from '@/hooks/useCart';
 import Petals from '@/components/ui/Petals';
+import HeartButton from '@/components/ui/HeartButton';
 import type { Category, Service } from '@/types/database';
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -230,6 +231,11 @@ function ServiceCard({
             في السلة
           </div>
         )}
+
+        {/* ❤️ زر المفضّلة */}
+        <div className="absolute top-2.5 left-2.5 z-10" style={{ top: inCart ? '2.5rem' : '0.625rem' }}>
+          <HeartButton serviceId={service.id} size="sm" variant="solid" />
+        </div>
       </div>
 
       {/* المحتوى */}
