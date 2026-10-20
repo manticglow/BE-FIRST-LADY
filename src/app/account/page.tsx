@@ -77,6 +77,15 @@ export default async function AccountPage() {
     minsToNext = Math.round((target.getTime() - Date.now()) / 60000);
   }
 
+  // 🔁 آخر حجز للاستخدام في "كرّري آخر حجز"
+  const lastCompleted = past.find((b: any) => b.status === 'completed') || past[0];
+
+  // ❤️ عدد المفضّلات
+  const { count: favoritesCount } = await supabase
+    .from('customer_favorites')
+    .select('*', { count: 'exact', head: true })
+    .eq('customer_id', user.id);
+
   const firstName = profile?.full_name?.split(' ')[0] || 'عزيزتي';
   const greeting = timeGreeting();
   const memberSince = new Date(profile?.created_at || Date.now()).getFullYear();
@@ -133,25 +142,42 @@ export default async function AccountPage() {
           {/* ═══ 4 إحصائيات ═══ */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
             <StatTile icon={CalendarPlus} label="حجوزات قادمة" value={String(upcoming.length)} color="emerald" />
-            <StatTile icon={Heart} label="زيارات سابقة" value={String(past.length)} color="pink" />
+            <StatTile icon={Heart} label="المفضّلات" value={String(favoritesCount || 0)} color="pink" />
             <StatTile icon={Sparkles} label="إجمالي الإنفاق" value={formatPrice(totalSpent)} color="gold" />
             <StatTile icon={Crown} label="عضوة منذ" value={String(memberSince)} color="violet" />
           </div>
 
           {/* ═══ شريط إجراءات ═══ */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8 md:mb-10">
+            {/* 🔁 كرّري آخر حجز (إذا موجود) */}
+            {lastCompleted && (
+              <ActionLink
+                href={`/booking?repeat=${lastCompleted.id}`}
+                title="كرّري آخر حجز"
+                subtitle={`نفس الخدمات · حجز بنقرة`}
+                icon={Clock}
+                variant="pink"
+              />
+            )}
             <ActionLink
               href="/booking"
               title="احجزي موعداً جديداً"
               subtitle="خدمات مختارة بعناية"
               icon={CalendarPlus}
               variant="primary"
-              className="sm:col-span-2"
+              className={lastCompleted ? '' : 'sm:col-span-2'}
+            />
+            <ActionLink
+              href="/account/favorites"
+              title={`مفضّلتكِ · ${favoritesCount || 0}`}
+              subtitle="خدمات وموظفات حفظتِهن"
+              icon={Heart}
+              variant="light"
             />
             <ActionLink
               href="/account/profile"
               title="بياناتي"
-              subtitle="تعديل الاسم والجوال"
+              subtitle="تعديل الاسم والجوال وتاريخ ميلادكِ 🎂"
               icon={UserIcon}
               variant="light"
             />
@@ -161,7 +187,7 @@ export default async function AccountPage() {
               subtitle="50 ر.س لكِ ولصديقتكِ عند أول حجز 🎁"
               icon={Gift}
               variant="pink"
-              className="sm:col-span-3"
+              className="sm:col-span-2"
             />
           </div>
 
