@@ -29,10 +29,10 @@ const config: Config = {
         whatsapp: '#25D366',
       },
       fontFamily: {
-        'ar-display': ['Amiri', 'serif'],
-        'ar-body': ['Cairo', 'sans-serif'],
-        'en-display': ['"Cormorant Garamond"', 'serif'],
-        'en-label': ['Cinzel', 'serif'],
+        'ar-display': ['Amiri', 'Georgia', 'serif'],
+        'ar-body': ['Cairo', 'system-ui', '-apple-system', 'sans-serif'],
+        'en-display': ['"Cormorant Garamond"', 'Georgia', 'serif'],
+        'en-label': ['Cinzel', 'Georgia', 'serif'],
       },
       backgroundImage: {
         'brand-radial': 'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201,169,110,.12), transparent 60%), linear-gradient(170deg, #fbf7ef, #f6eee0 55%, #efe4d2)',
