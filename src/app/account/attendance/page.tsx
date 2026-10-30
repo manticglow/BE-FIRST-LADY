@@ -16,7 +16,7 @@ export default async function AttendancePage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login?next=/account/attendance');
 
-  const { data: profile } = await supabase.from('profiles').select('full_name, role').eq('id', user.id).single();
+  const { data: profile } = await supabase.from('profiles').select('full_name, role').eq('id', user.id).single<{ full_name: string | null; role: string }>();
   if (!profile || !['staff', 'manager', 'owner'].includes(profile.role)) {
     redirect('/account');
   }
