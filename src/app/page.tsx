@@ -1,21 +1,31 @@
 /**
- * الصفحة الرئيسية — Home
+ * الصفحة الرئيسية — Home v3.0 · Editorial Luxury
  * ═══════════════════════════════════════════════════════════
- *
- * Server Component — تجيب البيانات من Supabase وقت التحميل
- * (SSG مع revalidation كل 60 ثانية)
+ * ترتيب الأقسام الجديد (تدفّق سينمائي):
+ *   1. Hero (editorial)
+ *   2. Story (قصّتنا)
+ *   3. SignatureServices (bento grid)
+ *   4. Summer Offer (إذا موجود)
+ *   5. Services (قائمة كاملة)
+ *   6. Trust (الأرقام والوعود)
+ *   7. Gallery (معرض الأعمال)
+ *   8. Reviews (آراء العميلات)
+ *   9. Hours
+ *   10. Contact
  */
 import { createClient } from '@/lib/supabase/server';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import HeroSection from '@/components/sections/HeroSection';
 import StorySection from '@/components/sections/StorySection';
+import SignatureServicesSection from '@/components/sections/SignatureServicesSection';
 import SummerOfferSection from '@/components/sections/SummerOfferSection';
+import ServicesSection from '@/components/sections/ServicesSection';
+import TrustSection from '@/components/sections/TrustSection';
+import GallerySection from '@/components/sections/GallerySection';
+import ReviewsSection from '@/components/sections/ReviewsSection';
 import HoursSection from '@/components/sections/HoursSection';
 import LashesBannerSection from '@/components/sections/LashesBannerSection';
-import GallerySection from '@/components/sections/GallerySection';
-import ServicesSection from '@/components/sections/ServicesSection';
-import ReviewsSection from '@/components/sections/ReviewsSection';
 import ContactSection from '@/components/sections/ContactSection';
 import FloatingButtons from '@/components/ui/FloatingButtons';
 import LoaderScreen from '@/components/ui/LoaderScreen';
@@ -71,16 +81,39 @@ export default async function HomePage() {
       <div className="hidden md:block">
         <Header />
         <main>
+          {/* 1. البطل · Hero editorial */}
           <HeroSection />
+
+          {/* 2. قصّتنا */}
           <StorySection />
+
+          {/* 3. الخدمات المميّزة · Bento Grid */}
+          <SignatureServicesSection />
+
+          {/* 4. العرض الصيفي (إذا موجود) */}
           {offer && <SummerOfferSection offer={offer} />}
-          <HoursSection hours={hours || []} />
-          <LashesBannerSection />
-          {gallery && <GallerySection items={gallery} />}
+
+          {/* 5. قائمة الخدمات الكاملة */}
           {categories && services && (
             <ServicesSection categories={categories} services={services} isLoggedIn={!!user} />
           )}
+
+          {/* 6. الأرقام والوعود */}
+          <TrustSection />
+
+          {/* 7. معرض الأعمال */}
+          {gallery && <GallerySection items={gallery} />}
+
+          {/* 8. اللاش بانر */}
+          <LashesBannerSection />
+
+          {/* 9. آراء العميلات */}
           {reviews && <ReviewsSection reviews={reviews} />}
+
+          {/* 10. ساعات العمل */}
+          <HoursSection hours={hours || []} />
+
+          {/* 11. تواصل */}
           <ContactSection />
         </main>
         <Footer />
