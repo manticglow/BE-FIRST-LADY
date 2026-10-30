@@ -1,5 +1,10 @@
+/**
+ * Root Layout — الهيكل العام للموقع
+ * ═══════════════════════════════════════════════════════════
+ * الخطوط تُحمَّل عبر CSS <link> مباشرة في <head>
+ * (بدلاً من next/font اللي كان يفشل في البناء على Vercel)
+ */
 import type { Metadata, Viewport } from 'next';
-import { Amiri, Cairo, Cormorant_Garamond, Cinzel } from 'next/font/google';
 import { Toaster } from 'sonner';
 import PWARegister from '@/components/ui/PWARegister';
 import AppSplash from '@/components/mobile/AppSplash';
@@ -7,48 +12,6 @@ import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import CartFab from '@/components/cart/CartFab';
 import BookingSuccessModal from '@/components/booking/BookingSuccessModal';
 import './globals.css';
-
-// ═══════ الخطوط (محمّلة محلياً عبر next/font) ═══════
-const amiri = Amiri({
-  subsets: ['arabic'],
-  weight: ['400', '700'],
-  variable: '--font-amiri',
-  display: 'swap',
-  preload: false,
-  fallback: ['Georgia', 'serif'],
-  adjustFontFallback: false,
-});
-
-const cairo = Cairo({
-  subsets: ['arabic'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-cairo',
-  display: 'swap',
-  preload: false,
-  fallback: ['system-ui', '-apple-system', 'sans-serif'],
-  adjustFontFallback: false,
-});
-
-const cormorant = Cormorant_Garamond({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  style: ['normal', 'italic'],
-  variable: '--font-cormorant',
-  display: 'swap',
-  preload: false,
-  fallback: ['Georgia', 'Times New Roman', 'serif'],
-  adjustFontFallback: false,
-});
-
-const cinzel = Cinzel({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-cinzel',
-  display: 'swap',
-  preload: false,
-  fallback: ['Georgia', 'serif'],
-  adjustFontFallback: false,
-});
 
 // ═══════ Metadata (SEO) ═══════
 export const metadata: Metadata = {
@@ -109,9 +72,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="ar"
       dir="rtl"
-      className={`${amiri.variable} ${cairo.variable} ${cormorant.variable} ${cinzel.variable}`}
       style={{ colorScheme: 'light' }}
     >
+      <head>
+        {/* ─── Google Fonts عبر CSS link (آمن ضد فشل next/font) ─── */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;500;600;700;800&family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className="min-h-screen bg-cream-50 md:bg-brand-radial md:bg-fixed pb-20 md:pb-0 text-ink">
         <AppSplash />
         {children}
@@ -127,7 +98,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               background: 'linear-gradient(to left, #fbf7ef, #f6eee0)',
               border: '1px solid #c9a96e',
               color: '#2a1c10',
-              fontFamily: 'var(--font-cairo)',
+              fontFamily: 'Cairo, sans-serif',
               borderRadius: '16px',
               boxShadow: '0 10px 40px -10px rgba(125, 97, 59, 0.25)',
             },
