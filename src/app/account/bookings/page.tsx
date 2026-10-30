@@ -15,12 +15,13 @@ export default async function MyBookingsPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login?next=/account/bookings');
 
-  const { data: bookings } = await supabase
+  const { data: bookingsRaw } = await supabase
     .from('bookings')
     .select('*, items:booking_items(*)')
     .eq('customer_id', user.id)
     .order('booking_date', { ascending: false })
     .order('booking_time', { ascending: false });
+  const bookings = (bookingsRaw as any[]) || [];
 
   return (
     <>
@@ -37,7 +38,7 @@ export default async function MyBookingsPage() {
             {bookings?.length || 0} حجز
           </p>
 
-          {!bookings || bookings.length === 0 ? (
+          {bookings.length === 0 ? (
             <div className="bg-white rounded-2xl p-12 text-center border border-cream-200">
               <div className="text-ink-soft mb-4">ما عندكِ أي حجوزات بعد</div>
               <Link href="/booking" className="btn-primary">احجزي أول موعد</Link>
