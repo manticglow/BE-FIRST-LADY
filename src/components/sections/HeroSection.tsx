@@ -1,132 +1,206 @@
-'use client';
-
+/**
+ * HeroSection v3 — Editorial Luxury Hero
+ * ═══════════════════════════════════════════════════════════
+ * - خطّ عربي ضخم (Amiri) · typography-first design
+ * - شبكة editorial مع صورة فنيّة
+ * - دخول متتابع ناعم
+ * - مؤشّر تمرير أنيق
+ * - mesh gradient خلفي
+ */
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { MessageCircle, ArrowDown } from 'lucide-react';
-import { waLink } from '@/lib/utils';
+import { ArrowDown, Calendar, Sparkles, MapPin, Clock, Phone } from 'lucide-react';
 
 export default function HeroSection() {
   return (
-    <section id="top" className="relative min-h-[85vh] flex items-center justify-center text-center overflow-hidden">
-      {/* زخارف الخلفية */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-10 left-10 w-32 h-32 opacity-10">
-          <Image src="/images/lotus-decoration.svg" alt="" width={128} height={128} />
+    <section className="relative min-h-screen flex items-center overflow-hidden mesh-cream">
+
+      {/* ═══ زخارف خلفيّة ═══ */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div className="absolute top-20 right-10 opacity-25">
+          <Image src="/images/lotus-decoration.svg" alt="" width={240} height={240} />
         </div>
-        <div className="absolute bottom-10 right-10 w-40 h-40 opacity-10">
-          <Image src="/images/lotus-decoration.svg" alt="" width={160} height={160} />
+        <div className="absolute bottom-24 left-10 opacity-15">
+          <Image src="/images/lotus-decoration.svg" alt="" width={320} height={320} />
         </div>
       </div>
 
-      <div className="container-brand relative z-10 py-20">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="flex flex-col items-center"
-        >
-          {/* الشعار */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <Image
-              src="/images/logo.svg"
-              alt="Be First Lady"
-              width={180}
-              height={180}
-              priority
-              className="drop-shadow-xl"
-            />
-          </motion.div>
+      <div className="relative z-10 container-brand max-w-7xl w-full py-20 md:py-24">
 
-          {/* SPA & SALON */}
-          <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="font-en-label text-xs tracking-[0.4em] text-gold-light mt-8"
-          >
-            SPA & SALON
-          </motion.span>
+        {/* ═══ شبكة editorial · عمودين على الديسكتوب ═══ */}
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
-          {/* الاسم بالإنجليزي */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.6 }}
-            className="font-en-display italic text-5xl md:text-7xl text-gold-deep mt-3"
-          >
-            Be First Lady
-          </motion.h1>
+          {/* ━━━ العمود الأيسر · النص الكبير ━━━ */}
+          <div className="lg:col-span-7 text-right">
 
-          {/* فاصل ذهبي */}
-          <motion.span
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.6, delay: 0.9 }}
-            className="divider-gold w-24 my-6"
-          />
+            {/* شارة علوية */}
+            <div className="animate-in inline-flex items-center gap-2 bg-white/70 backdrop-blur-md border border-gold-light/30 text-gold-deep font-bold text-xs px-4 py-2 rounded-full shadow-sm mb-8">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>EST. 2026 · المدينة المنوّرة</span>
+            </div>
 
-          {/* الشعار العربي */}
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 1.0 }}
-            className="font-ar-display text-4xl md:text-6xl text-gold-deep leading-tight"
-          >
-            نعتني بكِ لتُزهري
-          </motion.h2>
+            {/* العنوان الـEditorial · ضخم */}
+            <h1 className="animate-in animate-in-delay-1 mb-6">
+              <span className="oversize-ar block text-[clamp(3rem,10vw,8rem)] text-gold-deep">
+                نعتني
+              </span>
+              <span className="oversize-ar block text-[clamp(3rem,10vw,8rem)] text-ink -mt-3">
+                بـــكِ
+              </span>
+              <span className="oversize-en block text-[clamp(2rem,6vw,5rem)] text-gold-light mt-2 italic">
+                for you to bloom
+              </span>
+            </h1>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 1.3 }}
-            className="font-en-display italic text-lg text-gold mt-3"
-          >
-            A Sanctuary for You to Bloom
-          </motion.p>
+            {/* الوصف */}
+            <p className="animate-in animate-in-delay-2 text-base md:text-lg text-ink-soft leading-relaxed max-w-xl mb-10 mr-0">
+              مركز نسائي متكامل في قلب المدينة المنوّرة · ترفٌ يليق بكِ وجمالٌ يُحكى عنه.
+              <br />
+              <span className="font-en-display italic text-sm text-gold-deep mt-1 block">
+                Massage · Hammam · Facial · Hair · Makeup
+              </span>
+            </p>
 
-          {/* الوصف */}
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.5 }}
-            className="text-ink-soft mt-6 max-w-xl text-base md:text-lg leading-relaxed"
-          >
-            مركزٌ نسائيٌّ متكاملٌ في قلب المدينة المنوّرة —<br />
-            ترفٌ يليق بكِ، وجمالٌ يُحكى عنه.
-          </motion.p>
+            {/* CTAs */}
+            <div className="animate-in animate-in-delay-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-10">
+              <Link
+                href="/booking"
+                className="group inline-flex items-center justify-center gap-2 bg-gradient-to-br from-gold-deep via-ink to-gold-deep text-cream-50 font-ar-display font-bold text-lg px-10 py-4 rounded-full shadow-xl shadow-gold-deep/25 hover:scale-[1.03] transition-transform gold-sweep"
+              >
+                <Calendar className="w-5 h-5 group-hover:rotate-6 transition-transform" />
+                احجزي موعدكِ
+              </Link>
+              <Link
+                href="#services"
+                className="inline-flex items-center justify-center gap-2 bg-white/70 backdrop-blur text-gold-deep font-bold px-8 py-4 rounded-full border border-gold-light/40 hover:bg-white transition-colors"
+              >
+                تصفّحي الخدمات
+                <ArrowDown className="w-4 h-4" />
+              </Link>
+            </div>
 
-          {/* الأزرار */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.7 }}
-            className="flex flex-wrap items-center justify-center gap-3 mt-10"
-          >
-            <a href={waLink('السلام عليكم، أرغب بحجز موعد')} target="_blank" rel="noopener" className="btn-primary">
-              <MessageCircle className="w-5 h-5" />
-              <span>احجزي موعدك</span>
-            </a>
-            <Link href="#services" className="btn-outline">
-              <span>تصفّحي الخدمات</span>
-              <ArrowDown className="w-4 h-4" />
-            </Link>
-          </motion.div>
-        </motion.div>
+            {/* معلومات سريعة */}
+            <div className="animate-in animate-in-delay-4 grid grid-cols-3 gap-3 max-w-xl">
+              <QuickFact icon={MapPin} label="الموقع" value="المدينة المنوّرة" />
+              <QuickFact icon={Clock} label="المواعيد" value="10ص - 11م" />
+              <QuickFact icon={Sparkles} label="الخدمات" value="+40 خدمة" />
+            </div>
+          </div>
+
+          {/* ━━━ العمود الأيمن · البطاقة البصريّة ━━━ */}
+          <div className="lg:col-span-5 animate-in animate-in-delay-2">
+            <HeroVisualCard />
+          </div>
+        </div>
+
+        {/* ═══ شريط تحتي · شهادات/ثقة ═══ */}
+        <div className="animate-in animate-in-delay-5 mt-16 pt-10 border-t border-gold-light/15">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <TrustBadge value="+500" label="عميلة سعيدة" />
+            <TrustBadge value="4.9" label="تقييم ⭐" />
+            <TrustBadge value="+40" label="خدمة فاخرة" />
+            <TrustBadge value="100%" label="نسائي بالكامل" />
+          </div>
+        </div>
       </div>
 
-      {/* سهم للأسفل */}
-      <motion.div
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-gold-light"
+      {/* ═══ مؤشّر تمرير ═══ */}
+      <Link
+        href="#story"
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gold-deep hover:text-ink transition-colors group z-10"
+        aria-label="تمرير"
       >
-        <ArrowDown className="w-5 h-5" />
-      </motion.div>
+        <span className="editorial-eyebrow">SCROLL</span>
+        <div className="w-6 h-10 border-2 border-gold-deep/40 rounded-full flex items-start justify-center p-1 group-hover:border-ink transition-colors">
+          <span className="w-1 h-2 bg-gold-deep rounded-full animate-bounce" />
+        </div>
+      </Link>
     </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+
+function HeroVisualCard() {
+  return (
+    <div className="relative">
+      {/* بطاقة رئيسيّة */}
+      <div className="relative aspect-[3/4] rounded-3xl overflow-hidden bg-gradient-to-br from-gold-light/20 to-cream-100 shadow-2xl shadow-gold-deep/15">
+        <Image
+          src="/images/gallery/bridal-look.jpg"
+          alt="Be First Lady experience"
+          fill
+          priority
+          className="object-cover"
+          sizes="(max-width: 1024px) 100vw, 40vw"
+        />
+        {/* تدرّج سفلي */}
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink/80 via-ink/40 to-transparent" />
+
+        {/* نص فوق الصورة */}
+        <div className="absolute inset-x-0 bottom-0 p-6 text-cream-50">
+          <div className="editorial-eyebrow mb-2 opacity-80">SIGNATURE SERVICE</div>
+          <h3 className="font-ar-display text-2xl font-bold leading-tight mb-2">
+            تجربة البرايد الكاملة
+          </h3>
+          <p className="text-xs opacity-90 leading-relaxed">
+            جلسة متكاملة تجعل من يومكِ تجربة لا تُنسى
+          </p>
+        </div>
+
+        {/* شارة سعر */}
+        <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-md rounded-2xl px-3 py-2 shadow-lg">
+          <div className="text-[9px] text-ink-soft font-bold">تبدأ من</div>
+          <div className="font-en-display font-bold text-xl text-gold-deep -mt-0.5">
+            SAR 999
+          </div>
+        </div>
+      </div>
+
+      {/* بطاقة صغيرة · شهادة · عائمة */}
+      <div className="absolute -bottom-6 -right-6 bg-white rounded-2xl p-4 shadow-xl border border-cream-200 max-w-[220px] hidden md:block">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="flex -space-x-2 flex-row-reverse">
+            {['🌸', '✨', '💎'].map((e, i) => (
+              <div key={i} className="w-7 h-7 rounded-full bg-cream-100 border-2 border-white flex items-center justify-center text-xs">
+                {e}
+              </div>
+            ))}
+          </div>
+          <div className="text-[10px] text-ink-soft">+500 عميلة</div>
+        </div>
+        <div className="text-xs text-ink font-bold leading-relaxed">
+          "تجربة فاخرة بكل تفصيل · أحسن مكان بالمدينة"
+        </div>
+        <div className="flex items-center gap-1 mt-1.5">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <span key={i} className="text-gold-deep text-xs">★</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function QuickFact({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
+  return (
+    <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-3 border border-gold-light/20 text-center hover-lift">
+      <Icon className="w-4 h-4 text-gold-deep mx-auto mb-1.5" />
+      <div className="text-[10px] text-ink-soft">{label}</div>
+      <div className="text-xs font-bold text-ink mt-0.5">{value}</div>
+    </div>
+  );
+}
+
+function TrustBadge({ value, label }: { value: string; label: string }) {
+  return (
+    <div>
+      <div className="font-en-display font-bold text-3xl md:text-4xl text-gold-deep leading-none">
+        {value}
+      </div>
+      <div className="text-[11px] text-ink-soft mt-1 font-semibold">
+        {label}
+      </div>
+    </div>
   );
 }

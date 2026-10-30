@@ -37,6 +37,7 @@ export default function NotificationBell() {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const reminderIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // تحميل تفضيل الصوت والسماح
   useEffect(() => {
     try {
       setSoundEnabled(localStorage.getItem(SOUND_ENABLED_KEY) === 'true');
@@ -46,6 +47,7 @@ export default function NotificationBell() {
     }
   }, []);
 
+  // صوت التنبيه (Web Audio · 3 نغمات ذهبية متتابعة)
   function playAlertSound() {
     if (!soundEnabled) return;
     try {
@@ -54,7 +56,9 @@ export default function NotificationBell() {
       }
       const ctx = audioCtxRef.current;
       if (ctx.state === 'suspended') ctx.resume();
-      const frequencies = [880, 1046, 1318];
+
+      // 3 نغمات ناعمة متدرجة
+      const frequencies = [880, 1046, 1318]; // A5, C6, E6
       frequencies.forEach((freq, i) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -73,12 +77,14 @@ export default function NotificationBell() {
     }
   }
 
+  // اهتزاز للجوال
   function vibrate() {
     try {
       if ('vibrate' in navigator) navigator.vibrate([200, 100, 200]);
     } catch {}
   }
 
+  // إشعار نظام
   function showSystemNotification(title: string, body: string, href: string) {
     try {
       if (!('Notification' in window)) return;
@@ -98,6 +104,7 @@ export default function NotificationBell() {
     } catch {}
   }
 
+  // تذكير متكرر كل 3 دقائق لو فيه معلّق
   function startReminder() {
     stopReminder();
     reminderIntervalRef.current = setInterval(() => {
@@ -127,12 +134,27 @@ export default function NotificationBell() {
       const newItems: Notification[] = data.notifications || [];
       const newCount: number = data.count || 0;
 
+      // كشف الحجوزات الجديدة
       if (!firstLoadRef.current && newCount > prevCountRef.current) {
+        const diff = newCount - prevCountRef.current;
+        // أول عنصر عادةً هو الأحدث
         const latest = newItems[0];
         if (latest) {
           playAlertSound();
           vibrate();
-          showSystemNotification(`🔔 ${latest.title}`, latest.subtitle, latest.href);
+          showSystemNotification(
+            `🔔 ${latest.title}`,
+            latest.subtitle,
+            latest.href
+          );
+        } else {
+          playAlertSound();
+          vibrate();
+          showSystemNotification(
+            `🔔 ${diff} إشعار جديد`,
+            'افتحي اللوحة لمراجعة التفاصيل',
+            '/admin/bookings?status=pending'
+          );
         }
       }
 
@@ -141,6 +163,7 @@ export default function NotificationBell() {
       setItems(newItems);
       setCount(newCount);
 
+      // إدارة التذكير المتكرر
       if (newCount > 0 && !reminderIntervalRef.current) startReminder();
       else if (newCount === 0 && reminderIntervalRef.current) stopReminder();
     } catch {}
@@ -148,7 +171,7 @@ export default function NotificationBell() {
 
   useEffect(() => {
     load();
-    const interval = setInterval(load, 30000);
+    const interval = setInterval(load, 30000); // كل 30 ثانية
     return () => {
       clearInterval(interval);
       stopReminder();
@@ -156,6 +179,7 @@ export default function NotificationBell() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [soundEnabled]);
 
+  // إغلاق عند النقر خارج
   useEffect(() => {
     function handler(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -176,14 +200,18 @@ export default function NotificationBell() {
 
   async function toggleSound() {
     const next = !soundEnabled;
-    try { localStorage.setItem(SOUND_ENABLED_KEY, String(next)); } catch {}
+    try {
+      localStorage.setItem(SOUND_ENABLED_KEY, String(next));
+    } catch {}
     setSoundEnabled(next);
     if (next) {
+      // جربي الصوت ليتأكد المتصفح من موافقة المستخدم
       try {
         if (!audioCtxRef.current) {
           audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
         }
         if (audioCtxRef.current.state === 'suspended') await audioCtxRef.current.resume();
+        // صوت تجريبي قصير
         const osc = audioCtxRef.current.createOscillator();
         const gain = audioCtxRef.current.createGain();
         osc.frequency.value = 1046;
@@ -193,6 +221,7 @@ export default function NotificationBell() {
         osc.start();
         osc.stop(audioCtxRef.current.currentTime + 0.2);
       } catch {}
+      // اطلبي الإذن للإشعارات
       if ('Notification' in window && Notification.permission === 'default') {
         const perm = await Notification.requestPermission();
         setNotifPermission(perm);
@@ -226,7 +255,7 @@ export default function NotificationBell() {
                   ? 'bg-success/15 text-success hover:bg-success/25'
                   : 'bg-cream-100 text-ink-soft hover:bg-cream-200'
               }`}
-              title={soundEnabled ? 'الصوت مفعّل' : 'فعّلي الصوت'}
+              title={soundEnabled ? 'الصوت والإشعارات مفعّلة' : 'فعّلي الصوت والإشعارات'}
             >
               {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </button>
