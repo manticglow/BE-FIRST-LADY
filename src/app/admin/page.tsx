@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import StaffDashboard from '@/components/admin/StaffDashboard';
 import RevenueChart from '@/components/admin/RevenueChart';
+import SmartInsights from '@/components/admin/SmartInsights';
 import { formatPrice } from '@/lib/utils';
 import {
   CalendarCheck, DollarSign, Users, TrendingUp, TrendingDown,
@@ -82,6 +83,15 @@ export default async function AdminDashboard() {
     supabase.from('bookings').select('total').eq('booking_date', yesterday).eq('payment_status', 'paid'),
     supabase.from('booking_items').select('service_name').gte('created_at', monthStartStr),
   ]);
+
+  // رُؤى الأسبوع
+  const weekStart = new Date();
+  weekStart.setDate(weekStart.getDate() - 7);
+  const weekStartStr = weekStart.toISOString().split('T')[0];
+  const { data: weekBookings } = await supabase
+    .from('bookings')
+    .select('id, booking_date, booking_time, customer_name, total, status, payment_status')
+    .gte('booking_date', weekStartStr);
 
   const todayTotal = (todayRevenue || []).reduce((s, b) => s + Number(b.total), 0);
   const yesterdayTotal = (yesterdayRevenue || []).reduce((s, b) => s + Number(b.total), 0);
@@ -299,6 +309,9 @@ export default async function AdminDashboard() {
               <RevenueChart data={monthRevenue || []} />
             </div>
           </div>
+
+          {/* 🧠 الرؤى الذكيّة */}
+          <SmartInsights weekBookings={weekBookings || []} />
         </div>
       </div>
     </div>

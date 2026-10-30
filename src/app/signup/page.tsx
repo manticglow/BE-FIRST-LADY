@@ -68,8 +68,9 @@ export default function SignupPage() {
     }
 
     toast.success('تم إنشاء حسابكِ 🌸');
-    router.refresh()
-   setTimeout(() => router.push('/account'), 100);
+    // refresh أولاً عشان الـsession cookie ينتشر · ثم push
+    router.refresh();
+    setTimeout(() => router.push('/account'), 100);
   }
 
   return (
