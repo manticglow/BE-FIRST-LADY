@@ -14,6 +14,9 @@ const amiri = Amiri({
   weight: ['400', '700'],
   variable: '--font-amiri',
   display: 'swap',
+  preload: false,
+  fallback: ['Georgia', 'serif'],
+  adjustFontFallback: false,
 });
 
 const cairo = Cairo({
@@ -21,6 +24,9 @@ const cairo = Cairo({
   weight: ['300', '400', '500', '600', '700'],
   variable: '--font-cairo',
   display: 'swap',
+  preload: false,
+  fallback: ['system-ui', '-apple-system', 'sans-serif'],
+  adjustFontFallback: false,
 });
 
 const cormorant = Cormorant_Garamond({
@@ -29,6 +35,9 @@ const cormorant = Cormorant_Garamond({
   style: ['normal', 'italic'],
   variable: '--font-cormorant',
   display: 'swap',
+  preload: false,
+  fallback: ['Georgia', 'Times New Roman', 'serif'],
+  adjustFontFallback: false,
 });
 
 const cinzel = Cinzel({
@@ -36,6 +45,9 @@ const cinzel = Cinzel({
   weight: ['400', '500', '600'],
   variable: '--font-cinzel',
   display: 'swap',
+  preload: false,
+  fallback: ['Georgia', 'serif'],
+  adjustFontFallback: false,
 });
 
 // ═══════ Metadata (SEO) ═══════
