@@ -82,6 +82,19 @@ $$ LANGUAGE plpgsql;
 -- ─────────────────────────────────────────────────────────
 -- 4) منع إهداء النفس (gift_from_phone != customer_phone)
 -- ─────────────────────────────────────────────────────────
+-- 4-أ) أوّلاً · نظّفي أي بيانات مخالفة من قبل الـconstraint
+UPDATE bookings
+SET is_gift = FALSE,
+    gift_from_name = NULL,
+    gift_from_phone = NULL,
+    gift_message = NULL
+WHERE is_gift = TRUE
+  AND gift_from_phone IS NOT NULL
+  AND customer_phone IS NOT NULL
+  AND REGEXP_REPLACE(gift_from_phone, '[^0-9]', '', 'g')
+    = REGEXP_REPLACE(customer_phone, '[^0-9]', '', 'g');
+
+-- 4-ب) ثم أضيفي الـconstraint
 ALTER TABLE bookings
   DROP CONSTRAINT IF EXISTS no_self_gift;
 ALTER TABLE bookings

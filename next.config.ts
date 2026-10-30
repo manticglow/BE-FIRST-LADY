@@ -11,13 +11,6 @@ const config: NextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts'],
   },
-  // تجاهل أخطاء TypeScript و ESLint أثناء البناء (الكود يشتغل تمام في الـruntime)
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
 };
 
 export default config;

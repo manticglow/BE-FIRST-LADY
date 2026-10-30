@@ -10,10 +10,15 @@ SET loyalty_points = 1840,
     total_spent = 6840
 WHERE email = 'customer@befirstlady.com';
 
--- ─── حجز قادم + حجز مؤكّد سابق للعميلة ────────────────
-WITH cust AS (SELECT id FROM profiles WHERE email = 'customer@befirstlady.com'),
-     staff_id AS (SELECT id FROM profiles WHERE email = 'staff@befirstlady.com'),
-     svc AS (SELECT id, price FROM services WHERE name_ar = 'مساج ملكي' LIMIT 1)
+-- ─── إنشاء صف الموظّفة هديل في جدول staff ──────────────
+INSERT INTO staff (profile_id, name, job_title, specialties, is_active, display_order)
+SELECT p.id, 'هديل القحطاني', 'أخصّائية مساج وحمّام',
+       ARRAY['مساج', 'حمّام', 'بشرة']::TEXT[], true, 1
+FROM profiles p
+WHERE p.email = 'staff@befirstlady.com'
+  AND NOT EXISTS (SELECT 1 FROM staff s WHERE s.profile_id = p.id);
+
+-- ─── حجز قادم (باستخدام staff.id) ─────────────────────
 INSERT INTO bookings (
   customer_id, customer_name, customer_phone,
   booking_date, booking_time, duration_min,
@@ -21,21 +26,19 @@ INSERT INTO bookings (
   source, staff_id, booking_number
 )
 SELECT
-  (SELECT id FROM cust),
-  'سارة الزهراني',
-  '0504389329',
-  CURRENT_DATE + INTERVAL '1 day',
-  '17:00',
-  90,
-  350, 350,
-  'confirmed', 'unpaid', 'website',
-  (SELECT id FROM staff_id),
+  (SELECT id FROM profiles WHERE email = 'customer@befirstlady.com'),
+  'سارة الزهراني', '0504389329',
+  CURRENT_DATE + 1, '17:00', 90,
+  350, 350, 'confirmed', 'unpaid', 'website',
+  (SELECT s.id FROM staff s JOIN profiles p ON p.id = s.profile_id
+   WHERE p.email = 'staff@befirstlady.com' LIMIT 1),
   'B-' || TO_CHAR(NOW(), 'YYYYMMDD') || '-001'
-ON CONFLICT DO NOTHING;
+WHERE NOT EXISTS (
+  SELECT 1 FROM bookings
+  WHERE booking_number = 'B-' || TO_CHAR(NOW(), 'YYYYMMDD') || '-001'
+);
 
 -- ─── حجز سابق مكتمل ─────────────────────────────────
-WITH cust AS (SELECT id FROM profiles WHERE email = 'customer@befirstlady.com'),
-     staff_id AS (SELECT id FROM profiles WHERE email = 'staff@befirstlady.com')
 INSERT INTO bookings (
   customer_id, customer_name, customer_phone,
   booking_date, booking_time, duration_min,
@@ -43,17 +46,17 @@ INSERT INTO bookings (
   source, staff_id, booking_number
 )
 SELECT
-  (SELECT id FROM cust),
-  'سارة الزهراني',
-  '0504389329',
-  CURRENT_DATE - INTERVAL '7 days',
-  '15:30',
-  75,
-  280, 280,
-  'completed', 'paid', 'website',
-  (SELECT id FROM staff_id),
+  (SELECT id FROM profiles WHERE email = 'customer@befirstlady.com'),
+  'سارة الزهراني', '0504389329',
+  CURRENT_DATE - 7, '15:30', 75,
+  280, 280, 'completed', 'paid', 'website',
+  (SELECT s.id FROM staff s JOIN profiles p ON p.id = s.profile_id
+   WHERE p.email = 'staff@befirstlady.com' LIMIT 1),
   'B-' || TO_CHAR(NOW() - INTERVAL '7 days', 'YYYYMMDD') || '-002'
-ON CONFLICT DO NOTHING;
+WHERE NOT EXISTS (
+  SELECT 1 FROM bookings
+  WHERE booking_number = 'B-' || TO_CHAR(NOW() - INTERVAL '7 days', 'YYYYMMDD') || '-002'
+);
 
 -- ─── إسناد الخدمات للموظّفة هديل ────────────────────
 WITH staff_h AS (SELECT id FROM profiles WHERE email = 'staff@befirstlady.com')
@@ -80,12 +83,16 @@ SELECT (SELECT id FROM staff_h), 1, '09:00', '18:00', false
 ON CONFLICT (staff_id, day_of_week) DO UPDATE SET is_working = false;
 
 -- ─── بطاقة هديّة لتجربة العميلة ──────────────────────
-INSERT INTO gift_cards (code, amount, balance, status, expires_at)
-VALUES (
-  'GC-TEST-2026',
-  500,
-  420,
-  'active',
+INSERT INTO gift_cards (
+  code, initial_amount, balance,
+  purchaser_name, purchaser_phone,
+  recipient_name, recipient_phone,
+  message, is_active, expires_at
+) VALUES (
+  'GC-TEST-2026', 500, 420,
+  'ندى الحربي', '0509998877',
+  'سارة الزهراني', '0504389329',
+  'عيدكِ مبارك 🌸', true,
   CURRENT_DATE + INTERVAL '1 year'
 )
 ON CONFLICT (code) DO NOTHING;
