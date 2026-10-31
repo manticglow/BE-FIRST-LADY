@@ -1,0 +1,96 @@
+/**
+ * POST /api/admin/gift-cards/issue
+ * ═══════════════════════════════════════════════════════════
+ * إصدار بطاقة هديّة يدوياً من قِبل الإدارة
+ * - صلاحيّة: owner/manager
+ * - يُنشئ كود فريد (GC-XXXXXXXX)
+ * - يحفظ البطاقة بحالة نشطة
+ */
+import { createClient, createAdminClient } from '@/lib/supabase/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+
+const schema = z.object({
+  amount: z.number().min(10).max(20000),
+  recipient_name: z.string().min(2).max(100),
+  recipient_phone: z.string().min(9).max(20),
+  message: z.string().max(500).nullable().optional(),
+  design: z.enum(['gold', 'pink', 'floral']).default('gold'),
+  expires_days: z.number().int().min(0).max(730).default(365),
+  // للتوثيق · من دفع
+  purchaser_name: z.string().min(2).max(100).nullable().optional(),
+});
+
+export async function POST(req: NextRequest) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role, full_name')
+    .eq('id', user.id)
+    .single();
+  if (!profile || !['owner', 'manager'].includes((profile as any).role)) {
+    return NextResponse.json({ error: 'الإصدار متاح للمالكة والمديرة فقط' }, { status: 403 });
+  }
+
+  const body = await req.json();
+  const parsed = schema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.issues[0]?.message || 'بيانات غير صحيحة' }, { status: 400 });
+  }
+
+  const d = parsed.data;
+  const admin = createAdminClient();
+
+  // توليد كود فريد
+  const { data: codeData } = await admin.rpc('generate_gift_card_code');
+  const code = codeData || `GC-${Date.now().toString(36).toUpperCase()}`;
+
+  // تاريخ الانتهاء
+  const expiresAt = d.expires_days > 0
+    ? new Date(Date.now() + d.expires_days * 86400000).toISOString()
+    : null;
+
+  // تنظيف الجوال
+  const cleanPhone = d.recipient_phone.replace(/[^0-9+]/g, '');
+
+  const { data: card, error } = await admin
+    .from('gift_cards')
+    .insert({
+      code,
+      initial_amount: d.amount,
+      balance: d.amount,
+      purchaser_name: d.purchaser_name || `إصدار من ${(profile as any).full_name || 'الإدارة'}`,
+      purchaser_phone: cleanPhone,
+      recipient_name: d.recipient_name,
+      recipient_phone: cleanPhone,
+      message: d.message || null,
+      design: d.design,
+      expires_at: expiresAt,
+      is_active: true,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Gift card issue error:', error);
+    return NextResponse.json({ error: 'فشل إصدار البطاقة' }, { status: 500 });
+  }
+
+  return NextResponse.json({
+    ok: true,
+    card: {
+      id: card.id,
+      code: card.code,
+      amount: card.initial_amount,
+      recipient_name: card.recipient_name,
+      recipient_phone: card.recipient_phone,
+      message: card.message,
+      design: card.design,
+      expires_at: card.expires_at,
+    },
+    message: `✅ تم إصدار البطاقة · الكود: ${card.code}`,
+  });
+}
