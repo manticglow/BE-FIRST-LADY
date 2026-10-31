@@ -9,6 +9,7 @@
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { auditLog, extractRequestInfo } from '@/lib/audit-log';
 
 const schema = z.object({
   amount: z.number().min(10).max(20000),
@@ -78,6 +79,28 @@ export async function POST(req: NextRequest) {
     console.error('Gift card issue error:', error);
     return NextResponse.json({ error: 'فشل إصدار البطاقة' }, { status: 500 });
   }
+
+  // ═══ Audit Log ═══
+  const { ip, ua } = extractRequestInfo(req);
+  await auditLog({
+    userId: user.id,
+    userEmail: user.email || null,
+    userRole: (profile as any).role,
+    action: 'gift_card.issue',
+    resourceType: 'gift_card',
+    resourceId: String(card.id),
+    metadata: {
+      code: card.code,
+      amount: d.amount,
+      recipient_name: d.recipient_name,
+      recipient_phone: cleanPhone,
+      design: d.design,
+      expires_days: d.expires_days,
+    },
+    ipAddress: ip,
+    userAgent: ua,
+    success: true,
+  });
 
   return NextResponse.json({
     ok: true,

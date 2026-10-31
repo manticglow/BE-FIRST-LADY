@@ -11,6 +11,7 @@
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { auditLog, extractRequestInfo } from '@/lib/audit-log';
 
 const schema = z.object({
   code: z.string().min(3).max(50).transform((s) => s.trim().toUpperCase()),
@@ -122,6 +123,28 @@ export async function POST(req: NextRequest) {
     booking_id: d.booking_id || null,
     amount: amountToUse,
     balance_after: newBalance,
+  });
+
+  // ═══ Audit Log ═══
+  const { ip, ua } = extractRequestInfo(req);
+  await auditLog({
+    userId: user.id,
+    userEmail: user.email || null,
+    userRole: (profile as any).role,
+    action: 'gift_card.redeem',
+    resourceType: 'gift_card',
+    resourceId: String(card.id),
+    metadata: {
+      code: card.code,
+      amount_used: amountToUse,
+      balance_before: availableBalance,
+      balance_after: newBalance,
+      mode: d.mode,
+      booking_id: d.booking_id || null,
+    },
+    ipAddress: ip,
+    userAgent: ua,
+    success: true,
   });
 
   return NextResponse.json({

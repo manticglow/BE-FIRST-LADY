@@ -7,6 +7,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import AdminShell, { type SidebarItem } from '@/components/admin/AdminShell';
+import SessionHeartbeat from '@/components/admin/SessionHeartbeat';
 
 const SIDEBAR: SidebarItem[] = [
   { href: '/admin',             label: 'الرئيسية',   iconKey: 'LayoutDashboard', roles: ['owner', 'manager', 'staff'], mobileNav: true },
@@ -29,6 +30,7 @@ const SIDEBAR: SidebarItem[] = [
   { href: '/admin/reports',     label: 'التقارير',   iconKey: 'BarChart3',       roles: ['owner'] },
   { href: '/admin/salon-location', label: 'موقع الصالون', iconKey: 'LayoutDashboard', roles: ['owner', 'manager'] },
   { href: '/admin/users',       label: 'اليوزرات',   iconKey: 'Shield',          roles: ['owner'] },
+  { href: '/admin/security',    label: 'الأمن',      iconKey: 'Shield',          roles: ['owner'] },
   { href: '/admin/settings',    label: 'الإعدادات',  iconKey: 'Settings',        roles: ['owner'] },
 ];
 
@@ -53,6 +55,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       role={profile.role as 'owner' | 'manager' | 'staff'}
       fullName={profile.full_name || ''}
     >
+      <SessionHeartbeat />
       {children}
     </AdminShell>
   );

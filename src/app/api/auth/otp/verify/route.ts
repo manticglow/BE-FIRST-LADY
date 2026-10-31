@@ -11,6 +11,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { formatPhoneForWhatsApp } from '@/lib/integrations/whatsapp';
+import { checkRateLimit, getClientIp, rateLimitErrorResponse } from '@/lib/rate-limit';
+import { auditLog, extractRequestInfo } from '@/lib/audit-log';
+import { updateSessionActivity } from '@/lib/session-timeout';
 
 const admin = createAdminClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -19,6 +22,8 @@ const admin = createAdminClient(
 );
 
 export async function POST(req: NextRequest) {
+  const { ip, ua } = extractRequestInfo(req);
+
   try {
     const body = await req.json();
     const phone: string = (body.phone || '').trim();
@@ -30,6 +35,35 @@ export async function POST(req: NextRequest) {
     }
 
     const formattedPhone = formatPhoneForWhatsApp(phone);
+
+    // ─── Rate Limit: 10 محاولات/15 دقيقة لكل IP (ضد brute force للكود) ───
+    const ipLimit = await checkRateLimit({
+      key: ip || 'unknown',
+      category: 'otp-verify-ip',
+      max: 10,
+      windowSec: 15 * 60,
+    });
+    if (!ipLimit.allowed) {
+      await auditLog({
+        action: 'auth.otp.verify',
+        success: false,
+        errorMessage: 'rate_limited_ip',
+        metadata: { phone: formattedPhone, ip },
+        ipAddress: ip,
+        userAgent: ua,
+      });
+      await admin.from('login_attempts').insert({
+        identifier: formattedPhone,
+        ip_address: ip,
+        success: false,
+        error_type: 'rate_limited',
+        user_agent: ua,
+      });
+      return NextResponse.json(
+        { ok: false, ...rateLimitErrorResponse(ipLimit) },
+        { status: 429 },
+      );
+    }
 
     // ─── جلب آخر OTP نشط لهذا الرقم ───
     const { data: otp, error: otpError } = await admin
@@ -63,6 +97,23 @@ export async function POST(req: NextRequest) {
         .from('otp_codes')
         .update({ attempts: otp.attempts + 1 })
         .eq('id', otp.id);
+
+      // سجّلي محاولة فاشلة
+      await admin.from('login_attempts').insert({
+        identifier: formattedPhone,
+        ip_address: ip,
+        success: false,
+        error_type: 'wrong_otp',
+        user_agent: ua,
+      });
+      await auditLog({
+        action: 'auth.otp.verify',
+        success: false,
+        errorMessage: 'wrong_otp',
+        metadata: { phone: formattedPhone, attempts: otp.attempts + 1 },
+        ipAddress: ip,
+        userAgent: ua,
+      });
 
       return NextResponse.json(
         {
@@ -163,6 +214,25 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
+
+    // ─── Audit: Login successful ───
+    await admin.from('login_attempts').insert({
+      identifier: formattedPhone,
+      ip_address: ip,
+      success: true,
+      user_agent: ua,
+    });
+    await auditLog({
+      userId,
+      userEmail: syntheticEmail,
+      action: 'auth.login',
+      success: true,
+      metadata: { method: 'whatsapp_otp', phone: formattedPhone },
+      ipAddress: ip,
+      userAgent: ua,
+    });
+    // بدء تتبّع الـsession activity
+    await updateSessionActivity(userId, ip, ua);
 
     return NextResponse.json({
       ok: true,

@@ -4,6 +4,10 @@
  * توليد رمز OTP من 6 أرقام · حفظه في قاعدة البيانات
  * · إرساله عبر واتساب
  *
+ * 🛡️ Rate Limited:
+ *   - 5 محاولات/10 دقائق لكل phone
+ *   - 20 محاولة/ساعة لكل IP (ضد abuse)
+ *
  * Body: { phone: string, purpose?: 'login' | 'signup' | 'reset' }
  * Response: { ok: true } أو { ok: false, error: string }
  */
@@ -11,6 +15,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { sendOtpCode, formatPhoneForWhatsApp } from '@/lib/integrations/whatsapp';
+import { checkRateLimit, getClientIp, rateLimitErrorResponse } from '@/lib/rate-limit';
+import { auditLog, extractRequestInfo } from '@/lib/audit-log';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -19,6 +25,8 @@ const supabase = createClient(
 );
 
 export async function POST(req: NextRequest) {
+  const { ip, ua } = extractRequestInfo(req);
+
   try {
     const body = await req.json();
     const phone: string = (body.phone || '').trim();
@@ -31,18 +39,47 @@ export async function POST(req: NextRequest) {
 
     const formattedPhone = formatPhoneForWhatsApp(phone);
 
-    // ─── Rate Limiting: ما أكثر من 5 محاولات في 10 دقائق ───
-    const tenMinAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
-    const { count: recentCount } = await supabase
-      .from('otp_codes')
-      .select('*', { count: 'exact', head: true })
-      .eq('phone', formattedPhone)
-      .gte('created_at', tenMinAgo);
-
-    if ((recentCount || 0) >= 5) {
+    // ─── Rate Limit 1: لكل IP (20 محاولة/ساعة) ───
+    const ipLimit = await checkRateLimit({
+      key: ip || 'unknown',
+      category: 'otp-send-ip',
+      max: 20,
+      windowSec: 60 * 60,
+    });
+    if (!ipLimit.allowed) {
+      await auditLog({
+        action: 'auth.otp.send',
+        success: false,
+        errorMessage: 'rate_limited_ip',
+        metadata: { phone: formattedPhone, ip },
+        ipAddress: ip,
+        userAgent: ua,
+      });
       return NextResponse.json(
-        { ok: false, error: 'لقد تجاوزتِ عدد المحاولات · حاولي بعد 10 دقائق' },
-        { status: 429 }
+        { ok: false, ...rateLimitErrorResponse(ipLimit) },
+        { status: 429 },
+      );
+    }
+
+    // ─── Rate Limit 2: لكل phone (5 محاولات/10 دقائق) ───
+    const phoneLimit = await checkRateLimit({
+      key: formattedPhone,
+      category: 'otp-send-phone',
+      max: 5,
+      windowSec: 10 * 60,
+    });
+    if (!phoneLimit.allowed) {
+      await auditLog({
+        action: 'auth.otp.send',
+        success: false,
+        errorMessage: 'rate_limited_phone',
+        metadata: { phone: formattedPhone, retry_after: phoneLimit.retryAfter },
+        ipAddress: ip,
+        userAgent: ua,
+      });
+      return NextResponse.json(
+        { ok: false, ...rateLimitErrorResponse(phoneLimit) },
+        { status: 429 },
       );
     }
 
@@ -78,11 +115,28 @@ export async function POST(req: NextRequest) {
           _devCode: code, // ⚠️ ما يظهر في الإنتاج
         });
       }
+      await auditLog({
+        action: 'auth.otp.send',
+        success: false,
+        errorMessage: result.error || 'whatsapp_send_failed',
+        metadata: { phone: formattedPhone, purpose },
+        ipAddress: ip,
+        userAgent: ua,
+      });
       return NextResponse.json(
         { ok: false, error: result.error || 'فشل إرسال الرسالة' },
         { status: 500 }
       );
     }
+
+    // ─── Audit success ───
+    await auditLog({
+      action: 'auth.otp.send',
+      success: true,
+      metadata: { phone: formattedPhone, purpose, messageId: result.messageId },
+      ipAddress: ip,
+      userAgent: ua,
+    });
 
     return NextResponse.json({
       ok: true,
