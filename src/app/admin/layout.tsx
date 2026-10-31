@@ -24,6 +24,7 @@ const SIDEBAR: SidebarItem[] = [
   { href: '/admin/reviews',     label: 'التقييمات',  iconKey: 'Star',            roles: ['owner', 'manager'] },
   { href: '/admin/gallery',     label: 'المعرض',     iconKey: 'ImageIcon',       roles: ['owner', 'manager'] },
   { href: '/admin/payroll',     label: 'الرواتب',    iconKey: 'Banknote',        roles: ['owner'] },
+  { href: '/admin/expenses',    label: 'المصروفات',  iconKey: 'Banknote',        roles: ['owner', 'manager'] },
   { href: '/admin/push',        label: 'الإشعارات',  iconKey: 'Bell',            roles: ['owner', 'manager'] },
   { href: '/admin/reports',     label: 'التقارير',   iconKey: 'BarChart3',       roles: ['owner'] },
   { href: '/admin/salon-location', label: 'موقع الصالون', iconKey: 'LayoutDashboard', roles: ['owner', 'manager'] },

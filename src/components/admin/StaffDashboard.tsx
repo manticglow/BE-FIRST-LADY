@@ -9,6 +9,7 @@
  */
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import MyEarningsCard from '@/components/admin/MyEarningsCard';
 import {
   Calendar, Clock, Users, Phone, Award, Umbrella,
   CheckCircle2, PlayCircle, Timer, MessageCircle, MapPin, Sparkles,
@@ -136,6 +137,11 @@ export default async function StaffDashboard({ userId, firstName }: { userId: st
               : <span>تسجيل حضور</span>}
           </Link>
         </div>
+      </div>
+
+      {/* ═══ 💰 أرباحي اللحظيّة ═══ */}
+      <div className="mb-6">
+        <MyEarningsCard staffProfileId={userId} commissionRate={0.20} />
       </div>
 
       {/* ═══ الموعد القادم (إذا موجود) ═══ */}
