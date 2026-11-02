@@ -182,12 +182,25 @@ export default async function AccountPage() {
               variant="light"
             />
             <ActionLink
+              href="/account/beauty-profile"
+              title="ملف الجمال"
+              subtitle="نوع البشرة والشعر والحسّاسيّات ✨"
+              icon={Sparkles}
+              variant="light"
+            />
+            <ActionLink
+              href="/account/history"
+              title="تاريخ زياراتكِ"
+              subtitle="رحلة جمالكِ · صور قبل/بعد 💫"
+              icon={Heart}
+              variant="light"
+            />
+            <ActionLink
               href="/account/referral"
               title="ادعي صديقاتكِ"
               subtitle="50 ر.س لكِ ولصديقتكِ عند أول حجز 🎁"
               icon={Gift}
               variant="pink"
-              className="sm:col-span-2"
             />
           </div>
 
