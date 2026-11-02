@@ -218,6 +218,36 @@ export default async function AccountPage() {
             )}
           </section>
 
+          {/* ═══ احجزي مرّة ثانية · آخر خدمة ═══ */}
+          {lastCompleted && (
+            <section className="bg-gradient-to-br from-rose-50 via-amber-50 to-cream-50 rounded-3xl p-5 md:p-6 border border-amber-100">
+              <div className="flex items-start justify-between gap-3 flex-wrap">
+                <div className="flex-1">
+                  <div className="editorial-eyebrow text-amber-700/80 mb-1">BOOK AGAIN</div>
+                  <h3 className="font-ar-display text-lg md:text-xl font-bold text-ink mb-1">
+                    استمتعي مرّة ثانية بـ{lastCompleted.items?.[0]?.service_name || 'آخر زيارة'}
+                  </h3>
+                  <p className="text-xs text-ink-soft">
+                    آخر زيارة في{' '}
+                    {new Date(lastCompleted.booking_date).toLocaleDateString('ar-SA', {
+                      day: 'numeric', month: 'long',
+                    })}
+                    {lastCompleted.items && lastCompleted.items.length > 1 && (
+                      <> · {lastCompleted.items.length} خدمات</>
+                    )}
+                  </p>
+                </div>
+                <a
+                  href={`/booking?repeat=${lastCompleted.id}`}
+                  className="inline-flex items-center gap-1.5 bg-gradient-to-br from-gold-deep via-ink to-gold-deep text-cream-50 px-4 py-2.5 rounded-xl font-ar-display font-bold text-sm hover:scale-[1.03] transition-transform shadow-md"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  احجزي نفس الخدمة
+                </a>
+              </div>
+            </section>
+          )}
+
           {/* ═══ الحجوزات السابقة ═══ */}
           {past.length > 0 && (
             <section>

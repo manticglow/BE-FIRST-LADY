@@ -19,10 +19,10 @@ import {
 import { waLink } from '@/lib/utils';
 
 const NAV_LINKS = [
-  { href: '#story',     label: 'القصة',     icon: Sparkles },
   { href: '#services',  label: 'الخدمات',   icon: Sparkles },
-  { href: '#gallery',   label: 'المعرض',    icon: Sparkles },
+  { href: '/packages',  label: 'البكجات',   icon: Sparkles, badge: '✨' },
   { href: '/gift-cards', label: 'بطاقات هدية', icon: Sparkles, badge: '🎁' },
+  { href: '#gallery',   label: 'المعرض',    icon: Sparkles },
   { href: '#reviews',   label: 'آراء العميلات', icon: Sparkles },
   { href: '#contact',   label: 'تواصل',     icon: Sparkles },
 ];
