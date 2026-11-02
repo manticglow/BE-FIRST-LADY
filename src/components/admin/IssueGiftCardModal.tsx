@@ -10,7 +10,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import {
-  X, User, Phone, Gift, Loader2, CheckCircle2,
+  X, User, Phone, Gift, Loader2, CheckCircle2, Mail,
   Copy, MessageCircle, Download, Calendar, Sparkles,
 } from 'lucide-react';
 import { waLink, formatPrice } from '@/lib/utils';
@@ -22,6 +22,7 @@ interface IssuedCard {
   amount: number;
   recipient_name: string;
   recipient_phone: string;
+  recipient_email?: string | null;
   message: string | null;
   design: string;
   expires_at: string | null;
@@ -55,6 +56,7 @@ export default function IssueGiftCardModal({ onClose, onIssued }: Props) {
   const [amount, setAmount] = useState<number>(300);
   const [recipientName, setRecipientName] = useState('');
   const [recipientPhone, setRecipientPhone] = useState('');
+  const [recipientEmail, setRecipientEmail] = useState('');
   const [message, setMessage] = useState('');
   const [design, setDesign] = useState<'gold' | 'pink' | 'floral'>('gold');
   const [expiresDays, setExpiresDays] = useState(365);
@@ -67,6 +69,9 @@ export default function IssueGiftCardModal({ onClose, onIssued }: Props) {
     if (!/^0?5\d{8}$/.test(recipientPhone.replace(/\s/g, ''))) {
       toast.error('رقم جوال غير صحيح'); return;
     }
+    if (recipientEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipientEmail.trim())) {
+      toast.error('إيميل غير صحيح'); return;
+    }
     if (amount < 10) { toast.error('أقل مبلغ 10 ر.س'); return; }
 
     setSubmitting(true);
@@ -78,6 +83,7 @@ export default function IssueGiftCardModal({ onClose, onIssued }: Props) {
           amount,
           recipient_name: recipientName.trim(),
           recipient_phone: recipientPhone.replace(/\s/g, ''),
+          recipient_email: recipientEmail.trim() || null,
           message: message || null,
           design,
           expires_days: expiresDays,
@@ -196,6 +202,26 @@ export default function IssueGiftCardModal({ onClose, onIssued }: Props) {
                     placeholder="05xxxxxxxx"
                     dir="ltr"
                     className="w-full px-4 py-2.5 rounded-xl border border-cream-200 focus:border-gold-deep outline-none font-en-display text-right"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-ink-soft mb-1.5 flex items-center justify-between">
+                    <span>
+                      <Mail className="w-3.5 h-3.5 inline ml-1" />
+                      إيميل المستلمة (اختياري)
+                    </span>
+                    <span className="text-[9px] font-normal text-ink-soft/70">
+                      للإرسال بالإيميل بديلاً عن الواتساب
+                    </span>
+                  </label>
+                  <input
+                    type="email"
+                    value={recipientEmail}
+                    onChange={(e) => setRecipientEmail(e.target.value)}
+                    placeholder="name@example.com"
+                    dir="ltr"
+                    className="w-full px-4 py-2.5 rounded-xl border border-cream-200 focus:border-gold-deep outline-none font-en-display text-right text-sm"
                   />
                 </div>
 
@@ -321,10 +347,12 @@ function IssuedCardView({ card }: { card: IssuedCard }) {
     <div className="space-y-4">
       <GiftCardPreview
         card={{
+          id: card.id,
           code: card.code,
           amount: card.amount,
           recipient_name: card.recipient_name,
           recipient_phone: card.recipient_phone,
+          recipient_email: card.recipient_email,
           message: card.message,
           design: card.design as 'gold' | 'pink' | 'floral',
           expires_at: card.expires_at,

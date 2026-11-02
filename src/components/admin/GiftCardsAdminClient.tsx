@@ -21,6 +21,7 @@ interface Card {
   purchaser_phone: string;
   recipient_name: string | null;
   recipient_phone: string | null;
+  recipient_email?: string | null;
   message: string | null;
   design: string;
   expires_at: string | null;
@@ -188,10 +189,12 @@ function DownloadModal({ card, onClose }: { card: Card; onClose: () => void }) {
         <div className="flex-1 overflow-y-auto p-5">
           <GiftCardPreview
             card={{
+              id: card.id,
               code: card.code,
               amount: Number(card.initial_amount),
               recipient_name: card.recipient_name || '—',
               recipient_phone: card.recipient_phone || undefined,
+              recipient_email: card.recipient_email,
               message: card.message,
               design: (card.design as 'gold' | 'pink' | 'floral') || 'gold',
               expires_at: card.expires_at,

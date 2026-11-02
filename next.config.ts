@@ -47,7 +47,7 @@ const securityHeaders = [
       "font-src 'self' data: https://fonts.gstatic.com",
       "img-src 'self' data: https: blob:",
       "media-src 'self' blob:",
-      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.qrserver.com https://graph.facebook.com https://*.vercel-insights.com",
+      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.qrserver.com https://graph.facebook.com https://api.resend.com https://*.vercel-insights.com",
       "frame-ancestors 'self'",
       "base-uri 'self'",
       "form-action 'self'",

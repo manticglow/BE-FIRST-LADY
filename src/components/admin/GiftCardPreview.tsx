@@ -10,14 +10,18 @@
  */
 import { useRef, useState } from 'react';
 import {
-  Download, FileText, MessageCircle, Loader2, Sparkles, Scissors,
+  Download, FileText, MessageCircle, Loader2, Sparkles, Scissors, Mail, Send, X,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export interface GiftCardData {
+  id?: string;
   code: string;
   amount: number;
   recipient_name: string;
   recipient_phone?: string;
+  recipient_email?: string | null;
+  purchaser_name?: string | null;
   message?: string | null;
   design: 'gold' | 'pink' | 'floral';
   expires_at?: string | null;
@@ -25,7 +29,9 @@ export interface GiftCardData {
 
 export default function GiftCardPreview({ card }: { card: GiftCardData }) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const [busy, setBusy] = useState<'png' | 'pdf' | null>(null);
+  const [busy, setBusy] = useState<'png' | 'pdf' | 'email' | null>(null);
+  const [emailOpen, setEmailOpen] = useState(false);
+  const [emailValue, setEmailValue] = useState(card.recipient_email || '');
 
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(card.code)}&color=0a0a0a&bgcolor=ffffff&margin=10`;
 
@@ -129,6 +135,87 @@ export default function GiftCardPreview({ card }: { card: GiftCardData }) {
     window.open(url, '_blank');
   };
 
+  /**
+   * توليد صورة PNG + PDF للـemail كـbase64
+   */
+  const generateAttachments = async (): Promise<{
+    png?: string; pdf?: string;
+  }> => {
+    if (!cardRef.current) return {};
+    const html2canvas = (await import('html2canvas-pro')).default;
+    const { jsPDF } = await import('jspdf');
+
+    const canvas = await html2canvas(cardRef.current, {
+      scale: 3,
+      backgroundColor: null,
+      useCORS: true,
+      logging: false,
+    });
+    const pngDataUrl = canvas.toDataURL('image/png');
+
+    // PDF
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pageWidth = 210;
+    const cardW = 170;
+    const cardH = (cardW * canvas.height) / canvas.width;
+    const x = (pageWidth - cardW) / 2;
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(18);
+    pdf.setTextColor(60, 50, 40);
+    pdf.text('Be First Lady', pageWidth / 2, 20, { align: 'center' });
+    pdf.setFontSize(10);
+    pdf.setTextColor(140, 130, 120);
+    pdf.text('Luxury Gift Card', pageWidth / 2, 27, { align: 'center' });
+    pdf.addImage(pngDataUrl, 'PNG', x, 40, cardW, cardH);
+    pdf.setFontSize(9);
+    pdf.setTextColor(100, 90, 80);
+    pdf.text(`Code: ${card.code}`, pageWidth / 2, 40 + cardH + 15, { align: 'center' });
+    const pdfDataUrl = pdf.output('datauristring');
+
+    return { png: pngDataUrl, pdf: pdfDataUrl };
+  };
+
+  const sendByEmail = async () => {
+    const email = emailValue.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error('إيميل غير صحيح');
+      return;
+    }
+    setBusy('email');
+    try {
+      const { png, pdf } = await generateAttachments();
+      const res = await fetch('/api/admin/gift-cards/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          card_id: card.id,
+          to_email: email,
+          code: card.code,
+          amount: card.amount,
+          recipient_name: card.recipient_name,
+          purchaser_name: card.purchaser_name,
+          message: card.message,
+          design: card.design,
+          expires_at: card.expires_at,
+          png_base64: png,
+          pdf_base64: pdf,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error || 'فشل الإرسال');
+        return;
+      }
+      toast.success(`📧 أُرسلت إلى ${email}`);
+      setEmailOpen(false);
+    } catch (e) {
+      console.error(e);
+      toast.error('خطأ في الإرسال');
+    } finally {
+      setBusy(null);
+    }
+  };
+
   return (
     <div className="space-y-5">
 
@@ -143,51 +230,141 @@ export default function GiftCardPreview({ card }: { card: GiftCardData }) {
         </div>
       </div>
 
-      {/* ─── Actions ─── */}
-      <div className="grid grid-cols-3 gap-2.5">
-        <button
-          onClick={downloadPng}
-          disabled={busy !== null}
-          className="bg-gradient-to-br from-stone-800 to-stone-900 text-white rounded-xl py-3 px-3 text-xs font-bold hover:shadow-lg transition-all disabled:opacity-50 flex flex-col items-center gap-1.5"
-        >
-          {busy === 'png'
-            ? <Loader2 className="w-5 h-5 animate-spin" />
-            : <Download className="w-5 h-5" />}
-          تحميل PNG
-          <span className="text-[9px] opacity-70 font-normal">للواتساب</span>
-        </button>
+      {/* ─── Actions · 2 صفوف ─── */}
+      <div className="space-y-2.5">
+        {/* الصف الأول · تحميل */}
+        <div className="grid grid-cols-2 gap-2.5">
+          <button
+            onClick={downloadPng}
+            disabled={busy !== null}
+            className="bg-gradient-to-br from-stone-800 to-stone-900 text-white rounded-xl py-3 px-3 text-xs font-bold hover:shadow-lg transition-all disabled:opacity-50 flex flex-col items-center gap-1.5"
+          >
+            {busy === 'png'
+              ? <Loader2 className="w-5 h-5 animate-spin" />
+              : <Download className="w-5 h-5" />}
+            تحميل PNG
+            <span className="text-[9px] opacity-70 font-normal">صورة فاخرة</span>
+          </button>
 
-        <button
-          onClick={downloadPdf}
-          disabled={busy !== null}
-          className="bg-gradient-to-br from-amber-700 to-amber-800 text-white rounded-xl py-3 px-3 text-xs font-bold hover:shadow-lg transition-all disabled:opacity-50 flex flex-col items-center gap-1.5"
-        >
-          {busy === 'pdf'
-            ? <Loader2 className="w-5 h-5 animate-spin" />
-            : <FileText className="w-5 h-5" />}
-          تحميل PDF
-          <span className="text-[9px] opacity-70 font-normal">للطباعة</span>
-        </button>
+          <button
+            onClick={downloadPdf}
+            disabled={busy !== null}
+            className="bg-gradient-to-br from-amber-700 to-amber-800 text-white rounded-xl py-3 px-3 text-xs font-bold hover:shadow-lg transition-all disabled:opacity-50 flex flex-col items-center gap-1.5"
+          >
+            {busy === 'pdf'
+              ? <Loader2 className="w-5 h-5 animate-spin" />
+              : <FileText className="w-5 h-5" />}
+            تحميل PDF
+            <span className="text-[9px] opacity-70 font-normal">للطباعة</span>
+          </button>
+        </div>
 
-        <button
-          onClick={shareWhatsApp}
-          disabled={busy !== null}
-          className="bg-gradient-to-br from-emerald-600 to-emerald-700 text-white rounded-xl py-3 px-3 text-xs font-bold hover:shadow-lg transition-all disabled:opacity-50 flex flex-col items-center gap-1.5"
-        >
-          <MessageCircle className="w-5 h-5" />
-          واتساب
-          <span className="text-[9px] opacity-70 font-normal">إرسال مباشر</span>
-        </button>
+        {/* الصف الثاني · إرسال */}
+        <div className="grid grid-cols-2 gap-2.5">
+          <button
+            onClick={shareWhatsApp}
+            disabled={busy !== null}
+            className="bg-gradient-to-br from-emerald-600 to-emerald-700 text-white rounded-xl py-3 px-3 text-xs font-bold hover:shadow-lg transition-all disabled:opacity-50 flex flex-col items-center gap-1.5"
+          >
+            <MessageCircle className="w-5 h-5" />
+            واتساب
+            <span className="text-[9px] opacity-70 font-normal">فتح محادثة</span>
+          </button>
+
+          <button
+            onClick={() => setEmailOpen(true)}
+            disabled={busy !== null}
+            className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-xl py-3 px-3 text-xs font-bold hover:shadow-lg transition-all disabled:opacity-50 flex flex-col items-center gap-1.5"
+          >
+            <Mail className="w-5 h-5" />
+            إرسال بالإيميل
+            <span className="text-[9px] opacity-70 font-normal">
+              {card.recipient_email ? 'إيميل محفوظ' : 'بديل للواتساب'}
+            </span>
+          </button>
+        </div>
       </div>
 
       {/* نصيحة */}
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-[11px] text-amber-800 flex items-start gap-2">
         <Sparkles className="w-4 h-4 shrink-0 mt-0.5" />
         <div>
-          <strong>نصيحة:</strong> اختاري PNG لإرسالها عبر الواتساب والـstory ·
-          اختاري PDF لو تبين تطبعيها على ورق فاخر وتسلّميها شخصياً للعميلة.
+          <strong>نصيحة:</strong> لو عندها واتس · PNG + واتساب أسرع · لو ما عندها
+          أو تبين توثيق رسمي · الإيميل خيار ممتاز (يُرفَق فيه PNG + PDF).
         </div>
       </div>
+
+      {/* ─── Email Modal ─── */}
+      {emailOpen && (
+        <div
+          className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={(e) => { if (e.target === e.currentTarget && busy !== 'email') setEmailOpen(false); }}
+        >
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-5 relative">
+              <button
+                onClick={() => busy !== 'email' && setEmailOpen(false)}
+                className="absolute top-4 left-4 w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              <div className="editorial-eyebrow text-white/60 mb-1">EMAIL DELIVERY</div>
+              <h3 className="font-ar-display text-xl font-bold flex items-center gap-2">
+                <Mail className="w-5 h-5" />
+                إرسال البطاقة بالإيميل
+              </h3>
+              <p className="text-white/70 text-xs mt-1">
+                راح نرفق صورة PNG + PDF مع تصميم فاخر داخل الإيميل
+              </p>
+            </div>
+
+            <div className="p-5 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-stone-600 mb-1.5">
+                  إيميل المستلمة
+                </label>
+                <input
+                  type="email"
+                  value={emailValue}
+                  onChange={(e) => setEmailValue(e.target.value)}
+                  placeholder="name@example.com"
+                  dir="ltr"
+                  disabled={busy === 'email'}
+                  className="w-full px-4 py-3 rounded-xl border-2 border-stone-200 focus:border-blue-500 outline-none text-sm font-en-display text-right"
+                  autoFocus
+                />
+                {card.recipient_email && emailValue !== card.recipient_email && (
+                  <button
+                    type="button"
+                    onClick={() => setEmailValue(card.recipient_email || '')}
+                    className="text-[11px] text-blue-600 mt-1 hover:underline"
+                  >
+                    استخدم الإيميل المحفوظ ({card.recipient_email})
+                  </button>
+                )}
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 text-[11px] text-blue-800 space-y-1">
+                <div className="font-bold text-blue-900 mb-1">محتوى الإيميل:</div>
+                <div>✓ تصميم HTML فاخر مع البطاقة مُدمجة</div>
+                <div>✓ مرفق PNG (للحفظ · عالي الدقّة)</div>
+                <div>✓ مرفق PDF (للطباعة · A4)</div>
+                <div>✓ تعليمات الاستخدام · كود + QR</div>
+              </div>
+
+              <button
+                onClick={sendByEmail}
+                disabled={busy === 'email' || !emailValue.trim()}
+                className="w-full py-3 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-50 hover:shadow-lg transition-all"
+              >
+                {busy === 'email'
+                  ? <><Loader2 className="w-5 h-5 animate-spin" /> جارِ الإرسال...</>
+                  : <><Send className="w-5 h-5" /> إرسال الآن</>}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
