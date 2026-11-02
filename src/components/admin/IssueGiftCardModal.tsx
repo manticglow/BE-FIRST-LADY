@@ -14,6 +14,7 @@ import {
   Copy, MessageCircle, Download, Calendar, Sparkles,
 } from 'lucide-react';
 import { waLink, formatPrice } from '@/lib/utils';
+import GiftCardPreview from './GiftCardPreview';
 
 interface IssuedCard {
   id: string;
@@ -316,72 +317,24 @@ export default function IssueGiftCardModal({ onClose, onIssued }: Props) {
 /* ═══════════════════════════════════════════════════════════ */
 
 function IssuedCardView({ card }: { card: IssuedCard }) {
-  const designInfo = DESIGNS.find((d) => d.value === card.design) || DESIGNS[0];
-  const qrDataUrl = buildQrCodeUrl(card.code);
-
   return (
     <div className="space-y-4">
+      <GiftCardPreview
+        card={{
+          code: card.code,
+          amount: card.amount,
+          recipient_name: card.recipient_name,
+          recipient_phone: card.recipient_phone,
+          message: card.message,
+          design: card.design as 'gold' | 'pink' | 'floral',
+          expires_at: card.expires_at,
+        }}
+      />
 
-      {/* ─── البطاقة المرئيّة ─── */}
-      <div className={`relative bg-gradient-to-br ${designInfo.bg} text-cream-50 rounded-3xl p-6 shadow-xl overflow-hidden`}>
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/15 rounded-full blur-2xl pointer-events-none" />
-
-        <div className="relative">
-          <div className="flex items-center justify-between mb-5">
-            <div className="editorial-eyebrow text-cream-50/70">GIFT CARD</div>
-            <Sparkles className="w-5 h-5 opacity-70" />
-          </div>
-
-          <div className="text-xs opacity-80 mb-1">إلى</div>
-          <div className="font-ar-display text-xl font-bold mb-5">{card.recipient_name}</div>
-
-          <div className="text-xs opacity-80 mb-1">القيمة</div>
-          <div className="font-en-display font-bold text-5xl leading-none mb-5">
-            {formatPrice(card.amount, { showFrom: false })}
-          </div>
-
-          {card.message && (
-            <div className="bg-white/15 backdrop-blur-sm rounded-xl p-3 text-xs italic mb-4">
-              "{card.message}"
-            </div>
-          )}
-
-          <div className="flex items-center justify-between pt-4 border-t border-white/20">
-            <div>
-              <div className="text-[10px] opacity-70 mb-0.5">الكود</div>
-              <div className="font-en-display font-bold text-xl tracking-wider">
-                {card.code}
-              </div>
-            </div>
-            {qrDataUrl && (
-              <img
-                src={qrDataUrl}
-                alt={`QR ${card.code}`}
-                className="w-20 h-20 bg-white p-1.5 rounded-lg"
-              />
-            )}
-          </div>
-
-          {card.expires_at && (
-            <div className="text-[10px] opacity-70 mt-3 text-center">
-              تنتهي: {new Date(card.expires_at).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' })}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* ─── معلومات الإرسال ─── */}
-      <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
-        <div className="flex items-start gap-3">
-          <MessageCircle className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-          <div className="flex-1">
-            <div className="font-bold text-emerald-900 text-sm mb-1">جاهزة للإرسال</div>
-            <div className="text-xs text-emerald-800">
-              اضغطي "أرسلي عبر واتساب" راح يفتح واتساب مع رسالة جاهزة إلى
-              <span className="font-en-display font-bold mx-1">{card.recipient_phone}</span>
-            </div>
-          </div>
-        </div>
+      <div className="bg-stone-50 border border-stone-200 rounded-2xl p-3 text-[11px] text-stone-700">
+        <div className="font-bold mb-1 text-stone-900">💡 تنبيه:</div>
+        احفظي ملف PNG أو PDF أول · ثم أرفقيه مع رسالة الواتساب حتى تصل العميلة
+        بتصميم فاخر بدل الكود فقط.
       </div>
     </div>
   );

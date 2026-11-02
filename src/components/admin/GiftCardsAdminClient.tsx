@@ -6,9 +6,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Plus, Copy, MessageCircle, ScanLine } from 'lucide-react';
+import { Plus, Copy, MessageCircle, ScanLine, Download, X } from 'lucide-react';
 import { toast } from 'sonner';
 import IssueGiftCardModal from './IssueGiftCardModal';
+import GiftCardPreview from './GiftCardPreview';
 import { waLink } from '@/lib/utils';
 
 interface Card {
@@ -86,6 +87,7 @@ function CardRow({ card }: { card: Card }) {
   const status = getStatus(card);
   const used = Number(card.initial_amount) - Number(card.balance);
   const usedPct = Math.round((used / Number(card.initial_amount)) * 100);
+  const [showDownload, setShowDownload] = useState(false);
 
   function copyCode() {
     navigator.clipboard.writeText(card.code);
@@ -131,6 +133,13 @@ function CardRow({ card }: { card: Card }) {
           >
             <Copy className="w-3.5 h-3.5" />
           </button>
+          <button
+            onClick={() => setShowDownload(true)}
+            className="p-1.5 rounded-lg bg-stone-100 text-stone-700 hover:bg-stone-200 transition-colors"
+            title="تحميل PNG/PDF"
+          >
+            <Download className="w-3.5 h-3.5" />
+          </button>
           {card.recipient_phone && (
             <button
               onClick={sendWA}
@@ -148,8 +157,49 @@ function CardRow({ card }: { card: Card }) {
             <ScanLine className="w-3.5 h-3.5" />
           </Link>
         </div>
+
+        {showDownload && (
+          <DownloadModal card={card} onClose={() => setShowDownload(false)} />
+        )}
       </td>
     </tr>
+  );
+}
+
+function DownloadModal({ card, onClose }: { card: Card; onClose: () => void }) {
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden max-h-[95vh] flex flex-col">
+        <div className="relative bg-gradient-to-br from-stone-800 to-stone-900 text-white p-5 shrink-0">
+          <button
+            onClick={onClose}
+            className="absolute top-4 left-4 w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center"
+          >
+            <X className="w-4 h-4" />
+          </button>
+          <div className="editorial-eyebrow text-white/60 mb-1">DOWNLOAD · SHARE</div>
+          <h2 className="font-ar-display text-xl font-bold">تحميل البطاقة</h2>
+          <p className="text-white/70 text-xs mt-1">كود {card.code}</p>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-5">
+          <GiftCardPreview
+            card={{
+              code: card.code,
+              amount: Number(card.initial_amount),
+              recipient_name: card.recipient_name || '—',
+              recipient_phone: card.recipient_phone || undefined,
+              message: card.message,
+              design: (card.design as 'gold' | 'pink' | 'floral') || 'gold',
+              expires_at: card.expires_at,
+            }}
+          />
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -157,6 +207,7 @@ function CardRowMobile({ card }: { card: Card }) {
   const status = getStatus(card);
   const used = Number(card.initial_amount) - Number(card.balance);
   const usedPct = Math.round((used / Number(card.initial_amount)) * 100);
+  const [showDownload, setShowDownload] = useState(false);
 
   function copyCode() {
     navigator.clipboard.writeText(card.code);
@@ -196,10 +247,15 @@ function CardRowMobile({ card }: { card: Card }) {
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 mb-2">
         <button onClick={copyCode} className="flex-1 py-2 bg-cream-100 rounded-xl text-xs font-bold text-ink flex items-center justify-center gap-1">
           <Copy className="w-3.5 h-3.5" /> نسخ
         </button>
+        <button onClick={() => setShowDownload(true)} className="flex-1 py-2 bg-stone-100 rounded-xl text-xs font-bold text-stone-700 flex items-center justify-center gap-1">
+          <Download className="w-3.5 h-3.5" /> تحميل
+        </button>
+      </div>
+      <div className="flex items-center gap-2">
         {card.recipient_phone && (
           <button onClick={sendWA} className="flex-1 py-2 bg-emerald-100 rounded-xl text-xs font-bold text-emerald-700 flex items-center justify-center gap-1">
             <MessageCircle className="w-3.5 h-3.5" /> واتساب
@@ -212,6 +268,10 @@ function CardRowMobile({ card }: { card: Card }) {
           <ScanLine className="w-3.5 h-3.5" /> استخدام
         </Link>
       </div>
+
+      {showDownload && (
+        <DownloadModal card={card} onClose={() => setShowDownload(false)} />
+      )}
     </div>
   );
 }
