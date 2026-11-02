@@ -4,6 +4,14 @@
     {
       "path": "/api/cron/birthday-coupons",
       "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/booking-reminders",
+      "schedule": "*/30 * * * *"
+    },
+    {
+      "path": "/api/cron/review-request",
+      "schedule": "0 * * * *"
     }
   ]
 }
