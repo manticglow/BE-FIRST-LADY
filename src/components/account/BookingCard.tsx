@@ -6,7 +6,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { Calendar, Clock, Hash, X, Edit2, Loader2, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Calendar, Clock, Hash, X, Edit2, Loader2, Sparkles, CheckCircle2, CreditCard } from 'lucide-react';
+import Link from 'next/link';
 import { formatPrice, formatDate } from '@/lib/utils';
 import type { Booking, BookingItem } from '@/types/database';
 
@@ -122,13 +123,43 @@ export default function BookingCard({ booking }: { booking: Booking & { items?: 
           </div>
         )}
 
-        {/* الإجمالي + التقييم */}
+        {/* الإجمالي + حالة الدفع */}
         <div className="flex items-center justify-between pt-3 border-t border-cream-100">
-          <span className="text-[11px] text-ink-soft">الإجمالي</span>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-ink-soft">الإجمالي</span>
+            {(booking as any).payment_status === 'paid' && (
+              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold">
+                ✓ مدفوع
+              </span>
+            )}
+            {(booking as any).payment_status === 'deposit_paid' && (
+              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 font-bold">
+                عربون مدفوع
+              </span>
+            )}
+            {(booking as any).payment_status === 'pending' && isUpcoming && (
+              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 font-bold">
+                بانتظار الدفع
+              </span>
+            )}
+          </div>
           <span className="font-en-display font-bold text-base text-gold-deep">
             {formatPrice(booking.total)}
           </span>
         </div>
+
+        {/* زر الدفع الإلكتروني للحجوزات غير المدفوعة */}
+        {isUpcoming
+          && (booking as any).payment_status !== 'paid'
+          && (booking as any).payment_status !== 'deposit_paid' && (
+          <Link
+            href={`/account/bookings/${booking.id}/pay`}
+            className="mt-3 flex items-center justify-center gap-1.5 py-2.5 bg-gradient-to-br from-stone-900 to-amber-900 text-cream-50 text-xs font-bold rounded-lg hover:shadow-md transition-all"
+          >
+            <CreditCard className="w-3.5 h-3.5" />
+            ادفعي الآن إلكترونياً
+          </Link>
+        )}
 
         {/* رابط تقييم للحجوزات المكتملة */}
         {isCompleted && (
