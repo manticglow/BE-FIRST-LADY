@@ -210,9 +210,10 @@ export default function AdminShell({ items, role, fullName, children }: Props) {
       </div>
 
       {/* ═══════════ Bottom Nav · موبايل فقط ═══════════ */}
+      {/* الموظّفة عندها StaffMobileApp بـbottom nav خاص · نخفي بتاع AdminShell لها على الموبايل */}
       {mobileNavItems.length > 0 && (
         <nav
-          className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white dark:bg-ink/95 border-t border-cream-200 dark:border-white/10 backdrop-blur-md"
+          className={`${role === 'staff' ? 'hidden' : 'lg:hidden'} fixed bottom-0 inset-x-0 z-40 bg-white dark:bg-ink/95 border-t border-cream-200 dark:border-white/10 backdrop-blur-md`}
           style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
         >
           <div className="flex items-stretch justify-around px-2 pt-1.5 pb-1">

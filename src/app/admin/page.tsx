@@ -11,6 +11,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import StaffDashboard from '@/components/admin/StaffDashboard';
+import StaffMobileData from '@/components/staff/StaffMobileData';
 import AdminMobileHome from '@/components/admin/AdminMobileHome';
 import RevenueChart from '@/components/admin/RevenueChart';
 import SmartInsights from '@/components/admin/SmartInsights';
@@ -56,8 +57,17 @@ export default async function AdminDashboard() {
   const myFirstName = me?.full_name?.split(' ')[0] || 'عزيزتي';
 
   // الموظفة تحصل على لوحة خاصة
+  // - موبايل: StaffMobileApp (تطبيق جوّال فاخر بـbottom nav)
+  // - ديسكتوب: StaffDashboard (التصميم الموسّع)
   if (me?.role === 'staff' && user) {
-    return <StaffDashboard userId={user.id} firstName={myFirstName} />;
+    return (
+      <>
+        <StaffMobileData userId={user.id} firstName={myFirstName} />
+        <div className="hidden md:block">
+          <StaffDashboard userId={user.id} firstName={myFirstName} />
+        </div>
+      </>
+    );
   }
 
   const roleLabel = me?.role === 'owner' ? 'المالكة' : 'المديرة';
