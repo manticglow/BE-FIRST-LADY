@@ -11,8 +11,9 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { toast } from 'sonner';
-import { Check, ChevronLeft, ChevronRight, Clock, Calendar, User, Phone, FileText, Loader2, Gift, Heart } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, Clock, Calendar, User, Phone, FileText, Loader2, Gift, Heart, Sparkles, CreditCard, ArrowLeft } from 'lucide-react';
 import type { Category, Service, Package, Profile } from '@/types/database';
 import { formatPrice, formatDuration } from '@/lib/utils';
 import TimeSlotPicker from './TimeSlotPicker';
@@ -242,8 +243,15 @@ export default function BookingWizard({ categories, services, packages, user, pr
   }
 
   // --- خطوات ---
+  // عناوين الأزرار حسب الخطوة
+  const NEXT_LABELS: Record<number, string> = {
+    1: 'التالي · اختاري الوقت',
+    2: 'التالي · بياناتكِ',
+    3: 'التالي · التأكيد',
+  };
+
   return (
-    <div className="bg-white rounded-3xl shadow-sm border border-cream-200 overflow-hidden">
+    <div className="bg-white rounded-3xl shadow-sm border border-cream-200 overflow-hidden pb-28 md:pb-24">
       {/* شريط التقدم */}
       <StepIndicator current={step} onJump={(n) => setStep(n)} />
 
@@ -287,40 +295,88 @@ export default function BookingWizard({ categories, services, packages, user, pr
         )}
       </div>
 
-      {/* أزرار التنقل */}
-      <div className="border-t border-cream-200 p-4 md:p-6 flex items-center justify-between gap-3 bg-cream-50/50">
-        <button
-          onClick={back}
-          disabled={step === 1}
-          className="btn-outline !py-2 !px-4 text-sm flex items-center gap-1 disabled:opacity-30 disabled:cursor-not-allowed"
-        >
-          <ChevronRight className="w-4 h-4" />
-          السابق
-        </button>
+      {/* ═══ شريط الـactions الثابت أسفل الشاشة ═══ */}
+      <div className="fixed bottom-0 inset-x-0 z-40 bg-gradient-to-t from-cream-50 via-white to-white border-t border-gold-light/30 shadow-[0_-8px_32px_-10px_rgba(201,169,110,0.25)] backdrop-blur-xl">
+        <div className="max-w-5xl mx-auto px-4 py-3 md:px-6 md:py-3.5">
+          {/* الملخّص الصغير (يظهر لمّا فيه خدمات محدّدة) */}
+          {(state.selectedServices.length > 0 || state.selectedPackageId) && (
+            <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-cream-100">
+              <div className="flex items-center gap-3 text-[11px] text-ink-soft">
+                <span className="flex items-center gap-1">
+                  <Sparkles className="w-3 h-3 text-gold-light" />
+                  <strong className="text-ink font-en-display">
+                    {state.selectedPackageId ? 1 : state.selectedServices.length}
+                  </strong>
+                  {state.selectedPackageId ? 'بكج' : 'خدمة'}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Clock className="w-3 h-3 text-gold-light" />
+                  <strong className="text-ink font-en-display">{formatDuration(totalDuration)}</strong>
+                </span>
+                {state.booking_time && (
+                  <span className="flex items-center gap-1 hidden sm:flex">
+                    <Calendar className="w-3 h-3 text-gold-light" />
+                    <strong className="text-ink font-en-display">
+                      {state.booking_date} · {state.booking_time.slice(0, 5)}
+                    </strong>
+                  </span>
+                )}
+              </div>
+              <div className="font-en-display font-bold text-gold-deep text-base">
+                {formatPrice(subtotal)}
+              </div>
+            </div>
+          )}
 
-        <div className="text-xs text-ink-soft">
-          خطوة <span className="font-en-display font-bold text-gold-deep">{step}</span> من 4
+          {/* الأزرار */}
+          <div className="flex items-center gap-2">
+            {/* زر السابق · داكن أذهب */}
+            <button
+              onClick={back}
+              disabled={step === 1}
+              className="w-11 h-11 md:w-auto md:h-auto md:px-4 md:py-2.5 rounded-xl border border-cream-300 bg-white text-ink-soft hover:text-gold-deep hover:border-gold-light disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-1 text-sm font-semibold shrink-0"
+              aria-label="السابق"
+            >
+              <ChevronRight className="w-4 h-4" />
+              <span className="hidden md:inline">السابق</span>
+            </button>
+
+            {/* مؤشّر الخطوة · ديسكتوب فقط */}
+            <div className="hidden md:flex items-center gap-1 px-3 text-[11px] text-ink-soft">
+              <span>خطوة</span>
+              <span className="font-en-display font-bold text-gold-deep">{step}</span>
+              <span>من</span>
+              <span className="font-en-display font-bold text-gold-deep">4</span>
+            </div>
+
+            {/* زر التالي / تأكيد */}
+            {step < 4 ? (
+              <button
+                onClick={next}
+                disabled={!canGoNext()}
+                className="btn-shimmer flex-1 py-3 md:py-3 rounded-xl bg-gradient-to-br from-gold-deep via-ink to-gold-deep text-cream-50 font-ar-display font-bold text-sm md:text-base flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg active:scale-[0.98] transition-all overflow-hidden"
+              >
+                <span className="relative z-10">
+                  {NEXT_LABELS[step as 1 | 2 | 3] || 'التالي'}
+                </span>
+                <ChevronLeft className="w-4 h-4 relative z-10" />
+              </button>
+            ) : (
+              <button
+                onClick={submit}
+                disabled={submitting}
+                className="btn-shimmer btn-halo flex-1 py-3 md:py-3 rounded-xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 text-white font-ar-display font-bold text-sm md:text-base flex items-center justify-center gap-2 disabled:opacity-50 hover:shadow-lg active:scale-[0.98] transition-all overflow-hidden"
+              >
+                {submitting
+                  ? <><Loader2 className="w-5 h-5 animate-spin relative z-10" /> <span className="relative z-10">جارِ التأكيد...</span></>
+                  : <>
+                      <CreditCard className="w-5 h-5 relative z-10" />
+                      <span className="relative z-10">تأكيد الحجز ({formatPrice(subtotal, { showFrom: false })})</span>
+                    </>}
+              </button>
+            )}
+          </div>
         </div>
-
-        {step < 4 ? (
-          <button
-            onClick={next}
-            disabled={!canGoNext()}
-            className="btn-primary !py-2 !px-5 text-sm flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            التالي
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-        ) : (
-          <button
-            onClick={submit}
-            disabled={submitting}
-            className="btn-primary !py-2 !px-5 text-sm flex items-center gap-2 disabled:opacity-50"
-          >
-            {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-            تأكيد الحجز
-          </button>
-        )}
       </div>
     </div>
   );
@@ -386,6 +442,21 @@ function StepIndicator({
 // ═══════════════════════════════════════════════════════════
 // الخطوة 1 — اختيار الخدمات
 // ═══════════════════════════════════════════════════════════
+// أيقونات التصنيفات حسب slug · من /public/images/icons/
+const CATEGORY_ICONS: Record<string, string> = {
+  'massage':    '/images/icons/massage.png',
+  'bath':       '/images/icons/bath.png',
+  'facial':     '/images/icons/facial.png',
+  'nails':      '/images/icons/nails.png',
+  'brows':      '/images/icons/facial.png',
+  'hair-color': '/images/icons/hair-color.png',
+  'hair-cut':   '/images/icons/hair-cut.png',
+  'blow-dry':   '/images/icons/blow-dry.png',
+  'hair-style': '/images/icons/hair-style.png',
+  'hair-treat': '/images/icons/hair-treat.png',
+  'makeup':     '/images/icons/facial.png',
+};
+
 function StepServices({
   categories, services, packages, state, toggleService, choosePackage, subtotal, duration,
 }: {
@@ -396,21 +467,39 @@ function StepServices({
   subtotal: number;
   duration: number;
 }) {
+  // التصنيف المختار · null = عرض شبكة التصنيفات
+  const [activeCat, setActiveCat] = useState<string | null>(null);
+
+  // خدمات التصنيف المختار
+  const activeCatObj = activeCat ? categories.find((c) => c.id === activeCat) : null;
+  const activeServices = activeCat ? services.filter((s) => s.category_id === activeCat) : [];
+
+  // عدد الخدمات لكل تصنيف
+  const countByCategory = useMemo(() => {
+    const m: Record<string, number> = {};
+    services.forEach((s) => {
+      m[s.category_id] = (m[s.category_id] || 0) + 1;
+    });
+    return m;
+  }, [services]);
+
+  // التصنيفات اللي عندها خدمات نشطة فقط
+  const availableCategories = categories.filter((c) => (countByCategory[c.id] || 0) > 0);
+
   return (
     <div>
-      <h2 className="font-ar-display text-xl font-bold text-gold-deep mb-1">
-        اختاري ما تريدين
-      </h2>
-      <p className="text-sm text-ink-soft mb-6">
-        يمكنكِ اختيار خدمات متعددة أو بكج جاهز
-      </p>
-
-      {/* البكجات */}
+      {/* ═══ البكجات · دائماً مرئيّة ═══ */}
       {packages.length > 0 && (
-        <div className="mb-6">
-          <h3 className="font-ar-display text-lg font-bold text-ink mb-3">
-            🎁 البكجات الجاهزة
-          </h3>
+        <div className="mb-8">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="w-4 h-4 text-gold-deep" />
+            <h3 className="font-ar-display text-lg font-bold text-gold-deep">
+              البكجات الجاهزة
+            </h3>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 font-bold">
+              وفّري أكثر
+            </span>
+          </div>
           <div className="grid md:grid-cols-2 gap-3">
             {packages.map((p) => {
               const sel = state.selectedPackageId === p.id;
@@ -420,8 +509,8 @@ function StepServices({
                   onClick={() => choosePackage(p.id)}
                   className={`text-right border-2 rounded-2xl p-4 transition-all ${
                     sel
-                      ? 'border-gold-deep bg-gold-light/10 shadow-md'
-                      : 'border-cream-200 bg-white hover:border-gold-light'
+                      ? 'border-gold-deep bg-gradient-to-br from-gold-light/15 to-amber-50 shadow-md'
+                      : 'border-cream-200 bg-white hover:border-gold-light hover:shadow-sm'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
@@ -448,56 +537,189 @@ function StepServices({
         </div>
       )}
 
-      {/* الخدمات المفردة */}
-      <div>
-        <h3 className="font-ar-display text-lg font-bold text-ink mb-3">
-          أو اختاري خدمات مفردة
-        </h3>
-        <div className="space-y-4">
-          {categories.map((cat) => {
-            const catServices = services.filter((s) => s.category_id === cat.id);
-            if (catServices.length === 0) return null;
-            return (
-              <div key={cat.id}>
-                <div className="font-ar-display font-bold text-gold-deep text-sm mb-2">
-                  {cat.name_ar}
-                </div>
-                <div className="grid sm:grid-cols-2 gap-2">
-                  {catServices.map((s) => {
-                    const sel = state.selectedServices.includes(s.id);
-                    return (
-                      <button
-                        key={s.id}
-                        onClick={() => toggleService(s.id)}
-                        className={`text-right border rounded-xl p-3 transition-all ${
-                          sel
-                            ? 'border-gold-deep bg-gold-light/10'
-                            : 'border-cream-200 bg-white hover:border-gold-light'
-                        }`}
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="min-w-0 flex-1">
-                            <div className="font-bold text-sm text-ink truncate">{s.name_ar}</div>
-                            <div className="text-xs text-ink-soft mt-0.5">
-                              {formatDuration(s.duration_min)}
-                            </div>
-                          </div>
-                          <div className="text-left shrink-0">
-                            <div className="font-en-display font-bold text-sm text-gold-deep">
-                              {formatPrice(s.price)}
-                            </div>
-                            {sel && <Check className="w-3 h-3 text-gold-deep inline mt-1" />}
-                          </div>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
+      {/* ═══ عرض شبكة التصنيفات · default view ═══ */}
+      {!activeCat && (
+        <div>
+          <div className="mb-5">
+            <h2 className="font-ar-display text-2xl font-bold text-gold-deep mb-1">
+              اختاري تصنيفاً
+            </h2>
+            <p className="text-sm text-ink-soft">
+              تصفّحي خدماتنا حسب التصنيف · واختاري ما يناسبكِ
+            </p>
+          </div>
+
+          {/* شبكة التصنيفات · بطاقات فاخرة */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {availableCategories.map((cat) => {
+              // كم خدمة من هذا التصنيف محدّدة؟
+              const selectedCount = services.filter(
+                (s) => s.category_id === cat.id && state.selectedServices.includes(s.id)
+              ).length;
+              const total = countByCategory[cat.id];
+              const iconSrc = CATEGORY_ICONS[cat.slug] || CATEGORY_ICONS['facial'];
+
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveCat(cat.id)}
+                  className={`group relative text-right rounded-2xl p-4 transition-all overflow-hidden ${
+                    selectedCount > 0
+                      ? 'bg-gradient-to-br from-gold-light/15 to-amber-50 border-2 border-gold-deep shadow-md'
+                      : 'bg-white border-2 border-cream-200 hover:border-gold-light hover:shadow-md'
+                  }`}
+                >
+                  {/* زينة الخلفيّة · لمعة ذهبيّة */}
+                  <div className="absolute top-0 left-0 w-20 h-20 bg-gold-light/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                  {/* badge · عدد المحدّد */}
+                  {selectedCount > 0 && (
+                    <div className="absolute top-2 left-2 w-6 h-6 rounded-full bg-gradient-to-br from-gold-deep to-ink text-cream-50 flex items-center justify-center text-[11px] font-bold shadow-md">
+                      {selectedCount}
+                    </div>
+                  )}
+
+                  {/* أيقونة */}
+                  <div className="relative w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-cream-100 to-cream-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Image
+                      src={iconSrc}
+                      alt=""
+                      width={36}
+                      height={36}
+                      className="object-contain"
+                    />
+                  </div>
+
+                  {/* اسم التصنيف */}
+                  <div className="text-center">
+                    <div className="font-ar-display font-bold text-sm text-ink mb-0.5">
+                      {cat.name_ar}
+                    </div>
+                    <div className="text-[10px] text-ink-soft">
+                      {total} خدم{total === 1 ? 'ة' : total === 2 ? 'تين' : total > 10 ? 'ة' : 'ات'}
+                    </div>
+                  </div>
+
+                  {/* سهم في الزاوية */}
+                  <ChevronLeft className="absolute bottom-3 left-3 w-4 h-4 text-gold-light opacity-40 group-hover:opacity-100 group-hover:-translate-x-1 transition-all" />
+                </button>
+              );
+            })}
+          </div>
+
+          {/* نصيحة */}
+          <div className="mt-6 bg-cream-50 border border-cream-200 rounded-xl p-3 flex items-center gap-2 text-[11px] text-ink-soft">
+            <Sparkles className="w-3.5 h-3.5 text-gold-light shrink-0" />
+            <span>تقدرين تختارين خدمات من <strong>أكثر من تصنيف</strong> · كل الاختيارات تتجمّع في الحجز</span>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* ═══ عرض خدمات التصنيف ═══ */}
+      {activeCat && activeCatObj && (
+        <div>
+          {/* Breadcrumb + Back */}
+          <div className="flex items-center justify-between mb-5">
+            <button
+              onClick={() => setActiveCat(null)}
+              className="group flex items-center gap-1.5 text-sm text-ink-soft hover:text-gold-deep transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4 rotate-180 group-hover:translate-x-1 transition-transform" />
+              <span>كل التصنيفات</span>
+            </button>
+            {state.selectedServices.length > 0 && (
+              <span className="text-[11px] text-gold-deep font-bold bg-gold-light/15 px-3 py-1 rounded-full">
+                {state.selectedServices.length} مُحدّدة من جميع التصنيفات
+              </span>
+            )}
+          </div>
+
+          {/* Header التصنيف */}
+          <div className="flex items-center gap-3 mb-5 pb-5 border-b border-cream-200">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gold-light/20 to-amber-100/50 flex items-center justify-center shrink-0">
+              <Image
+                src={CATEGORY_ICONS[activeCatObj.slug] || CATEGORY_ICONS['facial']}
+                alt=""
+                width={28}
+                height={28}
+              />
+            </div>
+            <div>
+              <h2 className="font-ar-display text-xl font-bold text-ink">
+                {activeCatObj.name_ar}
+              </h2>
+              {activeCatObj.description_ar && (
+                <p className="text-xs text-ink-soft mt-0.5">{activeCatObj.description_ar}</p>
+              )}
+            </div>
+          </div>
+
+          {/* شبكة الخدمات */}
+          <div className="grid sm:grid-cols-2 gap-2.5">
+            {activeServices.map((s) => {
+              const sel = state.selectedServices.includes(s.id);
+              return (
+                <button
+                  key={s.id}
+                  onClick={() => toggleService(s.id)}
+                  className={`relative text-right border-2 rounded-2xl p-3.5 transition-all ${
+                    sel
+                      ? 'border-gold-deep bg-gradient-to-br from-gold-light/15 to-amber-50 shadow-md'
+                      : 'border-cream-200 bg-white hover:border-gold-light hover:shadow-sm'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <div className="font-bold text-sm text-ink mb-1">{s.name_ar}</div>
+                      {s.description_ar && (
+                        <p className="text-[11px] text-ink-soft line-clamp-2 mb-2 leading-relaxed">
+                          {s.description_ar}
+                        </p>
+                      )}
+                      <div className="flex items-center gap-2 text-xs text-ink-soft">
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3 text-gold-light" />
+                          <span className="font-en-display">{formatDuration(s.duration_min)}</span>
+                        </span>
+                        {s.is_featured && (
+                          <span className="flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 font-bold">
+                            <Sparkles className="w-2.5 h-2.5" />
+                            مميّزة
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-left shrink-0 flex flex-col items-end gap-1">
+                      <div className="font-en-display font-bold text-base text-gold-deep">
+                        {s.price_from && (
+                          <span className="text-[10px] font-normal text-ink-soft ml-1">من</span>
+                        )}
+                        {formatPrice(s.price, { showFrom: false })}
+                      </div>
+                      {sel ? (
+                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-gold-deep to-ink text-cream-50 flex items-center justify-center">
+                          <Check className="w-3.5 h-3.5" />
+                        </div>
+                      ) : (
+                        <div className="w-6 h-6 rounded-full border-2 border-cream-300" />
+                      )}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* زر الرجوع للتصنيفات أسفل */}
+          <button
+            onClick={() => setActiveCat(null)}
+            className="mt-5 w-full py-3 border-2 border-dashed border-cream-300 text-ink-soft rounded-xl hover:border-gold-light hover:text-gold-deep transition-colors text-sm font-semibold flex items-center justify-center gap-2"
+          >
+            <ChevronLeft className="w-4 h-4 rotate-180" />
+            اختاري من تصنيف آخر
+          </button>
+        </div>
+      )}
 
       {/* الملخص */}
       {(state.selectedServices.length > 0 || state.selectedPackageId) && (
