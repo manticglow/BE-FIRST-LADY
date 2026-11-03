@@ -28,12 +28,13 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
 
-  const { data: profile } = await supabase
+  const { data: profileRaw } = await supabase
     .from('profiles')
     .select('role, full_name')
     .eq('id', user.id)
     .single();
-  if (!profile || !['owner', 'manager'].includes((profile as any).role)) {
+  const profile = profileRaw as { role: string; full_name: string | null } | null;
+  if (!profile || !['owner', 'manager'].includes(profile.role)) {
     return NextResponse.json({ error: 'الإصدار متاح للمالكة والمديرة فقط' }, { status: 403 });
   }
 
@@ -64,7 +65,7 @@ export async function POST(req: NextRequest) {
       code,
       initial_amount: d.amount,
       balance: d.amount,
-      purchaser_name: d.purchaser_name || `إصدار من ${(profile as any).full_name || 'الإدارة'}`,
+      purchaser_name: d.purchaser_name || `إصدار من ${profile.full_name || 'الإدارة'}`,
       purchaser_phone: cleanPhone,
       recipient_name: d.recipient_name,
       recipient_phone: cleanPhone,
@@ -87,7 +88,7 @@ export async function POST(req: NextRequest) {
   await auditLog({
     userId: user.id,
     userEmail: user.email || null,
-    userRole: (profile as any).role,
+    userRole: profile.role,
     action: 'gift_card.issue',
     resourceType: 'gift_card',
     resourceId: String(card.id),

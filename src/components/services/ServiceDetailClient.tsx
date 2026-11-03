@@ -45,6 +45,7 @@ interface Review {
   customer_name: string;
   rating: number;
   comment: string | null;
+  image_urls?: string[] | null;
   created_at: string;
 }
 
@@ -309,9 +310,9 @@ function ReviewCard({ review }: { review: Review }) {
       )}
 
       {/* 📸 صور التقييم */}
-      {Array.isArray((review as any).image_urls) && (review as any).image_urls.length > 0 && (
+      {Array.isArray(review.image_urls) && review.image_urls.length > 0 && (
         <div className="grid grid-cols-4 gap-1.5 mt-3">
-          {(review as any).image_urls.slice(0, 4).map((url: string, i: number) => (
+          {review.image_urls.slice(0, 4).map((url: string, i: number) => (
             <a key={i} href={url} target="_blank" rel="noopener noreferrer"
                className="aspect-square rounded-lg overflow-hidden border border-cream-200">
               <img src={url} alt="" className="w-full h-full object-cover hover:scale-105 transition-transform" />

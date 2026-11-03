@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Package, Plus, Edit2, Trash2, X, Loader2, AlertTriangle, TrendingUp, TrendingDown } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
+import UIModal from '@/components/ui/Modal';
 
 interface Item {
   id: string;
@@ -181,9 +182,16 @@ export default function InventoryManager({ items }: { items: Item[] }) {
       )}
 
       {/* Modal CRUD */}
-      {editing && (
-        <Modal onClose={() => setEditing(null)} title={mode === 'create' ? 'منتج جديد' : 'تعديل'}>
-          <div className="p-5 space-y-3">
+      <UIModal
+        open={!!editing}
+        onClose={() => setEditing(null)}
+        size="sm"
+        title={mode === 'create' ? 'منتج جديد' : 'تعديل'}
+        padded={false}
+      >
+        {editing && (
+          <>
+            <div className="p-5 space-y-3">
             <F label="الاسم *"><input type="text" value={editing.name_ar || ''} onChange={(e) => setEditing({ ...editing, name_ar: e.target.value })} className="inp" /></F>
             <div className="grid grid-cols-2 gap-3">
               <F label="SKU"><input type="text" value={editing.sku || ''} onChange={(e) => setEditing({ ...editing, sku: e.target.value })} className="inp font-en-display" /></F>
@@ -205,19 +213,27 @@ export default function InventoryManager({ items }: { items: Item[] }) {
               المنتج مفعّل
             </label>
           </div>
-          <div className="p-5 border-t border-cream-200 flex gap-3">
-            <button onClick={() => setEditing(null)} className="btn-outline !py-2 flex-1 text-sm">إلغاء</button>
-            <button onClick={save} disabled={busy === 'save'} className="btn-primary !py-2 flex-1 text-sm disabled:opacity-50">
-              {busy === 'save' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'حفظ'}
-            </button>
-          </div>
-        </Modal>
-      )}
+            <div className="p-5 border-t border-cream-200 flex gap-3">
+              <button onClick={() => setEditing(null)} className="btn-outline !py-2 flex-1 text-sm">إلغاء</button>
+              <button onClick={save} disabled={busy === 'save'} className="btn-primary !py-2 flex-1 text-sm disabled:opacity-50">
+                {busy === 'save' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'حفظ'}
+              </button>
+            </div>
+          </>
+        )}
+      </UIModal>
 
       {/* Modal تعديل المخزون */}
-      {adjusting && (
-        <Modal onClose={() => setAdjusting(null)} title={`تعديل مخزون ${adjusting.name_ar}`}>
-          <div className="p-5 space-y-4">
+      <UIModal
+        open={!!adjusting}
+        onClose={() => setAdjusting(null)}
+        size="sm"
+        title={adjusting ? `تعديل مخزون ${adjusting.name_ar}` : ''}
+        padded={false}
+      >
+        {adjusting && (
+          <>
+            <div className="p-5 space-y-4">
             <div className="bg-cream-50 rounded-xl p-3 text-sm">
               الرصيد الحالي: <strong className="font-en-display">{adjusting.stock_qty}</strong> {adjusting.unit}
             </div>
@@ -253,29 +269,16 @@ export default function InventoryManager({ items }: { items: Item[] }) {
               الرصيد الجديد: <strong className="font-en-display text-gold-deep">{adjusting.stock_qty + adjustQty}</strong>
             </div>
           </div>
-          <div className="p-5 border-t border-cream-200 flex gap-3">
-            <button onClick={() => setAdjusting(null)} className="btn-outline !py-2 flex-1 text-sm">إلغاء</button>
-            <button onClick={adjust} disabled={busy === 'adjust' || adjustQty === 0} className="btn-primary !py-2 flex-1 text-sm disabled:opacity-50">
-              {busy === 'adjust' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'حفظ'}
-            </button>
-          </div>
-        </Modal>
-      )}
+            <div className="p-5 border-t border-cream-200 flex gap-3">
+              <button onClick={() => setAdjusting(null)} className="btn-outline !py-2 flex-1 text-sm">إلغاء</button>
+              <button onClick={adjust} disabled={busy === 'adjust' || adjustQty === 0} className="btn-primary !py-2 flex-1 text-sm disabled:opacity-50">
+                {busy === 'adjust' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'حفظ'}
+              </button>
+            </div>
+          </>
+        )}
+      </UIModal>
     </>
-  );
-}
-
-function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
-  return (
-    <div className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} className="bg-white rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-5 border-b border-cream-200">
-          <h3 className="font-ar-display text-lg font-bold text-gold-deep">{title}</h3>
-          <button onClick={onClose} className="p-1 hover:bg-cream-100 rounded-full"><X className="w-5 h-5" /></button>
-        </div>
-        {children}
-      </div>
-    </div>
   );
 }
 

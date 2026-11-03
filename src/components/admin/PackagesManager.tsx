@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { formatPrice, formatDuration } from '@/lib/utils';
 import type { Category, Service, Package } from '@/types/database';
+import Modal from '@/components/ui/Modal';
 
 type Mode = 'edit' | 'services';
 
@@ -183,17 +184,15 @@ export default function PackagesManager({
       )}
 
       {/* Modal — تعديل البيانات */}
-      {editing && mode === 'edit' && (
-        <div className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setEditing(null)}>
-          <div onClick={(e) => e.stopPropagation()} className="bg-white rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-5 border-b border-cream-200">
-              <h3 className="font-ar-display text-lg font-bold text-gold-deep">
-                {action === 'create' ? 'بكج جديد' : 'تعديل بكج'}
-              </h3>
-              <button onClick={() => setEditing(null)} className="p-1 hover:bg-cream-100 rounded-full">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      <Modal
+        open={!!editing && mode === 'edit'}
+        onClose={() => setEditing(null)}
+        size="sm"
+        title={action === 'create' ? 'بكج جديد' : 'تعديل بكج'}
+        padded={false}
+      >
+        {editing && mode === 'edit' && (
+          <>
             <div className="p-5 space-y-4">
               <F label="اسم البكج (عربي) *">
                 <input type="text" value={editing.name_ar || ''} onChange={(e) => setEditing({ ...editing, name_ar: e.target.value })} className="inp" placeholder="مثل: بكج الصيف" />
@@ -231,24 +230,22 @@ export default function PackagesManager({
                 {busy === 'save' ? <Loader2 className="w-4 h-4 animate-spin" /> : (action === 'create' ? 'إنشاء' : 'حفظ')}
               </button>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </Modal>
 
       {/* Modal — إدارة خدمات البكج */}
-      {editing && mode === 'services' && (
-        <div className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setEditing(null)}>
-          <div onClick={(e) => e.stopPropagation()} className="bg-white rounded-3xl shadow-2xl max-w-xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between p-5 border-b border-cream-200">
-              <div>
-                <h3 className="font-ar-display text-lg font-bold text-gold-deep">خدمات {editing.name_ar}</h3>
-                <p className="text-xs text-ink-soft mt-1">اختاري الخدمات المضمّنة في البكج</p>
-              </div>
-              <button onClick={() => setEditing(null)} className="p-1 hover:bg-cream-100 rounded-full">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-5 space-y-4">
+      <Modal
+        open={!!editing && mode === 'services'}
+        onClose={() => setEditing(null)}
+        size="lg"
+        title={editing ? `خدمات ${editing.name_ar}` : ''}
+        subtitle="اختاري الخدمات المضمّنة في البكج"
+        padded={false}
+      >
+        {editing && mode === 'services' && (
+          <>
+            <div className="p-5 space-y-4">
               {categories.map((cat) => {
                 const catServices = services.filter((s) => s.category_id === cat.id);
                 if (catServices.length === 0) return null;
@@ -287,9 +284,9 @@ export default function PackagesManager({
                 {busy === 'save' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'حفظ'}
               </button>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </Modal>
     </>
   );
 }

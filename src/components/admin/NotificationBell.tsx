@@ -52,7 +52,7 @@ export default function NotificationBell() {
     if (!soundEnabled) return;
     try {
       if (!audioCtxRef.current) {
-        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        audioCtxRef.current = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
       }
       const ctx = audioCtxRef.current;
       if (ctx.state === 'suspended') ctx.resume();
@@ -208,7 +208,7 @@ export default function NotificationBell() {
       // جربي الصوت ليتأكد المتصفح من موافقة المستخدم
       try {
         if (!audioCtxRef.current) {
-          audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+          audioCtxRef.current = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
         }
         if (audioCtxRef.current.state === 'suspended') await audioCtxRef.current.resume();
         // صوت تجريبي قصير

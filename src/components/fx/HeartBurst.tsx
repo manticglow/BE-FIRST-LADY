@@ -46,9 +46,9 @@ export default function HeartBurst({ trigger, count = 5, onDone }: Props) {
             top: 0,
             left: '50%',
             animationDelay: `${h.delay}ms`,
-            ['--hx' as any]: `${h.hx}px`,
-            ['--hy' as any]: `${h.hy}px`,
-          }}
+            '--hx': `${h.hx}px`,
+            '--hy': `${h.hy}px`,
+          } as React.CSSProperties}
         />
       ))}
     </>

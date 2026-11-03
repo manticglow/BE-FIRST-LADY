@@ -77,9 +77,9 @@ export default function ReviewsSection({ reviews }: { reviews: Review[] }) {
               )}
 
               {/* صور التقييم (قبل/بعد) */}
-              {Array.isArray((featured as any).image_urls) && (featured as any).image_urls.length > 0 && (
+              {Array.isArray(featured.image_urls) && featured.image_urls.length > 0 && (
                 <div className="grid grid-cols-4 gap-2 mb-5">
-                  {(featured as any).image_urls.slice(0, 4).map((url: string, i: number) => (
+                  {featured.image_urls.slice(0, 4).map((url: string, i: number) => (
                     <a
                       key={i}
                       href={url}
@@ -114,13 +114,13 @@ export default function ReviewsSection({ reviews }: { reviews: Review[] }) {
             </div>
 
             {/* ردّ البراند · 2 عمود */}
-            {(featured as any).admin_reply && (
+            {featured.admin_reply && (
               <div className="md:col-span-2">
                 <div className="relative bg-gradient-to-br from-gold-deep/5 to-amber-50 border-r-4 border-gold-deep p-5 rounded-2xl">
                   <div className="text-[10px] font-bold text-gold-deep tracking-widest uppercase mb-2">
                     💛 ردّ Be First Lady
                   </div>
-                  <p className="text-sm text-ink leading-relaxed">{(featured as any).admin_reply}</p>
+                  <p className="text-sm text-ink leading-relaxed">{featured.admin_reply}</p>
                 </div>
               </div>
             )}

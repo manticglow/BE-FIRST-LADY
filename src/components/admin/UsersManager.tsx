@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Users, Plus, Shield, Trash2, X, Loader2, Mail, Phone, User as UserIcon, Lock } from 'lucide-react';
+import Modal from '@/components/ui/Modal';
 
 interface User {
   id: string;
@@ -166,17 +167,15 @@ export default function UsersManager({ users }: { users: User[] }) {
       )}
 
       {/* Modal */}
-      {editing && (
-        <div className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setEditing(null)}>
-          <div onClick={(e) => e.stopPropagation()} className="bg-white rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-5 border-b border-cream-200">
-              <h3 className="font-ar-display text-lg font-bold text-gold-deep">
-                {mode === 'create' ? 'إنشاء يوزر جديد' : 'تعديل صلاحيات'}
-              </h3>
-              <button onClick={() => setEditing(null)} className="p-1 hover:bg-cream-100 rounded-full">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      <Modal
+        open={!!editing}
+        onClose={() => setEditing(null)}
+        size="sm"
+        title={mode === 'create' ? 'إنشاء يوزر جديد' : 'تعديل صلاحيات'}
+        padded={false}
+      >
+        {editing && (
+          <>
             <div className="p-5 space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-ink-soft mb-1.5">الاسم الكامل *</label>
@@ -273,9 +272,9 @@ export default function UsersManager({ users }: { users: User[] }) {
                 {busy === 'save' ? <Loader2 className="w-4 h-4 animate-spin" /> : (mode === 'create' ? 'إنشاء' : 'حفظ')}
               </button>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </Modal>
     </>
   );
 }

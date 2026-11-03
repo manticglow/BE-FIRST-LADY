@@ -13,6 +13,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Scissors, Plus, Clock, Edit2, Trash2, X, Loader2, Eye, EyeOff } from 'lucide-react';
+import Modal from '@/components/ui/Modal';
 import type { Category, Service } from '@/types/database';
 import { formatPrice, formatDuration } from '@/lib/utils';
 
@@ -200,18 +201,15 @@ export default function ServicesManager({ categories, services }: Props) {
       </div>
 
       {/* Modal تعديل/إضافة */}
-      {editing && (
-        <div className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-5 border-b border-cream-200">
-              <h3 className="font-ar-display text-lg font-bold text-gold-deep">
-                {editing.mode === 'create' ? 'إضافة خدمة' : 'تعديل خدمة'}
-              </h3>
-              <button onClick={() => setEditing(null)} className="p-1 hover:bg-cream-100 rounded-full">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
+      <Modal
+        open={!!editing}
+        onClose={() => setEditing(null)}
+        size="sm"
+        title={editing?.mode === 'create' ? 'إضافة خدمة' : 'تعديل خدمة'}
+        padded={false}
+      >
+        {editing && (
+          <>
             <div className="p-5 space-y-4">
               <Field label="اسم الخدمة (عربي)" required>
                 <input
@@ -312,9 +310,9 @@ export default function ServicesManager({ categories, services }: Props) {
                 {editing.mode === 'create' ? 'إضافة' : 'حفظ'}
               </button>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </Modal>
 
     </>
   );

@@ -7,7 +7,7 @@
  */
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import SecurityDashboard from '@/components/admin/SecurityDashboard';
+import SecurityDashboard, { type AuditLog, type LoginAttempt } from '@/components/admin/SecurityDashboard';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,7 +23,8 @@ export default async function SecurityPage() {
     .single();
 
   // فقط owner يشوف صفحة الأمن
-  if (!profile || (profile as any).role !== 'owner') redirect('/admin');
+  const profileRow = profile as { role: string } | null;
+  if (!profileRow || profileRow.role !== 'owner') redirect('/admin');
 
   // جلب آخر 100 عملية
   const [{ data: audits }, { data: logins }] = await Promise.all([
@@ -41,8 +42,8 @@ export default async function SecurityPage() {
 
   return (
     <SecurityDashboard
-      audits={(audits as any[]) || []}
-      logins={(logins as any[]) || []}
+      audits={(audits as AuditLog[] | null) || []}
+      logins={(logins as LoginAttempt[] | null) || []}
     />
   );
 }

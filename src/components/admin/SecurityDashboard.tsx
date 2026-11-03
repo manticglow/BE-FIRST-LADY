@@ -10,21 +10,21 @@ import {
   Activity, UserCheck, Lock, Globe,
 } from 'lucide-react';
 
-type AuditLog = {
+export type AuditLog = {
   id: number;
   user_email: string | null;
   user_role: string | null;
   action: string;
   resource_type: string | null;
   resource_id: string | null;
-  metadata: any;
+  metadata: unknown;
   ip_address: string | null;
   success: boolean;
   error_message: string | null;
   created_at: string;
 };
 
-type LoginAttempt = {
+export type LoginAttempt = {
   id: number;
   identifier: string;
   ip_address: string | null;

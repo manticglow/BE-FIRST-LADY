@@ -57,8 +57,10 @@ export async function sendWebPushToUser(
     return { ok: false, sent: 0, failed: 0, removedExpired: 0, error: 'no_subscriptions' };
   }
 
-  return await sendToSubs(subs as any, payload);
+  return await sendToSubs(subs as SubRow[], payload);
 }
+
+type SubRow = { id: string; endpoint: string; p256dh: string; auth: string };
 
 /**
  * إرسال إشعار جماعي (كل المسجّلات أو حسب role)
@@ -75,7 +77,7 @@ export async function sendWebPushToAll(
 
   if (role) {
     const { data: profiles } = await admin.from('profiles').select('id').eq('role', role);
-    const ids = (profiles || []).map((p: any) => p.id);
+    const ids = ((profiles as { id: string }[] | null) || []).map((p) => p.id);
     if (ids.length === 0) {
       return { ok: false, sent: 0, failed: 0, removedExpired: 0, error: 'no_users_for_role' };
     }
@@ -87,7 +89,7 @@ export async function sendWebPushToAll(
     return { ok: false, sent: 0, failed: 0, removedExpired: 0, error: 'no_subscriptions' };
   }
 
-  return await sendToSubs(subs as any, payload);
+  return await sendToSubs(subs as SubRow[], payload);
 }
 
 /**

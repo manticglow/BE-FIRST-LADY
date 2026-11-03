@@ -53,9 +53,9 @@ export default function SparkleBurst({
             marginTop: -s.size / 2,
             marginLeft: -s.size / 2,
             animationDelay: `${s.delay}ms`,
-            ['--sx' as any]: `${s.sx}px`,
-            ['--sy' as any]: `${s.sy}px`,
-          }}
+            '--sx': `${s.sx}px`,
+            '--sy': `${s.sy}px`,
+          } as React.CSSProperties}
         />
       ))}
     </>

@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { waLink, formatPrice } from '@/lib/utils';
 import GiftCardPreview from './GiftCardPreview';
+import Modal from '@/components/ui/Modal';
 
 interface IssuedCard {
   id: string;
@@ -118,12 +119,8 @@ export default function IssueGiftCardModal({ onClose, onIssued }: Props) {
   }
 
   return (
-    <div
-      className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
-    >
-      <div className="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-in max-h-[95vh] flex flex-col">
-
+    <Modal open={true} onClose={onClose} size="md" showClose={false} padded={false}>
+      <div className="flex flex-col h-full">
         {/* Header */}
         <div className="relative bg-gradient-to-br from-gold-deep via-ink to-gold-deep text-cream-50 p-5 shrink-0">
           <button
@@ -336,7 +333,7 @@ export default function IssueGiftCardModal({ onClose, onIssued }: Props) {
           )}
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 

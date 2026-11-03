@@ -16,6 +16,7 @@ import {
   Monitor, MoreHorizontal, Filter, TrendingDown,
 } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
+import Modal from '@/components/ui/Modal';
 
 const CATEGORIES = [
   { value: 'rent',        label: 'إيجار',           icon: Home,       color: 'bg-blue-50 text-blue-700 border-blue-200' },
@@ -268,12 +269,8 @@ function AddExpenseModal({ onClose, onAdded }: { onClose: () => void; onAdded: (
   }
 
   return (
-    <div
-      className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
-    >
-      <div className="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[95vh] flex flex-col animate-in">
-
+    <Modal open={true} onClose={onClose} size="sm" showClose={false} padded={false}>
+      <div className="flex flex-col h-full">
         <div className="relative bg-gradient-to-br from-rose-600 to-rose-900 text-white p-5 shrink-0">
           <button
             onClick={onClose}
@@ -387,7 +384,7 @@ function AddExpenseModal({ onClose, onAdded }: { onClose: () => void; onAdded: (
           </button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 

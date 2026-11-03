@@ -34,8 +34,9 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
 
-  const { data: profile } = await supabase.from('profiles').select('role, full_name').eq('id', user.id).single();
-  if (!profile || !['owner', 'manager', 'staff'].includes((profile as any).role)) {
+  const { data: profileRaw } = await supabase.from('profiles').select('role, full_name').eq('id', user.id).single();
+  const profile = profileRaw as { role: string; full_name: string | null } | null;
+  if (!profile || !['owner', 'manager', 'staff'].includes(profile.role)) {
     return NextResponse.json({ error: 'ليس لديكِ صلاحية' }, { status: 403 });
   }
 
@@ -67,25 +68,27 @@ export async function POST(req: NextRequest) {
 
   // تحقّق من الموظفة
   if (d.staff_id) {
-    const { data: staff } = await admin
+    const { data: staffRaw } = await admin
       .from('staff')
       .select('id, is_active')
       .eq('id', d.staff_id)
       .single();
-    if (!staff || !(staff as any).is_active) {
+    const staff = staffRaw as { id: string; is_active: boolean } | null;
+    if (!staff || !staff.is_active) {
       return NextResponse.json({ error: 'الموظفة غير متوفّرة' }, { status: 400 });
     }
   }
 
   // تحقّق من البحث عن عميلة بنفس الرقم (نربطها لو موجودة)
   const cleanPhone = d.customer_phone.replace(/[^0-9+]/g, '');
-  const { data: existingCustomer } = await admin
+  const { data: existingCustomerRaw } = await admin
     .from('profiles')
     .select('id')
     .eq('phone', cleanPhone)
     .eq('role', 'customer')
     .maybeSingle();
-  const customer_id = (existingCustomer as any)?.id || null;
+  const existingCustomer = existingCustomerRaw as { id: string } | null;
+  const customer_id = existingCustomer?.id || null;
 
   // إنشاء الحجز
   const { data: booking, error: bookErr } = await admin
@@ -134,7 +137,7 @@ export async function POST(req: NextRequest) {
       amount: subtotal,
       method: d.payment_method,
       status: 'completed',
-      notes: `حجز يدوي · ${(profile as any).full_name || 'الإدارة'}`,
+      notes: `حجز يدوي · ${profile.full_name || 'الإدارة'}`,
     });
   }
 

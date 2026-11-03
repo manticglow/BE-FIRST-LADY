@@ -110,7 +110,7 @@ export default function BeautyProfileForm({ initial }: { initial: Profile }) {
           {SKIN_TYPES.map((s) => (
             <button
               key={s.value}
-              onClick={() => setData({ ...data, skin_type: s.value as any })}
+              onClick={() => setData({ ...data, skin_type: s.value as Profile['skin_type'] })}
               className={`py-3 rounded-xl border-2 flex flex-col items-center gap-1 transition-all ${
                 data.skin_type === s.value
                   ? 'bg-blue-50 border-blue-500 text-blue-900'
@@ -130,7 +130,7 @@ export default function BeautyProfileForm({ initial }: { initial: Profile }) {
           {HAIR_TYPES.map((h) => (
             <button
               key={h.value}
-              onClick={() => setData({ ...data, hair_type: h.value as any })}
+              onClick={() => setData({ ...data, hair_type: h.value as Profile['hair_type'] })}
               className={`py-2.5 rounded-xl border-2 text-xs font-bold transition-all ${
                 data.hair_type === h.value
                   ? 'bg-purple-50 border-purple-500 text-purple-900'
@@ -226,7 +226,7 @@ export default function BeautyProfileForm({ initial }: { initial: Profile }) {
           ].map((p) => (
             <button
               key={p.value}
-              onClick={() => setData({ ...data, pregnancy_status: p.value as any })}
+              onClick={() => setData({ ...data, pregnancy_status: p.value as Profile['pregnancy_status'] })}
               className={`py-2.5 rounded-xl border-2 text-sm font-bold transition-all ${
                 data.pregnancy_status === p.value
                   ? 'bg-pink-50 border-pink-500 text-pink-900'

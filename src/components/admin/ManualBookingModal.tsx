@@ -17,6 +17,7 @@ import {
   CreditCard, Banknote, Smartphone, Wallet, Plus,
 } from 'lucide-react';
 import { formatPrice, formatDuration } from '@/lib/utils';
+import Modal from '@/components/ui/Modal';
 
 interface Service {
   id: string;
@@ -125,12 +126,8 @@ export default function ManualBookingModal({ services, staff, onClose }: Props) 
   }
 
   return (
-    <div
-      className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
-    >
-      <div className="bg-white w-full sm:max-w-xl rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-in max-h-[95vh] flex flex-col">
-
+    <Modal open={true} onClose={onClose} size="lg" showClose={false} padded={false}>
+      <div className="flex flex-col h-full">
         {/* ═══ Header ═══ */}
         <div className="relative bg-gradient-to-br from-gold-deep via-ink to-gold-deep text-cream-50 p-5 shrink-0">
           <button
@@ -460,7 +457,7 @@ export default function ManualBookingModal({ services, staff, onClose }: Props) 
           )}
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 

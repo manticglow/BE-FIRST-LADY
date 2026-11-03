@@ -15,7 +15,7 @@ export type Json = string | number | boolean | null | { [k: string]: Json | unde
 // ─── Enums ───────────────────────────────────────────────────
 export type UserRole = 'customer' | 'staff' | 'manager' | 'owner';
 export type BookingStatus = 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled' | 'no_show';
-export type PaymentStatus = 'unpaid' | 'partial' | 'paid' | 'refunded';
+export type PaymentStatus = 'unpaid' | 'partial' | 'paid' | 'refunded' | 'pending' | 'deposit_paid';
 export type PaymentMethod = 'cash' | 'card' | 'transfer' | 'mada' | 'applepay' | 'stc';
 export type PaymentGateway = 'moyasar' | 'tabby' | 'tamara' | 'manual';
 export type BookingSource = 'website' | 'whatsapp' | 'walk-in' | 'phone';
@@ -176,6 +176,8 @@ export interface Review {
   source: ReviewSource;
   is_approved: boolean;
   is_featured: boolean;
+  image_urls?: string[] | null;
+  admin_reply?: string | null;
   created_at: string;
 }
 

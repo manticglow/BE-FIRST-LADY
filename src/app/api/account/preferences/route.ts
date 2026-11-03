@@ -22,25 +22,26 @@ export async function GET() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
 
-  const { data: profile } = await supabase
+  const { data: profileRaw } = await supabase
     .from('profiles')
     .select('preferred_staff_id, preferences_notes')
     .eq('id', user.id)
     .single();
+  const profile = profileRaw as { preferred_staff_id: string | null; preferences_notes: string | null } | null;
 
   let preferredStaff = null;
-  if ((profile as any)?.preferred_staff_id) {
+  if (profile?.preferred_staff_id) {
     const { data: staff } = await supabase
       .from('staff')
       .select('id, display_name, photo_url, specialties, rating')
-      .eq('id', (profile as any).preferred_staff_id)
+      .eq('id', profile.preferred_staff_id)
       .maybeSingle();
     preferredStaff = staff;
   }
 
   return NextResponse.json({
     ok: true,
-    preferences_notes: (profile as any)?.preferences_notes || '',
+    preferences_notes: profile?.preferences_notes || '',
     preferred_staff: preferredStaff,
   });
 }

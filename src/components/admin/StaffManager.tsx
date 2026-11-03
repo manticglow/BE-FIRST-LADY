@@ -11,6 +11,7 @@ import {
   Scissors, Calendar, Check,
 } from 'lucide-react';
 import type { Category, Service } from '@/types/database';
+import Modal from '@/components/ui/Modal';
 
 interface Staff {
   id: string;
@@ -270,17 +271,15 @@ export default function StaffManager({
       )}
 
       {/* Modal — تعديل بيانات */}
-      {editing && modalMode === 'edit' && (
-        <div className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setEditing(null)}>
-          <div onClick={(e) => e.stopPropagation()} className="bg-white rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-5 border-b border-cream-200">
-              <h3 className="font-ar-display text-lg font-bold text-gold-deep">
-                {mode === 'create' ? 'إضافة موظفة' : 'تعديل'}
-              </h3>
-              <button onClick={() => setEditing(null)} className="p-1 hover:bg-cream-100 rounded-full">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      <Modal
+        open={!!editing && modalMode === 'edit'}
+        onClose={() => setEditing(null)}
+        size="sm"
+        title={mode === 'create' ? 'إضافة موظفة' : 'تعديل'}
+        padded={false}
+      >
+        {editing && modalMode === 'edit' && (
+          <>
             <div className="p-5 space-y-4">
               <Field label="الاسم *">
                 <input
@@ -332,24 +331,22 @@ export default function StaffManager({
                 {busy === 'save' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'حفظ'}
               </button>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </Modal>
 
       {/* Modal — إدارة الخدمات */}
-      {editing && modalMode === 'services' && (
-        <div className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setEditing(null)}>
-          <div onClick={(e) => e.stopPropagation()} className="bg-white rounded-3xl shadow-2xl max-w-xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between p-5 border-b border-cream-200">
-              <div>
-                <h3 className="font-ar-display text-lg font-bold text-gold-deep">خدمات {editing.name}</h3>
-                <p className="text-xs text-ink-soft mt-1">اختاري الخدمات التي تقدّمها</p>
-              </div>
-              <button onClick={() => setEditing(null)} className="p-1 hover:bg-cream-100 rounded-full">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-5 space-y-4">
+      <Modal
+        open={!!editing && modalMode === 'services'}
+        onClose={() => setEditing(null)}
+        size="lg"
+        title={editing ? `خدمات ${editing.name}` : ''}
+        subtitle="اختاري الخدمات التي تقدّمها"
+        padded={false}
+      >
+        {editing && modalMode === 'services' && (
+          <>
+            <div className="p-5 space-y-4">
               {categories.map((cat) => {
                 const catServices = services.filter((s) => s.category_id === cat.id);
                 if (catServices.length === 0) return null;
@@ -396,24 +393,22 @@ export default function StaffManager({
                 {busy === 'save' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'حفظ'}
               </button>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </Modal>
 
       {/* Modal — إدارة الجدول */}
-      {editing && modalMode === 'schedule' && (
-        <div className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setEditing(null)}>
-          <div onClick={(e) => e.stopPropagation()} className="bg-white rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between p-5 border-b border-cream-200">
-              <div>
-                <h3 className="font-ar-display text-lg font-bold text-gold-deep">جدول {editing.name}</h3>
-                <p className="text-xs text-ink-soft mt-1">ساعات العمل الأسبوعية</p>
-              </div>
-              <button onClick={() => setEditing(null)} className="p-1 hover:bg-cream-100 rounded-full">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-5 space-y-2">
+      <Modal
+        open={!!editing && modalMode === 'schedule'}
+        onClose={() => setEditing(null)}
+        size="sm"
+        title={editing ? `جدول ${editing.name}` : ''}
+        subtitle="ساعات العمل الأسبوعية"
+        padded={false}
+      >
+        {editing && modalMode === 'schedule' && (
+          <>
+            <div className="p-5 space-y-2">
               {schedule.map((day, i) => (
                 <div key={i} className={`p-3 rounded-xl border ${day.is_off ? 'bg-cream-50/50 border-cream-200' : 'bg-white border-gold-light/30'}`}>
                   <div className="flex items-center justify-between mb-2">
@@ -471,9 +466,9 @@ export default function StaffManager({
                 {busy === 'save' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'حفظ الجدول'}
               </button>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </Modal>
     </>
   );
 }

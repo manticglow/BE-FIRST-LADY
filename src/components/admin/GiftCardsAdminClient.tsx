@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import IssueGiftCardModal from './IssueGiftCardModal';
 import GiftCardPreview from './GiftCardPreview';
 import { waLink } from '@/lib/utils';
+import Modal from '@/components/ui/Modal';
 
 interface Card {
   id: string;
@@ -169,11 +170,8 @@ function CardRow({ card }: { card: Card }) {
 
 function DownloadModal({ card, onClose }: { card: Card; onClose: () => void }) {
   return (
-    <div
-      className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
-    >
-      <div className="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden max-h-[95vh] flex flex-col">
+    <Modal open={true} onClose={onClose} size="md" showClose={false} padded={false}>
+      <div className="flex flex-col h-full">
         <div className="relative bg-gradient-to-br from-stone-800 to-stone-900 text-white p-5 shrink-0">
           <button
             onClick={onClose}
@@ -202,7 +200,7 @@ function DownloadModal({ card, onClose }: { card: Card; onClose: () => void }) {
           />
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 

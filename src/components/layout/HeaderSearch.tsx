@@ -59,10 +59,10 @@ export default function HeaderSearch({ services, packages, categories, headless 
       setOpen(true);
     }
     window.addEventListener('keydown', onKey);
-    window.addEventListener('bfl:open-search' as any, onOpenEvent);
+    window.addEventListener('bfl:open-search', onOpenEvent as EventListener);
     return () => {
       window.removeEventListener('keydown', onKey);
-      window.removeEventListener('bfl:open-search' as any, onOpenEvent);
+      window.removeEventListener('bfl:open-search', onOpenEvent as EventListener);
     };
   }, []);
 

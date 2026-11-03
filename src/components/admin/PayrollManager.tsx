@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { DollarSign, Loader2, Check, Calculator, Edit2, X } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
+import Modal from '@/components/ui/Modal';
 
 interface Record {
   id: string;
@@ -225,13 +226,15 @@ export default function PayrollManager() {
       )}
 
       {/* Modal تعديل */}
-      {editing && (
-        <div className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setEditing(null)}>
-          <div onClick={(e) => e.stopPropagation()} className="bg-white rounded-3xl shadow-2xl max-w-md w-full">
-            <div className="flex items-center justify-between p-5 border-b border-cream-200">
-              <h3 className="font-ar-display text-lg font-bold text-gold-deep">تعديل راتب {editing.user.full_name}</h3>
-              <button onClick={() => setEditing(null)} className="p-1 hover:bg-cream-100 rounded-full"><X className="w-5 h-5" /></button>
-            </div>
+      <Modal
+        open={!!editing}
+        onClose={() => setEditing(null)}
+        size="sm"
+        title={editing ? `تعديل راتب ${editing.user.full_name}` : ''}
+        padded={false}
+      >
+        {editing && (
+          <>
             <div className="p-5 space-y-4">
               <div className="bg-cream-50 rounded-xl p-3 text-sm">
                 الأساسي: <strong className="font-en-display">{formatPrice(editing.base_amount)}</strong>
@@ -259,9 +262,9 @@ export default function PayrollManager() {
                 {busy === 'edit' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'حفظ'}
               </button>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </Modal>
     </>
   );
 }

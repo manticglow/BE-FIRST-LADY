@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Star, Check, X, Reply, Trash2, Star as StarIcon } from 'lucide-react';
+import Modal from '@/components/ui/Modal';
 
 interface Review {
   id: string;
@@ -194,28 +195,31 @@ export default function ReviewsModerator({ reviews }: { reviews: Review[] }) {
       )}
 
       {/* Modal الرد */}
-      {replying && (
-        <div className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setReplying(null)}>
-          <div onClick={(e) => e.stopPropagation()} className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6">
-            <h3 className="font-ar-display text-lg font-bold text-gold-deep mb-1">الرد على {replying.customer_name}</h3>
-            <p className="text-xs text-ink-soft mb-4">يُنشر مع التقييم للعميلات</p>
-            <textarea
-              rows={4}
-              value={replyText}
-              onChange={(e) => setReplyText(e.target.value)}
-              maxLength={500}
-              placeholder="شكراً لكِ على كلماتكِ الجميلة 💛..."
-              className="w-full px-3 py-3 rounded-xl border border-cream-200 bg-cream-50 focus:bg-white focus:border-gold outline-none text-sm resize-none"
-            />
-            <div className="flex gap-3 mt-4">
-              <button onClick={() => setReplying(null)} className="btn-outline !py-2 flex-1 text-sm">إلغاء</button>
-              <button onClick={sendReply} disabled={!replyText.trim() || busy === 'reply'} className="btn-primary !py-2 flex-1 text-sm disabled:opacity-50">
-                إرسال
-              </button>
-            </div>
+      <Modal
+        open={!!replying}
+        onClose={() => setReplying(null)}
+        size="sm"
+        title={replying ? `الرد على ${replying.customer_name}` : ''}
+        subtitle="يُنشر مع التقييم للعميلات"
+        padded={false}
+      >
+        <div className="p-5">
+          <textarea
+            rows={4}
+            value={replyText}
+            onChange={(e) => setReplyText(e.target.value)}
+            maxLength={500}
+            placeholder="شكراً لكِ على كلماتكِ الجميلة 💛..."
+            className="w-full px-3 py-3 rounded-xl border border-cream-200 bg-cream-50 focus:bg-white focus:border-gold outline-none text-sm resize-none"
+          />
+          <div className="flex gap-3 mt-4">
+            <button onClick={() => setReplying(null)} className="btn-outline !py-2 flex-1 text-sm">إلغاء</button>
+            <button onClick={sendReply} disabled={!replyText.trim() || busy === 'reply'} className="btn-primary !py-2 flex-1 text-sm disabled:opacity-50">
+              إرسال
+            </button>
           </div>
         </div>
-      )}
+      </Modal>
     </>
   );
 }

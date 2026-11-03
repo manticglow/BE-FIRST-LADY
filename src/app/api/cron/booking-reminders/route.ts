@@ -67,7 +67,17 @@ async function sendBatch(
   });
 
   // fallback لو الـRPC مش موجود
-  let items = bookings as any[] | null;
+  type ReminderBooking = {
+    id: string;
+    booking_date: string;
+    booking_time: string;
+    customer_name: string | null;
+    customer_phone: string | null;
+    duration_min: number | null;
+    booking_number: string | null;
+    items?: { service_name: string }[];
+  };
+  let items = bookings as ReminderBooking[] | null;
   if (error || !items) {
     const { data: fallback } = await admin
       .from('bookings')
@@ -75,7 +85,7 @@ async function sendBatch(
       .in('status', ['pending', 'confirmed'])
       .gte('booking_date', from.toISOString().split('T')[0])
       .lte('booking_date', to.toISOString().split('T')[0]);
-    items = (fallback as any[]) || [];
+    items = (fallback as ReminderBooking[] | null) || [];
     // فلترة يدويّة بالوقت
     items = items.filter((b) => {
       const dt = new Date(`${b.booking_date}T${b.booking_time}`);
@@ -84,13 +94,15 @@ async function sendBatch(
   }
 
   // جلب أي booking لم يُرسل له هذا التذكير بعد (من جدول booking_reminders)
-  const bookingIds = items.map((b: any) => b.id);
+  const bookingIds = items.map((b) => b.id);
   const { data: alreadySent } = await admin
     .from('booking_reminders')
     .select('booking_id')
     .in('booking_id', bookingIds.length ? bookingIds : ['00000000-0000-0000-0000-000000000000'])
     .eq('reminder_type', type);
-  const sentSet = new Set(((alreadySent as any[]) || []).map((r) => r.booking_id));
+  const sentSet = new Set(
+    ((alreadySent as { booking_id: string }[] | null) || []).map((r) => r.booking_id),
+  );
 
   let sent = 0;
   for (const b of items) {
