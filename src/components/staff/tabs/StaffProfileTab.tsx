@@ -13,6 +13,7 @@ import {
 import type { StaffUser, AttendanceState } from '../types';
 import { createClient } from '@/lib/supabase/client';
 import MyRatingsCard from '../MyRatingsCard';
+import PushNotificationManager from '@/components/account/PushNotificationManager';
 
 export default function StaffProfileTab({
   user, attendance,
@@ -100,6 +101,9 @@ export default function StaffProfileTab({
           </div>
         </div>
       </div>
+
+      {/* ─── تفعيل الإشعارات ─── */}
+      <PushNotificationManager />
 
       {/* ─── تقييمات العميلات لي ─── */}
       <MyRatingsCard />
