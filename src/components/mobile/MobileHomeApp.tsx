@@ -179,55 +179,65 @@ export default function MobileHomeApp({ categories, services, packages, user, to
   return (
     <div className="md:hidden min-h-screen bg-white pb-24">
 
-      {/* ═══ Top bar · شبيه Olivéa ═══ */}
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-cream-100">
-        <div className="px-4 py-3 flex items-center justify-between gap-3">
+      {/* ═══ Top bar · فاخر + glass ═══ */}
+      <header className="sticky top-0 z-30 bg-gradient-to-b from-cream-50 via-white/95 to-white/80 backdrop-blur-xl border-b border-gold-light/15">
+        {/* ─── greeting row ─── */}
+        <div className="px-4 pt-4 pb-3 flex items-center justify-between gap-3 relative">
+          {/* light reflection */}
+          <div className="absolute top-0 left-1/3 w-40 h-16 bg-gold-light/10 blur-2xl pointer-events-none" />
+
           <a
             href={waLink()}
             target="_blank"
-            className="w-10 h-10 rounded-full border border-gold-light/40 flex items-center justify-center text-gold-deep hover:bg-cream-50 transition-colors"
+            className="relative w-11 h-11 rounded-full bg-gradient-to-br from-emerald-50 to-green-50 border border-emerald-200/60 flex items-center justify-center text-emerald-600 active:scale-95 transition-all shadow-sm"
             aria-label="واتساب"
           >
             <MessageCircle className="w-5 h-5" />
+            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white animate-pulse" />
           </a>
 
-          <div className="flex items-center gap-2 min-w-0">
+          <div className="flex items-center gap-2.5 min-w-0 relative">
             {user?.full_name ? (
-              <>
-                <div className="text-right min-w-0">
-                  <div className="text-[10px] text-ink-soft">أهلاً بكِ</div>
-                  <div className="text-xs font-bold text-gold-deep truncate">
-                    {user.full_name.split(' ')[0]}
-                  </div>
+              <div className="text-right min-w-0">
+                <div className="text-[9px] text-ink-soft">
+                  {new Date().getHours() < 12 ? 'صباح الخير ☀️' : new Date().getHours() < 17 ? 'مساء الخير 🌤️' : 'مساء النور 🌙'}
                 </div>
-              </>
+                <div className="text-sm font-ar-display font-bold text-gold-deep truncate">
+                  {user.full_name.split(' ')[0]}
+                </div>
+              </div>
             ) : (
               <div className="text-right">
-                <div className="text-[10px] text-ink-soft flex items-center gap-1 justify-end">
-                  <MapPin className="w-3 h-3" />
+                <div className="text-[9px] text-ink-soft flex items-center gap-1 justify-end">
+                  <MapPin className="w-2.5 h-2.5 text-gold-light" />
                   المدينة المنوّرة
                 </div>
-                <div className="text-xs font-bold text-gold-deep">دخول كضيفة</div>
+                <div className="text-xs font-bold text-gold-deep font-ar-display">أهلاً بكِ 🌸</div>
               </div>
             )}
             <Link
               href={user ? '/account' : '/login'}
-              className="w-10 h-10 rounded-full border border-gold-light/40 flex items-center justify-center text-gold-deep hover:bg-cream-50 transition-colors"
+              className="relative w-11 h-11 rounded-full bg-gradient-to-br from-gold-light/15 to-amber-100/30 border border-gold-light/40 flex items-center justify-center text-gold-deep active:scale-95 transition-all shadow-sm"
               aria-label="الحساب"
             >
               <User className="w-5 h-5" />
+              {user && (
+                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-white" />
+              )}
             </Link>
           </div>
         </div>
 
-        {/* شريط البحث */}
-        <div className="px-4 pb-3">
+        {/* ─── شريط البحث ─── */}
+        <div className="px-4 pb-3 relative">
           <Link
             href="/booking"
-            className="flex items-center gap-2 w-full bg-cream-50 border border-cream-200 rounded-2xl px-4 py-3 text-ink-soft text-sm hover:border-gold-light transition-colors"
+            className="group flex items-center gap-2.5 w-full bg-gradient-to-br from-cream-50 to-amber-50/40 border border-gold-light/25 rounded-full px-4 py-3 text-ink-soft text-sm active:scale-[0.98] transition-all"
           >
-            <Search className="w-4 h-4" />
-            <span>ابحثي عن خدمة...</span>
+            <div className="w-7 h-7 rounded-full bg-gold-light/15 flex items-center justify-center">
+              <Search className="w-3.5 h-3.5 text-gold-deep" />
+            </div>
+            <span>ابحثي عن خدمة · بكج · عرض...</span>
           </Link>
         </div>
       </header>
@@ -417,28 +427,36 @@ function CategoryTile({ category }: { category: Category }) {
   const icon = CATEGORY_ICONS[category.slug];
   return (
     <Link
-      href={`/services#${category.slug}`}
-      className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-cream-50 to-cream-100 border border-gold-light/20 shadow-sm active:scale-95 transition-transform p-4 flex flex-col items-center justify-center gap-2 group hover:border-gold-light/50"
+      href={`/booking?category=${category.slug}`}
+      className="group relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-cream-50 via-white to-amber-50/40 border border-gold-light/25 shadow-sm active:scale-95 transition-all p-3 flex flex-col items-center justify-center gap-1.5 hover:border-gold-light/50 hover:shadow-md"
     >
-      {icon ? (
-        <div className="w-14 h-14 rounded-full bg-white/70 flex items-center justify-center p-2 group-hover:scale-110 transition-transform">
-          <Image
-            src={icon}
-            alt={category.name_ar}
-            width={44}
-            height={44}
-            className="object-contain"
-          />
-        </div>
-      ) : (
-        <div className="w-14 h-14 rounded-full bg-gold-light/15 flex items-center justify-center text-2xl">
-          {category.icon || '✨'}
-        </div>
-      )}
-      <div className="font-ar-display font-bold text-gold-deep text-sm text-center">
+      {/* Gold glow في الزاوية */}
+      <div className="absolute top-0 right-0 w-16 h-16 bg-gold-light/20 rounded-full blur-2xl opacity-50 group-hover:opacity-100 transition-opacity pointer-events-none" />
+
+      {/* سطح لامع */}
+      <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/30 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-700 pointer-events-none" />
+
+      <div className="relative">
+        {icon ? (
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-white to-cream-50 flex items-center justify-center p-2 shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 ring-1 ring-gold-light/20">
+            <Image
+              src={icon}
+              alt={category.name_ar}
+              width={40}
+              height={40}
+              className="object-contain"
+            />
+          </div>
+        ) : (
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold-light/20 to-amber-100/30 flex items-center justify-center text-2xl shadow-sm">
+            {category.icon || '✨'}
+          </div>
+        )}
+      </div>
+      <div className="font-ar-display font-bold text-ink text-xs text-center relative">
         {category.name_ar}
       </div>
-      <div className="text-[9px] font-en-label tracking-[0.2em] text-gold-light uppercase">
+      <div className="text-[8px] font-en-label tracking-[0.25em] text-gold-light uppercase relative">
         {category.name_en}
       </div>
     </Link>

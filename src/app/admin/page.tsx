@@ -11,6 +11,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import StaffDashboard from '@/components/admin/StaffDashboard';
+import AdminMobileHome from '@/components/admin/AdminMobileHome';
 import RevenueChart from '@/components/admin/RevenueChart';
 import SmartInsights from '@/components/admin/SmartInsights';
 import { formatPrice } from '@/lib/utils';
@@ -112,8 +113,37 @@ export default async function AdminDashboard() {
 
   const greeting = timeGreeting();
 
+  // ─── mobile view stats (passes to AdminMobileHome) ───
+  const completedToday = (todayBookingsList || []).filter((b: any) => b.status === 'completed').length;
+  const mobileBookings = (todayBookingsList || []).map((b: any) => ({
+    id: b.id,
+    booking_time: b.booking_time,
+    customer_name: b.customer_name || 'عميلة',
+    service_name: b.items?.[0]?.service_name || 'خدمة',
+    status: b.status,
+  }));
+
   return (
-    <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+    <>
+      {/* ─── MOBILE VIEW (app-like) ─── */}
+      <div className="md:hidden">
+        <AdminMobileHome
+          profile={{
+            full_name: me?.full_name || 'عزيزتي',
+            role: (me?.role || 'staff') as 'owner' | 'manager' | 'staff',
+          }}
+          stats={{
+            today_bookings: todayBookings || 0,
+            today_revenue: todayTotal,
+            pending_count: pendingBookings || 0,
+            completed_today: completedToday,
+          }}
+          todayBookings={mobileBookings}
+        />
+      </div>
+
+      {/* ─── DESKTOP VIEW (المالك dashboard) ─── */}
+      <div className="hidden md:block p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
 
       {/* ═══ Hero ═══ */}
       <div className="mb-6 md:mb-8">
@@ -315,6 +345,7 @@ export default async function AdminDashboard() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

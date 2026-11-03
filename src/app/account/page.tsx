@@ -13,6 +13,7 @@ import { createClient } from '@/lib/supabase/server';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import BookingCard from '@/components/account/BookingCard';
+import PushNotificationManager from '@/components/account/PushNotificationManager';
 import {
   CalendarPlus, Clock, Heart, User as UserIcon, Award, Sparkles,
   Gift, LogOut, Phone, MessageCircle, ChevronLeft, Crown, Star,
@@ -203,6 +204,11 @@ export default async function AccountPage() {
               variant="pink"
             />
           </div>
+
+          {/* ═══ Push Notifications ═══ */}
+          <section className="mb-8">
+            <PushNotificationManager />
+          </section>
 
           {/* ═══ الحجوزات القادمة ═══ */}
           <section className="mb-10">
