@@ -10,6 +10,7 @@
 import { useState } from 'react';
 import { Award, Check, X, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
+import SparkleBurst from '@/components/fx/SparkleBurst';
 
 const POINTS_PER_SAR = 10; // كل 10 نقاط = 1 ريال
 const MIN_POINTS_TO_REDEEM = 50; // أقل عدد نقاط يُسمح باستبدالها
@@ -24,6 +25,7 @@ interface Props {
 
 export default function LoyaltyField({ availablePoints, subtotal, value, onApplied, onCleared }: Props) {
   const [applied, setApplied] = useState<number>(value); // الريال المطبّق
+  const [sparkle, setSparkle] = useState(false);
 
   if (availablePoints < MIN_POINTS_TO_REDEEM) {
     return null; // لا تعرضيه إلا لو عندها نقاط كافية
@@ -39,6 +41,9 @@ export default function LoyaltyField({ availablePoints, subtotal, value, onAppli
     setApplied(safeAmount);
     onApplied(safeAmount, pointsNeeded);
     toast.success(`تم استبدال ${pointsNeeded} نقطة · خصم ${safeAmount} ر.س 💎`);
+    // ✨ شرر نجوم
+    setSparkle(true);
+    setTimeout(() => setSparkle(false), 50);
   }
 
   function clear() {
@@ -68,7 +73,8 @@ export default function LoyaltyField({ availablePoints, subtotal, value, onAppli
   }
 
   return (
-    <div className="bg-gradient-to-l from-gold-light/10 to-transparent border border-gold-light/30 rounded-xl p-4">
+    <div className="relative bg-gradient-to-l from-gold-light/10 to-transparent border border-gold-light/30 rounded-xl p-4">
+      {sparkle && <SparkleBurst trigger={true} count={10} color="#d4b062" />}
       <div className="flex items-center gap-2 mb-2">
         <Award className="w-5 h-5 text-gold-deep" />
         <div className="flex-1">

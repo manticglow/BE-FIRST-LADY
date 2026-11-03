@@ -19,6 +19,7 @@ import { formatPrice, formatDuration } from '@/lib/utils';
 import { useCart } from '@/hooks/useCart';
 import Petals from '@/components/ui/Petals';
 import HeartButton from '@/components/ui/HeartButton';
+import TiltCard from '@/components/fx/TiltCard';
 import type { Category, Service } from '@/types/database';
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -195,9 +196,10 @@ function ServiceCard({
   }
 
   return (
+    <TiltCard max={5} scale={1.02}>
     <Link
       href={`/services/${service.id}`}
-      className={`group relative bg-white rounded-2xl overflow-hidden border transition-all duration-500 hover:shadow-xl hover:shadow-gold-deep/10 hover:-translate-y-1 ${
+      className={`group relative block bg-white rounded-2xl overflow-hidden border transition-all duration-500 hover:shadow-xl hover:shadow-gold-deep/10 ${
         inCart ? 'border-gold-deep shadow-md shadow-gold-deep/10' : 'border-cream-200 hover:border-gold-light/50'
       }`}
     >
@@ -291,5 +293,6 @@ function ServiceCard({
         </button>
       </div>
     </Link>
+    </TiltCard>
   );
 }

@@ -14,6 +14,8 @@ import StaffDashboard from '@/components/admin/StaffDashboard';
 import AdminMobileHome from '@/components/admin/AdminMobileHome';
 import RevenueChart from '@/components/admin/RevenueChart';
 import SmartInsights from '@/components/admin/SmartInsights';
+import CapacityMeter from '@/components/admin/CapacityMeter';
+import LiveStaffStatus from '@/components/admin/LiveStaffStatus';
 import { formatPrice } from '@/lib/utils';
 import {
   CalendarCheck, DollarSign, Users, TrendingUp, TrendingDown,
@@ -342,6 +344,19 @@ export default async function AdminDashboard() {
 
           {/* 🧠 الرؤى الذكيّة */}
           <SmartInsights weekBookings={weekBookings || []} />
+        </div>
+
+        {/* ═══ طاقة اليوم + حالة الموظّفات (جديد) ═══ */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-6">
+          {/* طاقة الصالون */}
+          <CapacityMeter
+            bookedMinutes={(todayBookingsList || []).reduce((s: number, b: any) => s + Number(b.duration_min || 60), 0)}
+            availableMinutes={13 * 60}  // 10am-11pm = 13 ساعة
+            totalBookings={todayBookings || 0}
+            activeStaffCount={3}
+          />
+          {/* حالة الموظّفات الحيّة */}
+          <LiveStaffStatus />
         </div>
       </div>
     </div>
