@@ -91,6 +91,7 @@ export default function BookingWizard({ categories, services, packages, user, pr
   });
 
   // تحميل الخدمات من: prefill (كرّري آخر حجز) أولاً · ثم URL · ثم السلة
+  // ✨ لو الخدمات جاءت محمّلة من أي مصدر خارجي · نتخطّى الخطوة 1 مباشرة للخطوة 2
   useEffect(() => {
     // 🔁 إعادة حجز سابق · له الأولوية
     if (prefill) {
@@ -101,6 +102,8 @@ export default function BookingWizard({ categories, services, packages, user, pr
         selectedPackageId: prefill.packageId,
         staff_id: prefill.staffId,
       }));
+      // تخطّي خطوة الخدمات → الوقت مباشرة
+      if (validServices.length > 0 || prefill.packageId) setStep(2);
       return;
     }
 
@@ -113,16 +116,22 @@ export default function BookingWizard({ categories, services, packages, user, pr
       const ids = serviceParam.split(',').filter((id) => services.some((s) => s.id === id));
       if (ids.length > 0) {
         setState((prev) => ({ ...prev, selectedServices: ids, selectedPackageId: null }));
+        // ✨ تخطّي خطوة الخدمات (العميلة اختارتها بالفعل في السلة أو الرابط)
+        setStep(2);
       }
     } else if (packageParam) {
       if (packages.some((p) => p.id === packageParam)) {
         setState((prev) => ({ ...prev, selectedPackageId: packageParam, selectedServices: [] }));
+        // ✨ تخطّي خطوة الخدمات (البكج مُختار)
+        setStep(2);
       }
     } else if (cart.hydrated && cart.items.length > 0) {
       // لو ما فيه URL param · حمّلي من السلة
       const validIds = cart.items.filter((id) => services.some((s) => s.id === id));
       if (validIds.length > 0) {
         setState((prev) => ({ ...prev, selectedServices: validIds, selectedPackageId: null }));
+        // ✨ تخطّي خطوة الخدمات (السلة ليست فارغة)
+        setStep(2);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -236,7 +245,7 @@ export default function BookingWizard({ categories, services, packages, user, pr
   return (
     <div className="bg-white rounded-3xl shadow-sm border border-cream-200 overflow-hidden">
       {/* شريط التقدم */}
-      <StepIndicator current={step} />
+      <StepIndicator current={step} onJump={(n) => setStep(n)} />
 
       <div className="p-6 md:p-8">
         {step === 1 && (
@@ -320,38 +329,55 @@ export default function BookingWizard({ categories, services, packages, user, pr
 // ═══════════════════════════════════════════════════════════
 // شريط الخطوات
 // ═══════════════════════════════════════════════════════════
-function StepIndicator({ current }: { current: Step }) {
+function StepIndicator({
+  current, onJump,
+}: {
+  current: Step;
+  onJump?: (n: Step) => void;
+}) {
   const steps = [
-    { n: 1, label: 'الخدمات' },
-    { n: 2, label: 'الوقت' },
-    { n: 3, label: 'بياناتكِ' },
-    { n: 4, label: 'التأكيد' },
+    { n: 1 as Step, label: 'الخدمات' },
+    { n: 2 as Step, label: 'الوقت' },
+    { n: 3 as Step, label: 'بياناتكِ' },
+    { n: 4 as Step, label: 'التأكيد' },
   ];
 
   return (
     <div className="bg-gradient-to-l from-gold-deep/5 to-transparent border-b border-cream-200 p-4 md:p-6">
       <div className="flex items-center justify-between">
-        {steps.map((s, i) => (
-          <div key={s.n} className="flex items-center flex-1">
-            <div className="flex flex-col items-center">
-              <div
-                className={`w-9 h-9 rounded-full flex items-center justify-center font-en-display font-bold text-sm transition-all ${
-                  current >= s.n
-                    ? 'bg-gold-deep text-cream-50 shadow-md'
-                    : 'bg-cream-100 text-ink-soft'
-                }`}
+        {steps.map((s, i) => {
+          // الخطوات اللي تمّت أو الحاليّة · قابلة للضغط للرجوع
+          const canJump = onJump && s.n <= current;
+          const Tag: any = canJump ? 'button' : 'div';
+          return (
+            <div key={s.n} className="flex items-center flex-1">
+              <Tag
+                type={canJump ? 'button' : undefined}
+                onClick={canJump ? () => onJump!(s.n) : undefined}
+                className={`flex flex-col items-center ${canJump ? 'cursor-pointer group' : ''}`}
+                title={canJump ? `الرجوع لخطوة "${s.label}"` : undefined}
               >
-                {current > s.n ? <Check className="w-4 h-4" /> : s.n}
-              </div>
-              <div className={`text-[10px] md:text-xs mt-1.5 font-semibold ${current >= s.n ? 'text-gold-deep' : 'text-ink-soft'}`}>
-                {s.label}
-              </div>
+                <div
+                  className={`w-9 h-9 rounded-full flex items-center justify-center font-en-display font-bold text-sm transition-all ${
+                    current >= s.n
+                      ? 'bg-gold-deep text-cream-50 shadow-md group-hover:scale-110'
+                      : 'bg-cream-100 text-ink-soft'
+                  }`}
+                >
+                  {current > s.n ? <Check className="w-4 h-4" /> : s.n}
+                </div>
+                <div className={`text-[10px] md:text-xs mt-1.5 font-semibold ${
+                  current >= s.n ? 'text-gold-deep group-hover:underline' : 'text-ink-soft'
+                }`}>
+                  {s.label}
+                </div>
+              </Tag>
+              {i < steps.length - 1 && (
+                <div className={`flex-1 h-0.5 mx-1 ${current > s.n ? 'bg-gold-deep' : 'bg-cream-200'}`} />
+              )}
             </div>
-            {i < steps.length - 1 && (
-              <div className={`flex-1 h-0.5 mx-1 ${current > s.n ? 'bg-gold-deep' : 'bg-cream-200'}`} />
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

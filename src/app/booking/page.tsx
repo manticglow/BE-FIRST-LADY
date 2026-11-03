@@ -71,7 +71,9 @@ export default async function BookingPage({
             <p className="text-ink-soft text-sm">
               {repeatBooking
                 ? '🔁 الخدمات والموظفة محمّلة مسبقاً · اختاري بس التاريخ'
-                : 'اختاري الخدمات والوقت الذي يناسبكِ'}
+                : (params.service || params.package)
+                  ? '✨ خدماتكِ محمّلة · اختاري الوقت وأكّدي الحجز'
+                  : 'اختاري الخدمات والوقت الذي يناسبكِ'}
             </p>
           </div>
 
