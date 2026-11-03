@@ -7,10 +7,34 @@
 import { createAdminClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { auditLog, extractRequestInfo } from '@/lib/audit-log';
+import { logger } from '@/lib/logger';
+import type { SupabaseClient } from '@supabase/supabase-js';
+
+const log = logger.scope('moyasar-webhook');
 
 export const runtime = 'nodejs';
 
 const WEBHOOK_SECRET = process.env.MOYASAR_WEBHOOK_SECRET || '';
+
+type IntentRow = {
+  id: string;
+  customer_id: string | null;
+  amount: number;
+  booking_id: string;
+  loyalty_points_used: number | null;
+  gift_card_code: string | null;
+  gift_card_amount: number | null;
+};
+
+type UpdatePayload = {
+  status: string;
+  gateway_response: unknown;
+  method: string | null;
+  paid_at?: string;
+  gateway_payment_id?: string;
+  refunded_at?: string;
+  failure_reason?: string;
+};
 
 export async function POST(req: NextRequest) {
   const { ip, ua } = extractRequestInfo(req);
@@ -18,7 +42,7 @@ export async function POST(req: NextRequest) {
   // التحقّق من الـsecret (في header أو body)
   const headerSecret = req.headers.get('x-moyasar-secret') || req.headers.get('secret-token');
   if (WEBHOOK_SECRET && headerSecret !== WEBHOOK_SECRET) {
-    console.warn('[moyasar webhook] invalid secret');
+    log.warn('invalid secret');
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
 
@@ -36,14 +60,14 @@ export async function POST(req: NextRequest) {
   const intentId = metadata.payment_intent_id;
   const gatewayPaymentId = data.id;
 
-  let intent;
+  let intent: IntentRow | null = null;
   if (intentId) {
     const { data: byId } = await admin
       .from('payment_intents')
       .select('*')
       .eq('id', intentId)
       .maybeSingle();
-    intent = byId;
+    intent = byId as IntentRow | null;
   }
   if (!intent && gatewayPaymentId) {
     const { data: byGateway } = await admin
@@ -52,11 +76,11 @@ export async function POST(req: NextRequest) {
       .eq('gateway', 'moyasar')
       .eq('gateway_payment_id', gatewayPaymentId)
       .maybeSingle();
-    intent = byGateway;
+    intent = byGateway as IntentRow | null;
   }
 
   if (!intent) {
-    console.warn('[moyasar webhook] no matching intent · event:', eventType);
+    log.warn('no matching intent', { event: eventType });
     return NextResponse.json({ ok: true, note: 'no intent' });
   }
 
@@ -77,7 +101,7 @@ export async function POST(req: NextRequest) {
   }
 
   // تحديث
-  const updates: any = {
+  const updates: UpdatePayload = {
     status: newStatus,
     gateway_response: data,
     method: data.source?.type || null,
@@ -96,10 +120,10 @@ export async function POST(req: NextRequest) {
   const { error: updErr } = await admin
     .from('payment_intents')
     .update(updates)
-    .eq('id', (intent as any).id);
+    .eq('id', intent.id);
 
   if (updErr) {
-    console.error('[moyasar webhook] update error', updErr);
+    log.error('update failed', updErr);
     return NextResponse.json({ error: 'update failed' }, { status: 500 });
   }
 
@@ -109,14 +133,14 @@ export async function POST(req: NextRequest) {
   }
 
   await auditLog({
-    userId: (intent as any).customer_id,
+    userId: intent.customer_id,
     action: 'auth.login',  // placeholder action
     resourceType: 'payment',
-    resourceId: (intent as any).id,
+    resourceId: intent.id,
     metadata: {
       event: eventType,
       new_status: newStatus,
-      amount: (intent as any).amount,
+      amount: intent.amount,
       gateway: 'moyasar',
     },
     ipAddress: ip,
@@ -127,35 +151,37 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ ok: true, status: newStatus });
 }
 
-async function applySuccessDiscounts(admin: any, intent: any) {
+async function applySuccessDiscounts(admin: SupabaseClient, intent: IntentRow) {
   // صرف نقاط الولاء
-  if (intent.loyalty_points_used > 0 && intent.customer_id) {
-    const { data: p } = await admin
+  if ((intent.loyalty_points_used ?? 0) > 0 && intent.customer_id) {
+    const { data: pRaw } = await admin
       .from('profiles')
       .select('loyalty_points')
       .eq('id', intent.customer_id)
       .single();
-    const current = Number((p as any)?.loyalty_points || 0);
+    const p = pRaw as { loyalty_points: number | null } | null;
+    const current = Number(p?.loyalty_points || 0);
     await admin
       .from('profiles')
-      .update({ loyalty_points: Math.max(0, current - intent.loyalty_points_used) })
+      .update({ loyalty_points: Math.max(0, current - (intent.loyalty_points_used ?? 0)) })
       .eq('id', intent.customer_id);
   }
   // صرف البطاقة
-  if (intent.gift_card_code && intent.gift_card_amount > 0) {
-    const { data: card } = await admin
+  if (intent.gift_card_code && (intent.gift_card_amount ?? 0) > 0) {
+    const { data: cardRaw } = await admin
       .from('gift_cards')
       .select('id, balance')
       .eq('code', intent.gift_card_code.toUpperCase())
       .single();
+    const card = cardRaw as { id: string; balance: number } | null;
     if (card) {
-      const newBalance = Number((card as any).balance) - Number(intent.gift_card_amount);
+      const newBalance = Number(card.balance) - Number(intent.gift_card_amount);
       await admin
         .from('gift_cards')
         .update({ balance: Math.max(0, newBalance), is_active: newBalance > 0 })
-        .eq('id', (card as any).id);
+        .eq('id', card.id);
       await admin.from('gift_card_redemptions').insert({
-        gift_card_id: (card as any).id,
+        gift_card_id: card.id,
         booking_id: intent.booking_id,
         amount: intent.gift_card_amount,
         balance_after: Math.max(0, newBalance),

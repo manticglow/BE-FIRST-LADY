@@ -14,6 +14,9 @@ import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { sendBookingConfirmation } from '@/lib/integrations/whatsapp';
+import { logger } from '@/lib/logger';
+
+const log = logger.scope('api/bookings');
 
 const SAUDI_PHONE_REGEX = /^(?:\+?966|0)?5\d{8}$/;
 
@@ -278,7 +281,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (bookErr) {
-      console.error('Booking error:', bookErr);
+      log.error('Booking create failed', bookErr);
       // رسائل خطأ ودية
       if (bookErr.message.includes('conflict')) {
         return NextResponse.json({ error: 'الوقت المختار محجوز الآن — اختاري وقتاً آخر' }, { status: 409 });
@@ -291,7 +294,7 @@ export async function POST(request: NextRequest) {
 
     const items = itemsData.map((i) => ({ ...i, booking_id: booking.id }));
     const { error: itemsErr } = await admin.from('booking_items').insert(items);
-    if (itemsErr) console.error('Items error:', itemsErr);
+    if (itemsErr) log.error('Items insert failed', itemsErr);
 
     // اخصمي نقاط الولاء المستخدمة ───────────
     if (loyaltyPointsUsed > 0 && userData?.user?.id) {
@@ -356,10 +359,10 @@ export async function POST(request: NextRequest) {
       booking.booking_number
     ).then((result) => {
       if (!result.ok) {
-        console.warn('[WhatsApp confirm] Failed:', result.error);
+        log.warn('WhatsApp confirm failed', { error: result.error });
       }
     }).catch((err) => {
-      console.warn('[WhatsApp confirm] Exception:', err);
+      log.warn('WhatsApp confirm exception', { err });
     });
 
     return NextResponse.json({
@@ -372,7 +375,7 @@ export async function POST(request: NextRequest) {
       gift_card_amount: giftCardAmount,
     });
   } catch (err: any) {
-    console.error('API error:', err);
+    log.error('API error', err);
     return NextResponse.json({ error: err.message || 'خطأ غير متوقع' }, { status: 500 });
   }
 }

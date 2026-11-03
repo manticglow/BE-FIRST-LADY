@@ -18,6 +18,9 @@
  *   await sendWhatsAppTemplate(phone, 'otp_login', 'ar', ['123456']);
  */
 
+import { logger } from '@/lib/logger';
+
+const log = logger.scope('whatsapp');
 const API_VERSION = 'v21.0';
 
 interface SendResult {
@@ -70,12 +73,12 @@ export async function sendWhatsAppText(to: string, body: string): Promise<SendRe
 
     const data = await res.json();
     if (!res.ok) {
-      console.error('[WhatsApp Text] Error:', data);
+      log.error('text message failed', null, { data });
       return { ok: false, error: data.error?.message || 'فشل الإرسال' };
     }
     return { ok: true, messageId: data.messages?.[0]?.id };
   } catch (e: any) {
-    console.error('[WhatsApp Text] Exception:', e);
+    log.error('text message exception', e);
     return { ok: false, error: e.message };
   }
 }
@@ -140,12 +143,12 @@ export async function sendWhatsAppTemplate(
 
     const data = await res.json();
     if (!res.ok) {
-      console.error('[WhatsApp Template] Error:', data);
+      log.error('template failed', null, { data });
       return { ok: false, error: data.error?.message || 'فشل الإرسال' };
     }
     return { ok: true, messageId: data.messages?.[0]?.id };
   } catch (e: any) {
-    console.error('[WhatsApp Template] Exception:', e);
+    log.error('template exception', e);
     return { ok: false, error: e.message };
   }
 }

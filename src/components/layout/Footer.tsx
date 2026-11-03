@@ -40,11 +40,24 @@ export default function Footer() {
       return;
     }
     setSubscribing(true);
-    // TODO: wire up to actual newsletter API
-    await new Promise((r) => setTimeout(r, 800));
-    toast.success('✨ شكراً · اشتركتِ بنشرتنا');
-    setEmail('');
-    setSubscribing(false);
+    try {
+      const res = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, source: 'footer' }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        toast.error(data.error || 'حدث خطأ · حاولي لاحقاً');
+      } else {
+        toast.success(data.message || '✨ شكراً · اشتركتِ بنشرتنا');
+        setEmail('');
+      }
+    } catch {
+      toast.error('تعذّر الاتصال · حاولي لاحقاً');
+    } finally {
+      setSubscribing(false);
+    }
   }
 
   function scrollToTop() {

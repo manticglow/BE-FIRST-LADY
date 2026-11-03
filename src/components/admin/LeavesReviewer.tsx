@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Check, X, Clock, Loader2, Calendar, MessageSquare } from 'lucide-react';
+import Modal from '@/components/ui/Modal';
 
 interface Leave {
   id: string;
@@ -173,35 +174,36 @@ export default function LeavesReviewer() {
       )}
 
       {/* Modal المراجعة */}
-      {reviewing && (
-        <div className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setReviewing(null)}>
-          <div onClick={(e) => e.stopPropagation()} className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6">
-            <h3 className="font-ar-display text-lg font-bold text-gold-deep mb-4">
-              {action === 'approve' ? '✓ اعتماد طلب' : 'رفض طلب'} {reviewing.user.full_name}
-            </h3>
-            <textarea
-              rows={3}
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              maxLength={500}
-              placeholder={action === 'approve' ? 'ملاحظة (اختياري)' : 'سبب الرفض (مُفضَّل)'}
-              className="w-full px-3 py-2 rounded-xl border border-cream-200 bg-cream-50 text-sm resize-none"
-            />
-            <div className="flex gap-3 mt-4">
-              <button onClick={() => setReviewing(null)} className="btn-outline !py-2 flex-1 text-sm">إلغاء</button>
-              <button
-                onClick={review}
-                disabled={busy === 'review'}
-                className={`!py-2 flex-1 text-sm font-bold text-white rounded-xl disabled:opacity-50 ${
-                  action === 'approve' ? 'bg-success hover:bg-success/90' : 'bg-danger hover:bg-danger/90'
-                }`}
-              >
-                {busy === 'review' ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : (action === 'approve' ? 'اعتماد' : 'رفض')}
-              </button>
-            </div>
+      <Modal
+        open={!!reviewing}
+        onClose={() => setReviewing(null)}
+        size="sm"
+        title={reviewing ? `${action === 'approve' ? '✓ اعتماد طلب' : 'رفض طلب'} ${reviewing.user.full_name}` : ''}
+        padded={false}
+      >
+        <div className="p-5">
+          <textarea
+            rows={3}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            maxLength={500}
+            placeholder={action === 'approve' ? 'ملاحظة (اختياري)' : 'سبب الرفض (مُفضَّل)'}
+            className="w-full px-3 py-2 rounded-xl border border-cream-200 bg-cream-50 text-sm resize-none"
+          />
+          <div className="flex gap-3 mt-4">
+            <button onClick={() => setReviewing(null)} className="btn-outline !py-2 flex-1 text-sm">إلغاء</button>
+            <button
+              onClick={review}
+              disabled={busy === 'review'}
+              className={`!py-2 flex-1 text-sm font-bold text-white rounded-xl disabled:opacity-50 ${
+                action === 'approve' ? 'bg-success hover:bg-success/90' : 'bg-danger hover:bg-danger/90'
+              }`}
+            >
+              {busy === 'review' ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : (action === 'approve' ? 'اعتماد' : 'رفض')}
+            </button>
           </div>
         </div>
-      )}
+      </Modal>
     </>
   );
 }

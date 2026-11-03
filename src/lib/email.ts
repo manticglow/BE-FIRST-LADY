@@ -6,7 +6,9 @@
  * - fallback graceful لو الـAPI key ناقص
  */
 import { Resend } from 'resend';
+import { logger } from '@/lib/logger';
 
+const log = logger.scope('email');
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const RESEND_FROM = process.env.RESEND_FROM || 'Be First Lady <noreply@befirstlady.com>';
 
@@ -36,7 +38,7 @@ export interface SendEmailResult {
  */
 export async function sendEmail(opts: SendEmailOptions): Promise<SendEmailResult> {
   if (!RESEND_API_KEY) {
-    console.warn('[email] RESEND_API_KEY غير مُفعّل · تخطّي الإرسال');
+    log.warn('RESEND_API_KEY missing · skipping send');
     return {
       ok: false,
       error: 'خدمة الإيميل غير مُفعّلة · يرجى التواصل مع الدعم',
@@ -63,12 +65,12 @@ export async function sendEmail(opts: SendEmailOptions): Promise<SendEmailResult
 
     const { data, error } = await resend.emails.send(payload);
     if (error) {
-      console.error('[email] Resend error:', error);
+      log.error('Resend error', error);
       return { ok: false, error: error.message || 'فشل إرسال الإيميل' };
     }
     return { ok: true, id: data?.id };
   } catch (e: any) {
-    console.error('[email] Exception:', e);
+    log.error('exception', e);
     return { ok: false, error: e.message || 'خطأ في الإرسال' };
   }
 }

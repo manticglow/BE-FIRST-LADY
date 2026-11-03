@@ -12,6 +12,23 @@ import { ChevronRight, Calendar, Clock, Sparkles } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
+type BookingRow = {
+  id: string;
+  customer_id: string;
+  total: number;
+  status: string;
+  payment_status: string;
+  booking_date: string;
+  booking_time: string | null;
+  customer_name: string | null;
+};
+type ProfileRow = { loyalty_points: number | null };
+type SettingsRow = {
+  payment_deposit_pct: number | null;
+  payment_deposit_threshold: number | null;
+  loyalty_point_value: number | null;
+};
+
 export default async function PayPage({
   params,
 }: {
@@ -22,29 +39,32 @@ export default async function PayPage({
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/login?redirect=/account/bookings/${id}/pay`);
 
-  const { data: booking } = await supabase
+  const { data: bookingRaw } = await supabase
     .from('bookings')
     .select('id, customer_id, total, status, payment_status, booking_date, booking_time, customer_name')
     .eq('id', id)
     .single();
+  const booking = bookingRaw as BookingRow | null;
 
   if (!booking) notFound();
-  if ((booking as any).customer_id !== user.id) redirect('/account');
-  if ((booking as any).payment_status === 'paid') {
+  if (booking.customer_id !== user.id) redirect('/account');
+  if (booking.payment_status === 'paid') {
     redirect(`/account/bookings/${id}?payment=already_paid`);
   }
 
-  const { data: profile } = await supabase
+  const { data: profileRaw } = await supabase
     .from('profiles')
     .select('loyalty_points')
     .eq('id', user.id)
     .single();
+  const profile = profileRaw as ProfileRow | null;
 
-  const { data: settings } = await supabase
+  const { data: settingsRaw } = await supabase
     .from('company_settings')
     .select('payment_deposit_pct, payment_deposit_threshold, loyalty_point_value')
     .limit(1)
     .maybeSingle();
+  const settings = settingsRaw as SettingsRow | null;
 
   return (
     <div className="min-h-screen bg-cream-50 py-6">
@@ -64,17 +84,17 @@ export default async function PayPage({
           <div className="editorial-eyebrow text-stone-500 mb-2">BOOKING</div>
           <h1 className="font-ar-display text-xl font-bold text-stone-900 mb-2 flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-amber-500" />
-            {(booking as any).customer_name || 'حجزكِ'}
+            {booking.customer_name || 'حجزكِ'}
           </h1>
           <div className="flex items-center gap-3 text-xs text-stone-600 pt-2 border-t border-cream-100">
             <span className="flex items-center gap-1">
               <Calendar className="w-3 h-3" />
-              {new Date((booking as any).booking_date).toLocaleDateString('ar-SA')}
+              {new Date(booking.booking_date).toLocaleDateString('ar-SA')}
             </span>
-            {(booking as any).booking_time && (
+            {booking.booking_time && (
               <span className="flex items-center gap-1">
                 <Clock className="w-3 h-3" />
-                {(booking as any).booking_time}
+                {booking.booking_time}
               </span>
             )}
           </div>
@@ -83,13 +103,13 @@ export default async function PayPage({
         {/* Payment selector */}
         <PaymentSelector
           opts={{
-            bookingId: (booking as any).id,
-            totalAmount: Number((booking as any).total),
-            loyaltyPointsAvailable: Number((profile as any)?.loyalty_points || 0),
-            loyaltyPointValue: Number((settings as any)?.loyalty_point_value || 0.10),
+            bookingId: booking.id,
+            totalAmount: Number(booking.total),
+            loyaltyPointsAvailable: Number(profile?.loyalty_points || 0),
+            loyaltyPointValue: Number(settings?.loyalty_point_value || 0.10),
             depositEnabled: true,
-            depositPct: Number((settings as any)?.payment_deposit_pct || 25),
-            depositThreshold: Number((settings as any)?.payment_deposit_threshold || 500),
+            depositPct: Number(settings?.payment_deposit_pct || 25),
+            depositThreshold: Number(settings?.payment_deposit_threshold || 500),
             gateways: {
               moyasar: !!process.env.MOYASAR_SECRET_KEY,
               tabby: !!process.env.TABBY_SECRET_KEY,

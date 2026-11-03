@@ -14,6 +14,9 @@ import { formatPhoneForWhatsApp } from '@/lib/integrations/whatsapp';
 import { checkRateLimit, getClientIp, rateLimitErrorResponse } from '@/lib/rate-limit';
 import { auditLog, extractRequestInfo } from '@/lib/audit-log';
 import { updateSessionActivity } from '@/lib/session-timeout';
+import { logger } from '@/lib/logger';
+
+const log = logger.scope('otp/verify');
 
 const admin = createAdminClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -158,7 +161,7 @@ export async function POST(req: NextRequest) {
       });
 
       if (createError || !newUser.user) {
-        console.error('[OTP Verify] Create user error:', createError);
+        log.error('create user failed', createError);
         return NextResponse.json(
           { ok: false, error: 'فشل إنشاء الحساب · حاولي مجدداً' },
           { status: 500 }
@@ -182,7 +185,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (linkError || !linkData) {
-      console.error('[OTP Verify] Magic link error:', linkError);
+      log.error('magic link failed', linkError);
       return NextResponse.json(
         { ok: false, error: 'فشل تسجيل الدخول · حاولي مجدداً' },
         { status: 500 }
@@ -208,7 +211,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (verifyError || !sessionData.session) {
-      console.error('[OTP Verify] Verify error:', verifyError);
+      log.error('verify failed', verifyError);
       return NextResponse.json(
         { ok: false, error: 'فشل تفعيل الجلسة · حاولي مجدداً' },
         { status: 500 }
@@ -241,7 +244,7 @@ export async function POST(req: NextRequest) {
       message: 'تم تسجيل الدخول بنجاح',
     });
   } catch (e: any) {
-    console.error('[OTP Verify] Exception:', e);
+    log.error('exception', e);
     return NextResponse.json(
       { ok: false, error: 'خطأ غير متوقّع · حاولي مجدداً' },
       { status: 500 }

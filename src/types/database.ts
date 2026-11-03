@@ -1,22 +1,29 @@
 /**
+ * Database Types · Be First Lady
  * ═══════════════════════════════════════════════════════════
- * Be First Lady — Database Types
- * ═══════════════════════════════════════════════════════════
+ * Hand-crafted types for the project tables (derived from
+ * supabase/migrations/*.sql).
  *
- * هذه الـ types مطابقة لـ schema قاعدة البيانات.
- * عادةً تُولَّد تلقائياً بـ: npm run db:types
- * (بعد ربط supabase CLI بالمشروع)
+ * To regenerate from the live DB after schema changes:
+ *   npx supabase gen types typescript --project-id <PROJECT_ID> > src/types/database.ts
+ *
+ * Until then, update this file manually when migrations change.
  */
 
+export type Json = string | number | boolean | null | { [k: string]: Json | undefined } | Json[];
+
+// ─── Enums ───────────────────────────────────────────────────
 export type UserRole = 'customer' | 'staff' | 'manager' | 'owner';
 export type BookingStatus = 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled' | 'no_show';
 export type PaymentStatus = 'unpaid' | 'partial' | 'paid' | 'refunded';
 export type PaymentMethod = 'cash' | 'card' | 'transfer' | 'mada' | 'applepay' | 'stc';
+export type PaymentGateway = 'moyasar' | 'tabby' | 'tamara' | 'manual';
+export type BookingSource = 'website' | 'whatsapp' | 'walk-in' | 'phone';
+export type SalonSection = 'spa' | 'salon';
+export type DiscountType = 'percentage' | 'fixed' | 'package';
+export type ReviewSource = 'internal' | 'google' | 'instagram';
 
-// ═══════════════════════════════════════════════════════════
-// Core Entities
-// ═══════════════════════════════════════════════════════════
-
+// ─── Core domain rows ────────────────────────────────────────
 export interface Profile {
   id: string;
   full_name: string;
@@ -26,79 +33,11 @@ export interface Profile {
   avatar_url: string | null;
   birthday: string | null;
   notes: string | null;
+  beauty_profile?: Json;
   loyalty_points?: number;
-  loyalty_tier?: 'bronze' | 'silver' | 'gold' | 'diamond';
-  total_spent?: number;
+  preferences?: Json;
   created_at: string;
   updated_at: string;
-}
-
-export interface Coupon {
-  id: string;
-  code: string;
-  description: string | null;
-  discount_type: 'percentage' | 'fixed';
-  discount_value: number;
-  min_total: number;
-  max_uses: number | null;
-  used_count: number;
-  expires_at: string | null;
-  is_active: boolean;
-  per_customer_limit: number;
-  created_at: string;
-}
-
-export interface LoyaltyTransaction {
-  id: string;
-  customer_id: string;
-  booking_id: string | null;
-  points: number;
-  reason: string;
-  balance_after: number;
-  created_at: string;
-}
-
-export interface AttendanceRecord {
-  id: string;
-  user_id: string;
-  check_in_at: string;
-  check_out_at: string | null;
-  check_in_lat: number | null;
-  check_in_lng: number | null;
-  check_out_lat: number | null;
-  check_out_lng: number | null;
-  check_in_accuracy_m: number | null;
-  check_out_accuracy_m: number | null;
-  location_id: string | null;
-  notes: string | null;
-  is_late: boolean;
-  total_minutes: number | null;
-  created_at: string;
-}
-
-export interface SalonLocation {
-  id: string;
-  name: string;
-  address: string | null;
-  latitude: number;
-  longitude: number;
-  radius_m: number;
-  is_active: boolean;
-  created_at: string;
-}
-
-export interface LeaveRequest {
-  id: string;
-  user_id: string;
-  leave_type: 'annual' | 'sick' | 'emergency' | 'unpaid' | 'other';
-  start_date: string;
-  end_date: string;
-  reason: string | null;
-  status: 'pending' | 'approved' | 'rejected' | 'cancelled';
-  reviewed_by: string | null;
-  reviewed_at: string | null;
-  review_note: string | null;
-  created_at: string;
 }
 
 export interface Category {
@@ -107,7 +46,7 @@ export interface Category {
   name_ar: string;
   name_en: string;
   icon: string | null;
-  color: string;
+  color: string | null;
   description_ar: string | null;
   description_en: string | null;
   display_order: number;
@@ -132,7 +71,6 @@ export interface Service {
   notes_ar: string | null;
   created_at: string;
   updated_at: string;
-  category?: Category;
 }
 
 export interface Package {
@@ -148,7 +86,7 @@ export interface Package {
   valid_until: string | null;
   is_active: boolean;
   display_order: number;
-  services?: Service[];
+  created_at: string;
 }
 
 export interface Staff {
@@ -156,12 +94,12 @@ export interface Staff {
   profile_id: string | null;
   name: string;
   job_title: string;
-  specialties: string[];
+  specialties: string[] | null;
   avatar_url: string | null;
   bio: string | null;
   is_active: boolean;
   display_order: number;
-  services?: Service[];
+  created_at: string;
 }
 
 export interface Booking {
@@ -183,22 +121,12 @@ export interface Booking {
   payment_status: PaymentStatus;
   customer_notes: string | null;
   admin_notes: string | null;
-  source: 'website' | 'whatsapp' | 'walk-in' | 'phone';
+  source: BookingSource;
   cancellation_reason: string | null;
   cancelled_at: string | null;
   completed_at: string | null;
-  // الهدية
-  is_gift?: boolean;
-  gift_from_name?: string | null;
-  gift_from_phone?: string | null;
-  gift_message?: string | null;
-  invitation_sent_at?: string | null;
   created_at: string;
   updated_at: string;
-  items?: BookingItem[];
-  staff?: Staff;
-  customer?: Profile;
-  payments?: Payment[];
 }
 
 export interface BookingItem {
@@ -209,6 +137,7 @@ export interface BookingItem {
   price: number;
   duration_min: number;
   quantity: number;
+  created_at: string;
 }
 
 export interface Payment {
@@ -216,11 +145,13 @@ export interface Payment {
   booking_id: string;
   amount: number;
   method: PaymentMethod;
-  status: 'pending' | 'completed' | 'failed' | 'refunded';
-  gateway: string | null;
+  status: PaymentStatus;
+  gateway: PaymentGateway | null;
   gateway_ref: string | null;
   receipt_url: string | null;
   paid_at: string | null;
+  refunded_at: string | null;
+  created_at: string;
 }
 
 export interface GalleryItem {
@@ -233,6 +164,7 @@ export interface GalleryItem {
   is_featured: boolean;
   display_order: number;
   is_published: boolean;
+  created_at: string;
 }
 
 export interface Review {
@@ -241,9 +173,21 @@ export interface Review {
   customer_name: string;
   rating: number;
   comment: string | null;
-  source: 'internal' | 'google' | 'instagram';
+  source: ReviewSource;
   is_approved: boolean;
   is_featured: boolean;
+  created_at: string;
+}
+
+export interface Hours {
+  id: string;
+  section: SalonSection;
+  day_of_week: number | null;
+  open_time: string;
+  close_time: string;
+  is_closed: boolean;
+  special_date: string | null;
+  note: string | null;
   created_at: string;
 }
 
@@ -253,31 +197,175 @@ export interface Offer {
   title_ar: string;
   subtitle_ar: string | null;
   description_ar: string | null;
-  discount_type: 'percentage' | 'fixed' | 'package' | null;
-  discount_value: number | null;
+  discount_type: DiscountType;
+  discount_value: number;
   valid_from: string;
   valid_until: string;
   banner_image: string | null;
   is_active: boolean;
+  display_order: number;
+  created_at: string;
 }
 
-// ═══════════════════════════════════════════════════════════
-// Supabase Database Shape (for type-safe queries)
-// ═══════════════════════════════════════════════════════════
-export interface Database {
+export interface AuditLog {
+  id: string;
+  user_id: string | null;
+  action: string;
+  entity_type: string;
+  entity_id: string | null;
+  details: Json;
+  ip_address: string | null;
+  created_at: string;
+}
+
+// ─── Phase 2 tables ──────────────────────────────────────────
+export interface StaffSchedule {
+  id: string;
+  staff_id: string;
+  day_of_week: number;
+  start_time: string;
+  end_time: string;
+  is_off: boolean;
+  created_at: string;
+}
+
+export interface BlockedDate {
+  id: string;
+  date: string;
+  reason: string | null;
+  created_at: string;
+}
+
+export interface LoyaltyTransaction {
+  id: string;
+  profile_id: string;
+  points: number;
+  reason: string;
+  booking_id: string | null;
+  created_at: string;
+}
+
+export interface Coupon {
+  id: string;
+  code: string;
+  discount_type: DiscountType;
+  discount_value: number;
+  min_amount: number | null;
+  max_uses: number | null;
+  used_count: number;
+  valid_from: string | null;
+  valid_until: string | null;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface GiftCard {
+  id: string;
+  code: string;
+  amount: number;
+  balance: number;
+  sender_name: string | null;
+  sender_phone: string | null;
+  recipient_name: string;
+  recipient_phone: string;
+  recipient_email: string | null;
+  message: string | null;
+  design: string | null;
+  status: 'active' | 'redeemed' | 'expired' | 'cancelled';
+  expires_at: string | null;
+  redeemed_at: string | null;
+  created_at: string;
+}
+
+export interface AttendanceRecord {
+  id: string;
+  staff_id: string;
+  location_id: string | null;
+  check_in: string;
+  check_out: string | null;
+  break_minutes: number;
+  notes: string | null;
+  created_at: string;
+}
+
+export interface LeaveRequest {
+  id: string;
+  staff_id: string;
+  start_date: string;
+  end_date: string;
+  reason: string | null;
+  status: 'pending' | 'approved' | 'rejected';
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+}
+
+export interface InventoryItem {
+  id: string;
+  sku: string;
+  name_ar: string;
+  name_en: string | null;
+  category: string | null;
+  quantity: number;
+  min_quantity: number;
+  unit: string;
+  cost: number;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface PushSubscription {
+  id: string;
+  user_id: string;
+  endpoint: string;
+  keys: Json;
+  user_agent: string | null;
+  created_at: string;
+}
+
+// ─── Joined / view-level rows ────────────────────────────────
+export type BookingWithItems = Booking & {
+  booking_items: BookingItem[];
+  staff: Pick<Staff, 'id' | 'name' | 'avatar_url'> | null;
+};
+
+export type ServiceWithCategory = Service & {
+  categories: Pick<Category, 'id' | 'slug' | 'name_ar' | 'name_en' | 'color' | 'icon'> | null;
+};
+
+// ─── Helpers ─────────────────────────────────────────────────
+/** Insert = all fields except auto-generated ones */
+export type Insert<T> = Omit<T, 'id' | 'created_at' | 'updated_at'> & { id?: string };
+
+/** Update = everything optional */
+export type Update<T> = Partial<Omit<T, 'id' | 'created_at'>>;
+
+/** Supabase Database shape — compatible with createClient<Database>() */
+export type Database = {
   public: {
     Tables: {
-      profiles: { Row: Profile; Insert: Partial<Profile>; Update: Partial<Profile> };
-      categories: { Row: Category; Insert: Partial<Category>; Update: Partial<Category> };
-      services: { Row: Service; Insert: Partial<Service>; Update: Partial<Service> };
-      packages: { Row: Package; Insert: Partial<Package>; Update: Partial<Package> };
-      staff: { Row: Staff; Insert: Partial<Staff>; Update: Partial<Staff> };
-      bookings: { Row: Booking; Insert: Partial<Booking>; Update: Partial<Booking> };
-      booking_items: { Row: BookingItem; Insert: Partial<BookingItem>; Update: Partial<BookingItem> };
-      payments: { Row: Payment; Insert: Partial<Payment>; Update: Partial<Payment> };
-      gallery: { Row: GalleryItem; Insert: Partial<GalleryItem>; Update: Partial<GalleryItem> };
-      reviews: { Row: Review; Insert: Partial<Review>; Update: Partial<Review> };
-      offers: { Row: Offer; Insert: Partial<Offer>; Update: Partial<Offer> };
+      profiles: { Row: Profile; Insert: Insert<Profile>; Update: Update<Profile> };
+      categories: { Row: Category; Insert: Insert<Category>; Update: Update<Category> };
+      services: { Row: Service; Insert: Insert<Service>; Update: Update<Service> };
+      packages: { Row: Package; Insert: Insert<Package>; Update: Update<Package> };
+      staff: { Row: Staff; Insert: Insert<Staff>; Update: Update<Staff> };
+      bookings: { Row: Booking; Insert: Insert<Booking>; Update: Update<Booking> };
+      booking_items: { Row: BookingItem; Insert: Insert<BookingItem>; Update: Update<BookingItem> };
+      payments: { Row: Payment; Insert: Insert<Payment>; Update: Update<Payment> };
+      gallery: { Row: GalleryItem; Insert: Insert<GalleryItem>; Update: Update<GalleryItem> };
+      reviews: { Row: Review; Insert: Insert<Review>; Update: Update<Review> };
+      hours: { Row: Hours; Insert: Insert<Hours>; Update: Update<Hours> };
+      offers: { Row: Offer; Insert: Insert<Offer>; Update: Update<Offer> };
+      audit_log: { Row: AuditLog; Insert: Insert<AuditLog>; Update: Update<AuditLog> };
+      staff_schedule: { Row: StaffSchedule; Insert: Insert<StaffSchedule>; Update: Update<StaffSchedule> };
+      blocked_dates: { Row: BlockedDate; Insert: Insert<BlockedDate>; Update: Update<BlockedDate> };
+      loyalty_transactions: { Row: LoyaltyTransaction; Insert: Insert<LoyaltyTransaction>; Update: Update<LoyaltyTransaction> };
+      coupons: { Row: Coupon; Insert: Insert<Coupon>; Update: Update<Coupon> };
+      gift_cards: { Row: GiftCard; Insert: Insert<GiftCard>; Update: Update<GiftCard> };
+      attendance_records: { Row: AttendanceRecord; Insert: Insert<AttendanceRecord>; Update: Update<AttendanceRecord> };
+      leave_requests: { Row: LeaveRequest; Insert: Insert<LeaveRequest>; Update: Update<LeaveRequest> };
+      inventory_items: { Row: InventoryItem; Insert: Insert<InventoryItem>; Update: Update<InventoryItem> };
+      push_subscriptions: { Row: PushSubscription; Insert: Insert<PushSubscription>; Update: Update<PushSubscription> };
     };
   };
-}
+};

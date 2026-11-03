@@ -10,12 +10,15 @@ import { createClient } from '@/lib/supabase/server';
 import {
   Wallet, TrendingUp, Users, Sparkles, Calendar, Award,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 
 interface Props {
   staffProfileId: string;
   commissionRate?: number; // النسبة من قيمة الخدمة (default 20%)
 }
+
+type BookingLite = { total: number; status: string; customer_name?: string; customer_id?: string | null };
 
 export default async function MyEarningsCard({
   staffProfileId,
@@ -30,7 +33,7 @@ export default async function MyEarningsCard({
     .eq('profile_id', staffProfileId)
     .maybeSingle();
 
-  const staffId = (staffRecord as any)?.id;
+  const staffId = (staffRecord as { id: string } | null)?.id;
   if (!staffId) return null;
 
   const todayStr = new Date().toISOString().split('T')[0];
@@ -61,22 +64,26 @@ export default async function MyEarningsCard({
       .in('status', ['confirmed', 'in_progress', 'completed']),
   ]);
 
+  const today = (todayBookings as BookingLite[] | null) ?? [];
+  const week = (weekBookings as BookingLite[] | null) ?? [];
+  const month = (monthBookings as BookingLite[] | null) ?? [];
+
   // حسابات اليوم
-  const todayTotal = (todayBookings as any[])?.reduce((s, b) => s + Number(b.total), 0) || 0;
+  const todayTotal = today.reduce((s, b) => s + Number(b.total), 0);
   const todayCommission = todayTotal * commissionRate;
-  const todayCount = (todayBookings as any[])?.length || 0;
-  const todayCompleted = (todayBookings as any[])?.filter((b) => b.status === 'completed').length || 0;
+  const todayCount = today.length;
+  const todayCompleted = today.filter((b) => b.status === 'completed').length;
 
   // حسابات الأسبوع
-  const weekTotal = (weekBookings as any[])?.reduce((s, b) => s + Number(b.total), 0) || 0;
+  const weekTotal = week.reduce((s, b) => s + Number(b.total), 0);
   const weekCommission = weekTotal * commissionRate;
-  const weekCount = (weekBookings as any[])?.length || 0;
+  const weekCount = week.length;
 
   // حسابات الشهر
-  const monthTotal = (monthBookings as any[])?.reduce((s, b) => s + Number(b.total), 0) || 0;
+  const monthTotal = month.reduce((s, b) => s + Number(b.total), 0);
   const monthCommission = monthTotal * commissionRate;
-  const monthCount = (monthBookings as any[])?.length || 0;
-  const uniqueCustomers = new Set((monthBookings as any[])?.filter((b) => b.customer_id).map((b) => b.customer_id)).size;
+  const monthCount = month.length;
+  const uniqueCustomers = new Set(month.filter((b) => b.customer_id).map((b) => b.customer_id)).size;
 
   return (
     <div className="relative bg-gradient-to-br from-emerald-500 via-teal-600 to-emerald-700 rounded-3xl p-5 md:p-6 text-white shadow-xl overflow-hidden">
@@ -160,7 +167,7 @@ export default async function MyEarningsCard({
 function PeriodStat({
   icon: Icon, label, commission, total, count, extra,
 }: {
-  icon: any; label: string;
+  icon: LucideIcon; label: string;
   commission: number; total: number; count: number;
   extra?: string;
 }) {
