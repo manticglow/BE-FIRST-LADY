@@ -73,7 +73,7 @@ export default function PWARegister() {
   // Prompt عادي (Android/Desktop)
   if (showPrompt && deferredPrompt) {
     return (
-      <div className="fixed bottom-4 left-4 right-4 md:left-auto md:w-96 z-[9999] animate-fade-in">
+      <div className="fixed bottom-24 md:bottom-4 left-4 right-4 md:left-auto md:w-96 z-[9999] animate-fade-in">
         <div className="bg-white rounded-2xl shadow-2xl border border-gold-light/40 p-4 flex items-center gap-3">
           <img src="/icons/icon-192.png" alt="BFL" className="w-12 h-12 rounded-xl" />
           <div className="flex-1 min-w-0">
@@ -95,7 +95,7 @@ export default function PWARegister() {
   // Prompt iOS (تعليمات يدوية)
   if (showIOSPrompt && isIOS) {
     return (
-      <div className="fixed bottom-4 left-4 right-4 md:left-auto md:w-96 z-[9999] animate-fade-in">
+      <div className="fixed bottom-24 md:bottom-4 left-4 right-4 md:left-auto md:w-96 z-[9999] animate-fade-in">
         <div className="bg-white rounded-2xl shadow-2xl border border-gold-light/40 p-4">
           <div className="flex items-start gap-3">
             <img src="/icons/icon-192.png" alt="BFL" className="w-12 h-12 rounded-xl" />

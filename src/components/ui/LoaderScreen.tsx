@@ -1,166 +1,87 @@
 /**
- * LoaderScreen — شاشة التحميل الفاخرة
+ * LoaderScreen — شاشة انتقال بين الصفحات
  * ═══════════════════════════════════════════════════════════
- * - تظهر مرة واحدة عند أول زيارة في الجلسة
- * - مدة ~4.5 ثانية بتأثيرات رسم إطار + شريط تقدّم
- * - تختفي بتدرّج ناعم
+ * - لا تظهر عند أوّل تحميل للموقع (محذوفة من البداية)
+ * - تظهر بين الصفحات عند التنقّل (navigation transition)
+ * - سريعة (0.6 ثانية) · ناعمة · فاخرة
  */
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 
 export default function LoaderScreen() {
-  const [show, setShow] = useState(true);
+  const pathname = usePathname();
+  const [show, setShow] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
+  // ─── أول mount: ما نظهر الـloader · فقط نرصد التنقّلات اللاحقة ───
   useEffect(() => {
-    // تحقق إذا شافت الشاشة قبل في نفس الجلسة
-    const seen = sessionStorage.getItem('bfl_loader_seen');
-    if (seen) {
-      setShow(false);
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      setShow(false);
-      try {
-        sessionStorage.setItem('bfl_loader_seen', '1');
-      } catch {}
-    }, 4500);
-
-    return () => clearTimeout(timer);
+    setMounted(true);
   }, []);
 
+  // ─── عند تغيّر الـpathname (بعد الـmount الأول) · نظهر الـloader قصيراً ───
+  useEffect(() => {
+    if (!mounted) return;
+    setShow(true);
+    const timer = setTimeout(() => setShow(false), 500);
+    return () => clearTimeout(timer);
+  }, [pathname, mounted]);
+
+  // ─── اعترضي ضغطات الروابط لإظهار الـloader فوراً قبل أن يتغيّر الـpathname ───
+  useEffect(() => {
+    if (!mounted) return;
+
+    function onClick(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      const link = target.closest('a');
+      if (!link) return;
+      // صفحة داخليّة فقط (نفس الدومين)
+      const href = link.getAttribute('href');
+      if (!href || href.startsWith('http') || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+      // لا تُظهري لو العميلة ضغطت ctrl/cmd (opens في tab جديد)
+      if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+      // لا تُظهري لو الـhref هو نفس الصفحة
+      if (href === pathname || href === window.location.pathname) return;
+      setShow(true);
+    }
+
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
+  }, [mounted, pathname]);
+
+  if (!show) return null;
+
   return (
-    <AnimatePresence>
-      {show && (
-        <motion.div
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.8, ease: 'easeInOut' }}
-          className="fixed inset-0 z-[9999] bg-cream-50 flex items-center justify-center overflow-hidden"
-        >
-          {/* زخارف خلفية */}
-          <div className="absolute inset-0 pointer-events-none opacity-20">
-            <div className="absolute top-16 left-16 w-40 h-40">
-              <Image src="/images/lotus-decoration.svg" alt="" width={160} height={160} />
-            </div>
-            <div className="absolute bottom-16 right-16 w-56 h-56">
-              <Image src="/images/lotus-decoration.svg" alt="" width={224} height={224} />
-            </div>
-          </div>
+    <div
+      className="fixed inset-0 z-[9999] bg-cream-50/95 backdrop-blur-md flex items-center justify-center animate-fade-in"
+      aria-hidden="true"
+    >
+      {/* زهرة اللوتس تنبض بلطف */}
+      <div className="relative">
+        {/* هالة ذهبيّة متحرّكة */}
+        <div className="absolute inset-0 -m-6 rounded-full bg-gradient-to-br from-gold-light/30 to-amber-200/20 blur-xl animate-pulse" />
 
-          {/* الإطار الفاخر */}
-          <motion.div
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
-            className="relative"
-          >
-            {/* زاوية علوية يسار */}
-            <motion.div
-              initial={{ width: 0, height: 0 }}
-              animate={{ width: 60, height: 60 }}
-              transition={{ duration: 1.2, delay: 0.3, ease: 'easeOut' }}
-              className="absolute -top-6 -left-6 border-t-2 border-l-2 border-gold"
-            />
-            {/* زاوية علوية يمين */}
-            <motion.div
-              initial={{ width: 0, height: 0 }}
-              animate={{ width: 60, height: 60 }}
-              transition={{ duration: 1.2, delay: 0.3, ease: 'easeOut' }}
-              className="absolute -top-6 -right-6 border-t-2 border-r-2 border-gold"
-            />
-            {/* زاوية سفلية يسار */}
-            <motion.div
-              initial={{ width: 0, height: 0 }}
-              animate={{ width: 60, height: 60 }}
-              transition={{ duration: 1.2, delay: 0.5, ease: 'easeOut' }}
-              className="absolute -bottom-6 -left-6 border-b-2 border-l-2 border-gold"
-            />
-            {/* زاوية سفلية يمين */}
-            <motion.div
-              initial={{ width: 0, height: 0 }}
-              animate={{ width: 60, height: 60 }}
-              transition={{ duration: 1.2, delay: 0.5, ease: 'easeOut' }}
-              className="absolute -bottom-6 -right-6 border-b-2 border-r-2 border-gold"
-            />
+        {/* اللوقو · pulse ناعم */}
+        <div className="relative animate-pulse-soft">
+          <Image
+            src="/images/logo.svg"
+            alt=""
+            width={72}
+            height={72}
+            priority
+            className="drop-shadow-lg"
+          />
+        </div>
 
-            {/* المحتوى الداخلي */}
-            <div className="px-10 py-8 text-center">
-              {/* اللوقو */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1.0, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <Image
-                  src="/images/logo.svg"
-                  alt="Be First Lady"
-                  width={140}
-                  height={140}
-                  priority
-                  className="mx-auto drop-shadow-lg"
-                />
-              </motion.div>
-
-              {/* SPA & SALON */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1.4 }}
-                className="font-en-label text-[10px] tracking-[0.4em] text-gold mt-6"
-              >
-                SPA & SALON
-              </motion.div>
-
-              {/* الاسم */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 1.7 }}
-                className="font-en-display italic text-3xl text-gold-deep mt-2"
-              >
-                Be First Lady
-              </motion.div>
-
-              {/* فاصل متحرّك */}
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 0.8, delay: 2.0 }}
-                className="divider-gold w-20 mx-auto my-4 origin-center"
-              />
-
-              {/* الاسم العربي */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 2.4 }}
-                className="font-ar-display text-xl text-gold-deep"
-              >
-                نعتني بكِ لتُزهري
-              </motion.div>
-
-              {/* شريط التقدّم */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 2.8 }}
-                className="mt-6 w-32 h-0.5 bg-cream-200 mx-auto overflow-hidden rounded-full"
-              >
-                <motion.div
-                  initial={{ x: '-100%' }}
-                  animate={{ x: '0%' }}
-                  transition={{ duration: 1.3, delay: 2.9, ease: 'easeInOut' }}
-                  className="h-full bg-gradient-to-l from-gold-deep via-gold to-gold-light"
-                />
-              </motion.div>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        {/* نقاط loading تحت اللوقو */}
+        <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex gap-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-gold-deep animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-gold-deep animate-pulse [animation-delay:150ms]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-gold-deep animate-pulse [animation-delay:300ms]" />
+        </div>
+      </div>
+    </div>
   );
 }

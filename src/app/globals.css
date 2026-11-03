@@ -638,3 +638,17 @@ textarea:-webkit-autofill {
 
 /* Petals · نسخة always-on لـheroes والصفحات الفاخرة */
 .petals-always .petal { animation-play-state: running !important; }
+
+/* ─── Pulse soft (for loader) ─── */
+@keyframes pulse-soft {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(0.95); opacity: 0.8; }
+}
+.animate-pulse-soft { animation: pulse-soft 1.2s ease-in-out infinite; }
+
+/* ─── Fade in (quick) ─── */
+.animate-fade-in { animation: fade-in-quick 0.2s ease-out; }
+@keyframes fade-in-quick {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
