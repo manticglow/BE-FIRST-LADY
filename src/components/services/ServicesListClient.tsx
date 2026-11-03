@@ -74,14 +74,28 @@ export default function ServicesListClient({ categories, services, isLoggedIn }:
   const [activeCat, setActiveCat] = useState<string | null>(null);
   const [search, setSearch] = useState('');
 
-  // اقرئي الـhash من الـURL (مثل #massage) لتفعيل الفئة
+  // اقرئي الـhash أو الـquery param من الـURL لتفعيل الفئة أو البحث
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const hash = window.location.hash.replace('#', '');
-    if (hash && categories.some((c) => c.slug === hash)) {
-      setActiveCat(hash);
-      // scroll لأعلى
+    const params = new URLSearchParams(window.location.search);
+    const catParam = params.get('category');
+    const filterParam = params.get('filter');
+    const queryParam = params.get('q');
+
+    // الأولوية: query params > hash
+    const slug = catParam || hash;
+    if (slug && categories.some((c) => c.slug === slug)) {
+      setActiveCat(slug);
       setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
+      return;
+    }
+
+    // دعم filter=bridal كبحث نصّي
+    if (filterParam) {
+      setSearch(filterParam === 'bridal' ? 'عرايس' : filterParam);
+    } else if (queryParam) {
+      setSearch(queryParam);
     }
   }, [categories]);
 

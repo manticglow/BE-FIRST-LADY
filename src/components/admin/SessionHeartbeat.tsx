@@ -51,7 +51,7 @@ export default function SessionHeartbeat() {
       if (!res.ok && data.reason === 'idle_timeout') {
         // انتهت الجلسة · redirect
         alert(data.message || 'تم تسجيل خروجكِ تلقائياً');
-        router.push('/account/login');
+        router.push('/login?next=/admin');
         return;
       }
 

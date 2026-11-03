@@ -36,15 +36,15 @@ const DEFAULT_BANNERS: Banner[] = [
   {
     title: 'خلّي التوتر يذوب',
     subtitle: 'مساج استرخاء مميّز بأيدي خبيرات',
-    href: '/booking',
+    href: '/services#massage',
     image: '/images/banners/relaxation.jpg',
     fallback: '/images/gallery/evening-glam.jpg',
     gradient: 'from-amber-900/80 via-amber-800/60 to-rose-900/40',
   },
   {
     title: 'باقة العناية المثالية',
-    subtitle: 'مساج + مانيكير وباديكير بـ 380 ر.س',
-    href: '/booking?package=combo',
+    subtitle: 'مساج + مانيكير وباديكير بسعر مميّز',
+    href: '/packages',
     image: '/images/banners/combo-package.jpg',
     fallback: '/images/gallery/burgundy-mani.jpg',
     gradient: 'from-rose-900/80 via-amber-800/60 to-amber-900/40',
