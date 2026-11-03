@@ -152,10 +152,10 @@ export default function Header() {
             {/* زر الحجز · البارز */}
             <Link
               href="/booking"
-              className="inline-flex items-center gap-1.5 bg-gradient-to-br from-gold-deep via-ink to-gold-deep text-cream-50 font-bold text-sm px-4 md:px-5 py-2.5 rounded-xl shadow-md shadow-gold-deep/20 hover:scale-[1.03] hover:shadow-lg transition-all"
+              className="btn-shimmer inline-flex items-center gap-1.5 bg-gradient-to-br from-gold-deep via-ink to-gold-deep text-cream-50 font-bold text-sm px-4 md:px-5 py-2.5 rounded-xl shadow-md shadow-gold-deep/20 hover:scale-[1.03] hover:shadow-lg transition-all"
             >
-              <Calendar className="w-4 h-4" />
-              <span>احجزي</span>
+              <Calendar className="w-4 h-4 relative z-10" />
+              <span className="relative z-10">احجزي</span>
             </Link>
 
             {/* زر القائمة · جوال */}

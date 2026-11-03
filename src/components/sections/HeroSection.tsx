@@ -10,10 +10,20 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowDown, Calendar, Sparkles, MapPin, Clock, Phone } from 'lucide-react';
+import LightRays from '@/components/fx/LightRays';
+import Petals from '@/components/ui/Petals';
 
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden mesh-cream">
+
+      {/* ═══ أشعّة ذهبيّة ناعمة ═══ */}
+      <LightRays />
+
+      {/* ═══ بتلات متساقطة في الخلفيّة ═══ */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden petals-always" aria-hidden="true">
+        <Petals count={6} />
+      </div>
 
       {/* ═══ زخارف خلفيّة ═══ */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
@@ -47,7 +57,7 @@ export default function HeroSection() {
               <span className="oversize-ar block text-[clamp(3rem,10vw,8rem)] text-ink -mt-3">
                 بـــكِ
               </span>
-              <span className="oversize-en block text-[clamp(2rem,6vw,5rem)] text-gold-light mt-2 italic">
+              <span className="oversize-en block text-[clamp(2rem,6vw,5rem)] mt-2 italic gradient-text">
                 for you to bloom
               </span>
             </h1>
@@ -65,10 +75,10 @@ export default function HeroSection() {
             <div className="animate-in animate-in-delay-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-10">
               <Link
                 href="/booking"
-                className="group inline-flex items-center justify-center gap-2 bg-gradient-to-br from-gold-deep via-ink to-gold-deep text-cream-50 font-ar-display font-bold text-lg px-10 py-4 rounded-full shadow-xl shadow-gold-deep/25 hover:scale-[1.03] transition-transform gold-sweep"
+                className="group btn-shimmer btn-halo inline-flex items-center justify-center gap-2 bg-gradient-to-br from-gold-deep via-ink to-gold-deep text-cream-50 font-ar-display font-bold text-lg px-10 py-4 rounded-full shadow-xl shadow-gold-deep/25 hover:scale-[1.03] transition-transform"
               >
-                <Calendar className="w-5 h-5 group-hover:rotate-6 transition-transform" />
-                احجزي موعدكِ
+                <Calendar className="w-5 h-5 group-hover:rotate-6 transition-transform relative z-10" />
+                <span className="relative z-10">احجزي موعدكِ</span>
               </Link>
               <Link
                 href="#services"
@@ -131,7 +141,7 @@ function HeroVisualCard() {
           alt="Be First Lady experience"
           fill
           priority
-          className="object-cover"
+          className="object-cover ken-burns"
           sizes="(max-width: 1024px) 100vw, 40vw"
         />
         {/* تدرّج سفلي */}

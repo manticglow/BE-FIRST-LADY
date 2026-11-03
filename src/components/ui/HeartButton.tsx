@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { Heart } from 'lucide-react';
 import { toast } from 'sonner';
 import { useFavorites } from '@/hooks/useFavorites';
+import HeartBurst from '@/components/fx/HeartBurst';
 
 interface Props {
   serviceId?: string;
@@ -27,6 +28,7 @@ export default function HeartButton({
   const fav = useFavorites();
   const router = useRouter();
   const [pulsing, setPulsing] = useState(false);
+  const [burst, setBurst] = useState(false);
 
   if (serviceId && staffId) {
     console.warn('HeartButton: pass either serviceId OR staffId, not both');
@@ -64,6 +66,8 @@ export default function HeartButton({
 
     if (added) {
       toast.success('أُضيفت لمفضّلتكِ 💛');
+      setBurst(true);
+      setTimeout(() => setBurst(false), 50);  // reset so next add retriggers
     } else {
       toast('تم الإزالة من المفضّلات');
     }
@@ -76,19 +80,22 @@ export default function HeartButton({
     : 'bg-transparent hover:bg-white/80';
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      aria-label={isFav ? 'إزالة من المفضّلات' : 'أضيفي للمفضّلات'}
-      className={`${sizeClasses} ${base} rounded-full flex items-center justify-center transition-all active:scale-90 ${
-        pulsing ? 'scale-125' : ''
-      } ${className}`}
-    >
-      <Heart
-        className={`${iconSize} transition-colors ${
-          isFav ? 'fill-rose-500 text-rose-500' : 'text-ink-soft hover:text-rose-500'
-        }`}
-      />
-    </button>
+    <div className="relative inline-block">
+      <button
+        type="button"
+        onClick={handleClick}
+        aria-label={isFav ? 'إزالة من المفضّلات' : 'أضيفي للمفضّلات'}
+        className={`${sizeClasses} ${base} rounded-full flex items-center justify-center transition-all active:scale-90 ${
+          pulsing ? 'scale-125' : ''
+        } ${className}`}
+      >
+        <Heart
+          className={`${iconSize} transition-colors ${pulsing ? 'heart-pulse' : ''} ${
+            isFav ? 'fill-rose-500 text-rose-500' : 'text-ink-soft hover:text-rose-500'
+          }`}
+        />
+      </button>
+      {burst && <HeartBurst trigger={true} />}
+    </div>
   );
 }

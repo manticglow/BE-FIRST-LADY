@@ -13,16 +13,22 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CheckCircle2, MessageCircle, Copy, X, UserPlus } from 'lucide-react';
 import { waLink } from '@/lib/utils';
+import Confetti from '@/components/fx/Confetti';
+import AnimatedCheck from '@/components/fx/AnimatedCheck';
 
 export default function BookingSuccessModal() {
   const router = useRouter();
   const [bookingNumber, setBookingNumber] = useState<string | null>(null);
+  const [confettiOn, setConfettiOn] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     const booked = params.get('booked');
-    if (booked) setBookingNumber(booked);
+    if (booked) {
+      setBookingNumber(booked);
+      setConfettiOn(true);
+    }
   }, []);
 
   if (!bookingNumber) return null;
@@ -47,6 +53,8 @@ export default function BookingSuccessModal() {
   }
 
   return (
+    <>
+      {confettiOn && <Confetti onDone={() => setConfettiOn(false)} />}
     <div
       className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm animate-in fade-in"
       onClick={close}
@@ -66,8 +74,8 @@ export default function BookingSuccessModal() {
 
         {/* الهيدر */}
         <div className="pt-10 pb-6 px-6 text-center bg-gradient-to-b from-gold-light/10 to-transparent">
-          <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-success to-emerald-600 flex items-center justify-center shadow-lg shadow-success/30 mb-4 animate-in zoom-in">
-            <CheckCircle2 className="w-10 h-10 text-white" />
+          <div className="w-20 h-20 mx-auto flex items-center justify-center mb-4 animate-in zoom-in">
+            <AnimatedCheck size={80} color="#059669" bgColor="#d1fae5" />
           </div>
           <h2 className="font-ar-display text-2xl font-bold text-gold-deep mb-1">
             تم إرسال طلب الحجز 🌸
@@ -129,5 +137,6 @@ export default function BookingSuccessModal() {
         </div>
       </div>
     </div>
+    </>
   );
 }
