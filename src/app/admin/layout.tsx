@@ -14,7 +14,7 @@ const SIDEBAR: SidebarItem[] = [
   { href: '/admin/bookings',    label: 'الحجوزات',   iconKey: 'CalendarCheck',   roles: ['owner', 'manager', 'staff'], mobileNav: true },
   { href: '/admin/reminders',   label: 'التذكيرات',  iconKey: 'BellRing',        roles: ['owner', 'manager'],          mobileNav: true },
   { href: '/admin/attendance',  label: 'الحضور',     iconKey: 'Clock',           roles: ['owner', 'manager'] },
-  { href: '/admin/leaves',      label: 'الإجازات',   iconKey: 'Umbrella',        roles: ['owner', 'manager'] },
+  { href: '/admin/requests',    label: 'طلبات الموظّفات', iconKey: 'Inbox',      roles: ['owner', 'manager'], mobileNav: true },
   { href: '/admin/customers',   label: 'العميلات',   iconKey: 'Users',           roles: ['owner', 'manager'] },
   { href: '/admin/staff',       label: 'الموظفات',   iconKey: 'UserCircle',      roles: ['owner', 'manager'] },
   { href: '/admin/services',    label: 'الخدمات',    iconKey: 'Scissors',        roles: ['owner', 'manager'], mobileNav: true },

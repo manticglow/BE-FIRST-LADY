@@ -38,7 +38,7 @@ export interface AttendanceState {
   weekDays: number;
 }
 
-export type TabKey = 'home' | 'bookings' | 'profile';
+export type TabKey = 'home' | 'bookings' | 'schedule' | 'requests' | 'profile';
 
 export const STATUS_STYLES: Record<string, { label: string; dot: string; bg: string }> = {
   pending:     { label: 'بانتظار',   dot: 'bg-amber-500',  bg: 'bg-amber-50 text-amber-700 border-amber-200' },

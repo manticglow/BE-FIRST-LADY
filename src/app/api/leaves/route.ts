@@ -6,6 +6,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { notifyManagersNewRequest } from '@/lib/push-helpers';
 
 const leaveSchema = z.object({
   leave_type: z.enum(['annual', 'sick', 'emergency', 'unpaid', 'other']),
@@ -25,7 +26,8 @@ export async function GET() {
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
-  return NextResponse.json({ leaves: data || [] });
+  // ندعم الـشكلين: items (الجديد) + leaves (القديم) للتوافق
+  return NextResponse.json({ leaves: data || [], items: data || [] });
 }
 
 export async function POST(req: NextRequest) {
@@ -59,6 +61,12 @@ export async function POST(req: NextRequest) {
   }).select().single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+
+  // إشعار للمدراء
+  const { data: profileRow } = await supabase.from('profiles').select('full_name').eq('id', user.id).single();
+  const staffName = (profileRow as { full_name: string | null } | null)?.full_name || 'موظّفة';
+  notifyManagersNewRequest('leave', staffName).catch(() => {});
+
   return NextResponse.json({ leave: data });
 }
 

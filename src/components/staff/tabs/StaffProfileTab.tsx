@@ -7,11 +7,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import {
-  User, Clock, Umbrella, Calendar, Settings, LogOut, ChevronLeft,
+  User, Clock, LogOut, ChevronLeft,
   Phone, Shield, HelpCircle, Award,
 } from 'lucide-react';
 import type { StaffUser, AttendanceState } from '../types';
 import { createClient } from '@/lib/supabase/client';
+import MyRatingsCard from '../MyRatingsCard';
 
 export default function StaffProfileTab({
   user, attendance,
@@ -100,6 +101,9 @@ export default function StaffProfileTab({
         </div>
       </div>
 
+      {/* ─── تقييمات العميلات لي ─── */}
+      <MyRatingsCard />
+
       {/* ─── روابط سريعة ─── */}
       <div className="space-y-2">
         <ProfileLink
@@ -108,13 +112,6 @@ export default function StaffProfileTab({
           label="سجلّ الحضور"
           sub="آخر 14 يوم · ساعات العمل · التفاصيل"
           color="bg-emerald-50 text-emerald-700"
-        />
-        <ProfileLink
-          href="/account/leaves"
-          icon={Umbrella}
-          label="طلب إجازة"
-          sub="سنويّة · مرضيّة · طارئة"
-          color="bg-amber-50 text-amber-700"
         />
         <ProfileLink
           href="/account/profile"

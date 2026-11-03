@@ -4,6 +4,7 @@
  */
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { notifyRequestReview } from '@/lib/push-helpers';
 
 async function requireAdmin() {
   const supabase = await createClient();
@@ -68,6 +69,16 @@ export async function PATCH(req: NextRequest) {
         await admin.from('blocked_dates').insert(blocks);
       }
     }
+  }
+
+  // إشعار لحظي للموظّفة
+  if (data) {
+    notifyRequestReview(
+      data.user_id,
+      'leave',
+      status as 'approved' | 'rejected',
+      `${data.start_date} ← ${data.end_date}`,
+    ).catch(() => {});
   }
 
   return NextResponse.json({ leave: data });

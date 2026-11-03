@@ -13,7 +13,8 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, CalendarCheck, Users, Scissors, Image as ImageIcon,
   BarChart3, Settings, LogOut, Package, UserCircle, Tag, Star, Shield,
-  Clock, Umbrella, Gift, Boxes, Banknote, Bell, BellRing, Menu, X, ChevronLeft,
+  Clock, Umbrella, Gift, Boxes, Banknote, Bell, BellRing, Inbox,
+  Menu, X, ChevronLeft,
 } from 'lucide-react';
 import NotificationBell from '@/components/admin/NotificationBell';
 import GlobalSearch from '@/components/admin/GlobalSearch';
@@ -23,7 +24,7 @@ type Role = 'owner' | 'manager' | 'staff';
 const ICON_MAP = {
   LayoutDashboard, CalendarCheck, Users, Scissors, ImageIcon,
   BarChart3, Settings, Package, UserCircle, Tag, Star, Shield,
-  Clock, Umbrella, Gift, Boxes, Banknote, Bell, BellRing,
+  Clock, Umbrella, Gift, Boxes, Banknote, Bell, BellRing, Inbox,
 };
 
 export interface SidebarItem {
