@@ -149,23 +149,25 @@ export default function Header() {
             <Link href="/" className="group flex flex-col items-center gap-1 relative">
               <div className="relative">
                 {/* Halo خلفي */}
-                <div className="absolute inset-0 -m-2 rounded-full bg-gradient-to-br from-gold-light/0 to-gold-light/0 group-hover:from-gold-light/20 group-hover:to-amber-300/15 blur-md transition-all duration-500" />
+                <div className="absolute inset-0 -m-3 rounded-full bg-gradient-to-br from-gold-light/0 to-gold-light/0 group-hover:from-gold-light/25 group-hover:to-amber-300/20 blur-lg transition-all duration-500" />
                 <Image
                   src="/images/logo.svg"
                   alt="Be First Lady"
-                  width={scrolled ? 42 : 52}
-                  height={scrolled ? 42 : 52}
+                  width={scrolled ? 64 : 88}
+                  height={scrolled ? 64 : 88}
                   priority
                   className="relative transition-all duration-300 group-hover:rotate-6"
                 />
               </div>
               <div className="text-center -mt-1">
                 <div className={`font-en-display italic text-gold-deep leading-none transition-all ${
-                  scrolled ? 'text-xl' : 'text-2xl'
+                  scrolled ? 'text-2xl' : 'text-4xl'
                 }`}>
                   Be First Lady
                 </div>
-                <div className="font-en-label text-[9px] tracking-[0.45em] text-gold-light mt-2">
+                <div className={`font-en-label tracking-[0.5em] text-gold-light mt-2.5 transition-all ${
+                  scrolled ? 'text-[9px]' : 'text-[10px]'
+                }`}>
                   SPA & SALON · MADINAH
                 </div>
               </div>
@@ -251,23 +253,23 @@ export default function Header() {
 
         {/* ───── Mobile / Tablet · شعار + hamburger ───── */}
         <div className="lg:hidden container-brand flex items-center justify-between gap-3 py-3">
-          <Link href="/" className="flex items-center gap-2.5 group shrink-0">
+          <Link href="/" className="flex items-center gap-3 group shrink-0">
             <div className="relative">
-              <div className="absolute inset-0 -m-1 rounded-full bg-gold-light/0 group-hover:bg-gold-light/20 blur-md transition-all" />
+              <div className="absolute inset-0 -m-1.5 rounded-full bg-gold-light/0 group-hover:bg-gold-light/20 blur-md transition-all" />
               <Image
                 src="/images/logo.svg"
                 alt="Be First Lady"
-                width={38}
-                height={38}
+                width={54}
+                height={54}
                 priority
                 className="relative transition-transform group-hover:rotate-6"
               />
             </div>
             <div>
-              <div className="font-en-display italic text-gold-deep text-base leading-none">
+              <div className="font-en-display italic text-gold-deep text-xl leading-none">
                 Be First Lady
               </div>
-              <div className="font-en-label text-[8px] tracking-[0.3em] text-gold-light mt-1">
+              <div className="font-en-label text-[9px] tracking-[0.35em] text-gold-light mt-1.5">
                 SPA · MADINAH
               </div>
             </div>
@@ -327,20 +329,20 @@ export default function Header() {
 
             <div className="relative flex items-start justify-between">
               <div className="flex flex-col items-center text-center mx-auto">
-                <div className="relative mb-2">
-                  <div className="absolute inset-0 -m-1 rounded-full bg-gold-light/20 blur-md" />
+                <div className="relative mb-3">
+                  <div className="absolute inset-0 -m-2 rounded-full bg-gold-light/20 blur-lg" />
                   <Image
                     src="/images/logo.svg"
                     alt=""
-                    width={48}
-                    height={48}
+                    width={68}
+                    height={68}
                     className="relative brightness-0 invert opacity-95"
                   />
                 </div>
-                <div className="font-en-display italic text-cream-50 text-xl leading-none">
+                <div className="font-en-display italic text-cream-50 text-2xl leading-none">
                   Be First Lady
                 </div>
-                <div className="font-en-label text-[8px] tracking-[0.45em] text-gold-light mt-2">
+                <div className="font-en-label text-[9px] tracking-[0.5em] text-gold-light mt-2.5">
                   SPA & SALON · MADINAH
                 </div>
               </div>
