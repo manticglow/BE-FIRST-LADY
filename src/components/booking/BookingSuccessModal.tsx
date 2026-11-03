@@ -15,6 +15,7 @@ import { CheckCircle2, MessageCircle, Copy, X, UserPlus } from 'lucide-react';
 import { waLink } from '@/lib/utils';
 import Confetti from '@/components/fx/Confetti';
 import AnimatedCheck from '@/components/fx/AnimatedCheck';
+import ShareButton from '@/components/ui/ShareButton';
 
 export default function BookingSuccessModal() {
   const router = useRouter();
@@ -118,11 +119,24 @@ export default function BookingSuccessModal() {
             اضغطي الزر لتأكيد الحجز معنا بشكل أسرع · هذا يفتح واتسابك
           </p>
 
+          {/* شارة مشاركة Be First Lady مع صديقاتها */}
+          <div className="mt-4">
+            <ShareButton
+              variant="ghost"
+              size="md"
+              label="شاركي Be First Lady مع صديقاتك"
+              title="Be First Lady · Spa & Salon"
+              text="جرّبت تجربة فاخرة في Be First Lady · أنصحك بشدّة ✨"
+              url="https://befirstlady.com"
+              className="w-full justify-center !py-3"
+            />
+          </div>
+
           {/* زر إنشاء حساب */}
           <Link
             href="/signup"
             onClick={close}
-            className="mt-4 w-full bg-cream-50 border border-cream-200 text-ink-soft hover:text-gold-deep hover:border-gold-light py-3 rounded-2xl flex items-center justify-center gap-2 text-sm font-semibold transition-colors"
+            className="mt-2 w-full bg-cream-50 border border-cream-200 text-ink-soft hover:text-gold-deep hover:border-gold-light py-3 rounded-2xl flex items-center justify-center gap-2 text-sm font-semibold transition-colors"
           >
             <UserPlus className="w-4 h-4" />
             أنشئي حساباً لمتابعة حجوزاتكِ (اختياري)

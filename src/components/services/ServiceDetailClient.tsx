@@ -16,6 +16,7 @@ import { formatPrice, formatDuration } from '@/lib/utils';
 import { useCart } from '@/hooks/useCart';
 import Petals from '@/components/ui/Petals';
 import HeartButton from '@/components/ui/HeartButton';
+import ShareButton from '@/components/ui/ShareButton';
 import type { Service, Category } from '@/types/database';
 
 const CATEGORY_DESCRIPTIONS: Record<string, string> = {
@@ -129,9 +130,17 @@ export default function ServiceDetailClient({ service, reviews, avgRating, isLog
         {/* 🌸 بتلات */}
         <Petals count={6} />
 
-        {/* ❤️ زر المفضّلة · فوق يسار */}
-        <div className="absolute top-4 left-4 z-10">
+        {/* ❤️ المفضّلة + 📤 مشاركة · فوق يسار */}
+        <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
           <HeartButton serviceId={service.id} size="lg" variant="solid" />
+          <ShareButton
+            variant="icon"
+            size="lg"
+            title={service.name_ar}
+            text={`شوفي خدمة ${service.name_ar} في Be First Lady`}
+            url={typeof window !== 'undefined' ? window.location.href : `https://befirstlady.com/services/${service.id}`}
+            className="bg-white/90 backdrop-blur shadow-sm"
+          />
         </div>
       </div>
 

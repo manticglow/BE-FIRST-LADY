@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { waLink } from '@/lib/utils';
 import Petals from '@/components/ui/Petals';
+import HeaderSearchLazy from './HeaderSearchLazy';
 
 // ─── الروابط ─── (بدون إيموجيز · بس شارة "جديد" أنيقة للبكجات)
 const NAV_LEFT = [
@@ -209,6 +210,8 @@ export default function Header() {
 
             {/* ─── CTAs مركزيّة ─── */}
             <div className="flex items-center gap-2.5 shrink-0">
+              <HeaderSearchLazy />
+
               <Link
                 href="/account"
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-gold-deep border border-gold-light/40 hover:border-gold-deep hover:bg-gold-light/10 transition-all tracking-wider"
