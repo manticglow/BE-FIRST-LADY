@@ -14,42 +14,40 @@ import Image from 'next/image';
 export default function LoaderScreen() {
   const pathname = usePathname();
   const [show, setShow] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [ready, setReady] = useState(false);
 
-  // ─── أول mount: ما نظهر الـloader · فقط نرصد التنقّلات اللاحقة ───
+  // ─── انتظري 3 ثواني بعد mount حتى نسمح للـFirstLoadSplash تختفي أولاً ───
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => setReady(true), 3000);
+    return () => clearTimeout(timer);
   }, []);
 
-  // ─── عند تغيّر الـpathname (بعد الـmount الأول) · نظهر الـloader قصيراً ───
+  // ─── عند تغيّر الـpathname (بعد ما نكون ready) · نظهر الـloader قصيراً ───
   useEffect(() => {
-    if (!mounted) return;
+    if (!ready) return;
     setShow(true);
     const timer = setTimeout(() => setShow(false), 500);
     return () => clearTimeout(timer);
-  }, [pathname, mounted]);
+  }, [pathname, ready]);
 
   // ─── اعترضي ضغطات الروابط لإظهار الـloader فوراً قبل أن يتغيّر الـpathname ───
   useEffect(() => {
-    if (!mounted) return;
+    if (!ready) return;
 
     function onClick(e: MouseEvent) {
       const target = e.target as HTMLElement;
       const link = target.closest('a');
       if (!link) return;
-      // صفحة داخليّة فقط (نفس الدومين)
       const href = link.getAttribute('href');
       if (!href || href.startsWith('http') || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
-      // لا تُظهري لو العميلة ضغطت ctrl/cmd (opens في tab جديد)
       if (e.metaKey || e.ctrlKey || e.shiftKey) return;
-      // لا تُظهري لو الـhref هو نفس الصفحة
       if (href === pathname || href === window.location.pathname) return;
       setShow(true);
     }
 
     document.addEventListener('click', onClick);
     return () => document.removeEventListener('click', onClick);
-  }, [mounted, pathname]);
+  }, [ready, pathname]);
 
   if (!show) return null;
 

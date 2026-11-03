@@ -41,7 +41,7 @@ export default function FirstLoadSplash() {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6, ease: 'easeInOut' }}
-          className="fixed inset-0 z-[9999] bg-cream-50 flex items-center justify-center overflow-hidden"
+          className="fixed inset-0 z-[10000] bg-cream-50 flex items-center justify-center overflow-hidden"
           aria-hidden="true"
         >
           {/* ═══ زخارف خلفيّة ═══ */}
