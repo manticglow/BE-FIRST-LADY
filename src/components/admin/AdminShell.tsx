@@ -14,7 +14,7 @@ import {
   LayoutDashboard, CalendarCheck, Users, Scissors, Image as ImageIcon,
   BarChart3, Settings, LogOut, Package, UserCircle, Tag, Star, Shield,
   Clock, Umbrella, Gift, Boxes, Banknote, Bell, BellRing, Inbox,
-  Menu, X, ChevronLeft,
+  MessageSquare, Cloud, Menu, X, ChevronLeft,
 } from 'lucide-react';
 import NotificationBell from '@/components/admin/NotificationBell';
 import GlobalSearch from '@/components/admin/GlobalSearch';
@@ -25,6 +25,7 @@ const ICON_MAP = {
   LayoutDashboard, CalendarCheck, Users, Scissors, ImageIcon,
   BarChart3, Settings, Package, UserCircle, Tag, Star, Shield,
   Clock, Umbrella, Gift, Boxes, Banknote, Bell, BellRing, Inbox,
+  MessageSquare, Cloud,
 };
 
 export interface SidebarItem {

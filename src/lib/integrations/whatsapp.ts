@@ -166,15 +166,12 @@ export async function sendOtpCode(phone: string, code: string): Promise<SendResu
 export async function sendBookingConfirmation(
   phone: string,
   customerName: string,
-  date: string,       // "2026-10-20"
-  time: string,       // "3:00 م"
+  date: string,
+  time: string,
   bookingNumber: string
 ): Promise<SendResult> {
   return sendWhatsAppTemplate(phone, 'booking_confirmation', 'ar', [
-    customerName,
-    date,
-    time,
-    bookingNumber,
+    customerName, date, time, bookingNumber,
   ]);
 }
 
@@ -186,10 +183,41 @@ export async function sendBookingReminder(
   time: string
 ): Promise<SendResult> {
   return sendWhatsAppTemplate(phone, 'booking_reminder_24h', 'ar', [
-    customerName,
-    date,
-    time,
+    customerName, date, time,
   ]);
+}
+
+/**
+ * ✨ الإصدار المحسّن · يستخدم قالب DB قابل للتحرير
+ * - يحمل القالب من message_templates حسب الـcode
+ * - يستبدل المتغيّرات بالقيم الحقيقيّة
+ * - يرسل كـfree-text (يحتاج 24h window) · أو يرجّع للـMeta template لو فشل
+ */
+export async function sendTemplatedMessage(
+  phone: string,
+  templateCode: string,
+  variables: Record<string, string | number | null | undefined>,
+  fallbackMetaTemplate?: { name: string; language: 'ar' | 'en'; params: string[] },
+): Promise<SendResult> {
+  const { renderTemplateByCode } = await import('@/lib/templates');
+  const body = await renderTemplateByCode(templateCode, variables, '');
+
+  if (body) {
+    const result = await sendWhatsAppText(phone, body);
+    if (result.ok) return result;
+  }
+
+  // fallback للـMeta template (لو خارج نافذة الـ24 ساعة)
+  if (fallbackMetaTemplate) {
+    return sendWhatsAppTemplate(
+      phone,
+      fallbackMetaTemplate.name,
+      fallbackMetaTemplate.language,
+      fallbackMetaTemplate.params,
+    );
+  }
+
+  return { ok: false, error: 'لا يوجد طريقة إرسال متاحة' };
 }
 
 // للتوافق مع الكود القديم

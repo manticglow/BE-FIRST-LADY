@@ -13,7 +13,7 @@
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { sendBookingConfirmation } from '@/lib/integrations/whatsapp';
+import { sendBookingConfirmation, sendTemplatedMessage } from '@/lib/integrations/whatsapp';
 import { logger } from '@/lib/logger';
 
 const log = logger.scope('api/bookings');
@@ -340,26 +340,44 @@ export async function POST(request: NextRequest) {
     }
 
     // ═══ إرسال تأكيد واتساب تلقائياً (ما يوقف العملية لو فشل) ═══
-    // نرسل بالخلفية حتى ما نأخّر الرد للعميلة
+    // يستخدم قالب DB قابل للتحرير من الإدارة · مع fallback لـMeta template
     const notifyPhone = booking.is_gift ? parsed.data.customer_phone : booking.customer_phone;
     const notifyName = booking.customer_name;
 
-    // تنسيق التاريخ والوقت بالعربي
     const dateFormatted = new Date(booking.booking_date).toLocaleDateString('ar-SA', {
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
     });
-    const timeFormatted = booking.booking_time.slice(0, 5); // "15:00"
+    const timeFormatted = booking.booking_time.slice(0, 5);
+
+    // بناء قائمة الخدمات كـstring
+    const servicesStr = (itemsData || [])
+      .map((it: { service_name?: string }) => it.service_name || '')
+      .filter(Boolean)
+      .join(' · ') || 'جلسة';
 
     // fire-and-forget — ما ننتظر النتيجة
-    sendBookingConfirmation(
+    sendTemplatedMessage(
       notifyPhone,
-      notifyName,
-      dateFormatted,
-      timeFormatted,
-      booking.booking_number
+      'booking_confirmation',
+      {
+        customer_name: notifyName,
+        booking_date: dateFormatted,
+        booking_time: timeFormatted,
+        services: servicesStr,
+        total: Number(booking.total).toFixed(2),
+        booking_number: booking.booking_number,
+      },
+      // fallback: Meta pre-approved template
+      {
+        name: 'booking_confirmation',
+        language: 'ar',
+        params: [notifyName, dateFormatted, timeFormatted, booking.booking_number],
+      },
     ).then((result) => {
       if (!result.ok) {
         log.warn('WhatsApp confirm failed', { error: result.error });
+        // fallback نهائي للـMeta template المباشر
+        sendBookingConfirmation(notifyPhone, notifyName, dateFormatted, timeFormatted, booking.booking_number).catch(() => {});
       }
     }).catch((err) => {
       log.warn('WhatsApp confirm exception', { err });
