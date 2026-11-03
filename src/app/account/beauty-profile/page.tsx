@@ -20,11 +20,26 @@ export default async function BeautyProfilePage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login?next=/account/beauty-profile');
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('beauty_profile')
-    .eq('id', user.id)
-    .single();
+  // جلب الملف · resilient لو العمود لم يُضَف بعد
+  let beautyProfile: any = {};
+  let migrationPending = false;
+  try {
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('beauty_profile')
+      .eq('id', user.id)
+      .single();
+    if (error) {
+      const msg = (error.message || '').toLowerCase();
+      if (msg.includes('beauty_profile') || msg.includes('schema cache')) {
+        migrationPending = true;
+      }
+    } else {
+      beautyProfile = (profile as any)?.beauty_profile || {};
+    }
+  } catch {
+    migrationPending = true;
+  }
 
   return (
     <>
@@ -53,7 +68,19 @@ export default async function BeautyProfilePage() {
             </p>
           </div>
 
-          <BeautyProfileForm initial={(profile as any)?.beauty_profile || {}} />
+          {migrationPending && (
+            <div className="mb-5 bg-amber-50 border border-amber-200 rounded-2xl p-4">
+              <div className="font-bold text-amber-900 text-sm mb-1 flex items-center gap-2">
+                ⚠️ ملف الجمال في طور التفعيل
+              </div>
+              <p className="text-xs text-amber-800 leading-relaxed">
+                قاعدة البيانات تحتاج تحديث بسيط من المدير · حتى ذلك الحين تقدرين تملين النموذج ·
+                وراح نحفظ البيانات بمجرّد اكتمال التحديث.
+              </p>
+            </div>
+          )}
+
+          <BeautyProfileForm initial={beautyProfile} />
 
         </div>
       </main>
