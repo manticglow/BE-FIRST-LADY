@@ -5,7 +5,7 @@
  *   - 24 ساعة قبل الموعد (تذكير اليوم السابق)
  *   - ساعة قبل الموعد (تذكير آخر)
  *
- * Vercel cron: */30 * * * *
+ * Vercel cron schedule: every 30 minutes
  *
  * الحماية: CRON_SECRET في Authorization OR x-vercel-cron
  */
