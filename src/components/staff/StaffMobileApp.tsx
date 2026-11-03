@@ -1,19 +1,18 @@
 /**
  * StaffMobileApp — تطبيق جوّال فاخر للموظّفة
  * ═══════════════════════════════════════════════════════════
- * - 4 تبويبات: الرئيسية · حجوزاتي · أرباحي · ملفي
+ * - 3 تبويبات: الرئيسية · حجوزاتي · ملفي
  * - bottom nav ثابت
  * - عرض فقط للموبايل (md:hidden)
  */
 'use client';
 
 import { useState } from 'react';
-import { Home, Calendar, Wallet, User } from 'lucide-react';
+import { Home, Calendar, User } from 'lucide-react';
 import { haptic } from '@/lib/mobile/haptics';
-import type { StaffBooking, StaffUser, AttendanceState, StaffEarnings, TabKey } from './types';
+import type { StaffBooking, StaffUser, AttendanceState, TabKey } from './types';
 import StaffHomeTab from './tabs/StaffHomeTab';
 import StaffBookingsTab from './tabs/StaffBookingsTab';
-import StaffEarningsTab from './tabs/StaffEarningsTab';
 import StaffProfileTab from './tabs/StaffProfileTab';
 
 interface Props {
@@ -22,18 +21,16 @@ interface Props {
   locationName: string | null;
   todayBookings: StaffBooking[];
   allBookings: StaffBooking[];
-  earnings: StaffEarnings;
 }
 
 const TABS: { key: TabKey; label: string; icon: typeof Home }[] = [
   { key: 'home',     label: 'الرئيسية', icon: Home },
   { key: 'bookings', label: 'حجوزاتي',  icon: Calendar },
-  { key: 'earnings', label: 'أرباحي',   icon: Wallet },
   { key: 'profile',  label: 'ملفي',     icon: User },
 ];
 
 export default function StaffMobileApp({
-  user, attendance, locationName, todayBookings, allBookings, earnings,
+  user, attendance, locationName, todayBookings, allBookings,
 }: Props) {
   const [tab, setTab] = useState<TabKey>('home');
 
@@ -53,11 +50,9 @@ export default function StaffMobileApp({
             attendance={attendance}
             locationName={locationName}
             todayBookings={todayBookings}
-            earnings={earnings}
           />
         )}
         {tab === 'bookings' && <StaffBookingsTab bookings={allBookings} />}
-        {tab === 'earnings' && <StaffEarningsTab earnings={earnings} />}
         {tab === 'profile' && (
           <StaffProfileTab user={user} attendance={attendance} />
         )}

@@ -9,7 +9,6 @@
  */
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import MyEarningsCard from '@/components/admin/MyEarningsCard';
 import {
   Calendar, Clock, Users, Phone, Award, Umbrella,
   CheckCircle2, PlayCircle, Timer, MessageCircle, MapPin, Sparkles,
@@ -81,7 +80,7 @@ export default async function StaffDashboard({ userId, firstName }: { userId: st
   const monthHours = Math.floor(monthMinutes / 60);
   const weekBookingsCount = weekBookings?.length || 0;
   const monthServiceCount = monthBookings?.length || 0;
-  const monthRevenue = (monthBookings || []).reduce((s, b: any) => s + Number(b.total || 0), 0);
+  // monthBookings إحصائيّة للعدّ فقط · ما نعرض قيمة ماليّة للموظّفة
   const isCheckedIn = !!openAttendance;
   const checkInTime = openAttendance ? new Date(openAttendance.check_in_at) : null;
   const workedMinutes = checkInTime ? Math.floor((Date.now() - checkInTime.getTime()) / 60000) : 0;
@@ -137,11 +136,6 @@ export default async function StaffDashboard({ userId, firstName }: { userId: st
               : <span>تسجيل حضور</span>}
           </Link>
         </div>
-      </div>
-
-      {/* ═══ 💰 أرباحي اللحظيّة ═══ */}
-      <div className="mb-6">
-        <MyEarningsCard staffProfileId={userId} commissionRate={0.20} />
       </div>
 
       {/* ═══ الموعد القادم (إذا موجود) ═══ */}

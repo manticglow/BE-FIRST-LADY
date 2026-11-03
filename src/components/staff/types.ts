@@ -22,20 +22,6 @@ export interface StaffBooking {
   items?: StaffBookingItem[];
 }
 
-export interface StaffEarnings {
-  today_total: number;
-  today_commission: number;
-  today_count: number;
-  week_total: number;
-  week_commission: number;
-  week_count: number;
-  month_total: number;
-  month_commission: number;
-  month_count: number;
-  commission_rate: number;
-  unique_customers: number;
-}
-
 export interface StaffUser {
   userId: string;
   staffId: string | null;
@@ -52,7 +38,7 @@ export interface AttendanceState {
   weekDays: number;
 }
 
-export type TabKey = 'home' | 'bookings' | 'earnings' | 'profile';
+export type TabKey = 'home' | 'bookings' | 'profile';
 
 export const STATUS_STYLES: Record<string, { label: string; dot: string; bg: string }> = {
   pending:     { label: 'بانتظار',   dot: 'bg-amber-500',  bg: 'bg-amber-50 text-amber-700 border-amber-200' },

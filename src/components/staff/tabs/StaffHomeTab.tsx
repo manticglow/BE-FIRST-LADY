@@ -5,15 +5,15 @@
  * - زر الحضور (CheckInButton)
  * - الموعد القادم (مع عدّاد تنازلي)
  * - جدول اليوم (timeline)
- * - إحصائيات سريعة
+ * - إحصائيات سريعة (عدد الجلسات · مكتملة · ساعات اليوم)
  */
 'use client';
 
 import { useMemo } from 'react';
-import { Calendar, Phone, Sparkles, Clock, Users, TrendingUp, Timer } from 'lucide-react';
-import type { StaffBooking, StaffUser, AttendanceState, StaffEarnings } from '../types';
+import { Calendar, Phone, Sparkles, Clock, Users, Timer } from 'lucide-react';
+import type { StaffBooking, StaffUser, AttendanceState } from '../types';
 import { STATUS_STYLES } from '../types';
-import { formatPrice, formatDuration } from '@/lib/utils';
+import { formatDuration } from '@/lib/utils';
 import CheckInButton from '../CheckInButton';
 
 interface Props {
@@ -21,7 +21,6 @@ interface Props {
   attendance: AttendanceState;
   locationName: string | null;
   todayBookings: StaffBooking[];
-  earnings: StaffEarnings;
   onRefresh?: () => void;
 }
 
@@ -46,7 +45,7 @@ function fmtCountdown(mins: number): string {
 }
 
 export default function StaffHomeTab({
-  user, attendance, locationName, todayBookings, earnings, onRefresh,
+  user, attendance, locationName, todayBookings, onRefresh,
 }: Props) {
   const greeting = timeGreeting();
   const now = new Date();
@@ -142,7 +141,7 @@ export default function StaffHomeTab({
         </div>
       )}
 
-      {/* ─── Mini stats ─── */}
+      {/* ─── Mini stats · عدد الجلسات + مكتملة + ساعات اليوم ─── */}
       <div className="grid grid-cols-3 gap-2">
         <MiniStat
           icon={Users}
@@ -153,16 +152,16 @@ export default function StaffHomeTab({
         />
         <MiniStat
           icon={Sparkles}
-          label="أنجزت"
+          label="أنجزتِ"
           value={`${completedCount}`}
           sub="جلسة"
           color="from-amber-50 to-rose-50 text-amber-700 border-amber-200"
         />
         <MiniStat
-          icon={TrendingUp}
-          label="عمولة اليوم"
-          value={formatPrice(earnings.today_commission, { showFrom: false })}
-          sub=""
+          icon={Clock}
+          label="هذا الأسبوع"
+          value={`${attendance.weekHours}س`}
+          sub={`${attendance.weekDays} ${attendance.weekDays === 1 ? 'يوم' : 'أيام'}`}
           color="from-gold-light/20 to-gold-light/5 text-gold-deep border-gold-light/40"
         />
       </div>
