@@ -14,7 +14,7 @@ interface SearchData {
   categories: Category[];
 }
 
-export default function HeaderSearchLazy() {
+export default function HeaderSearchLazy({ headless }: { headless?: boolean }) {
   const [data, setData] = useState<SearchData>({
     services: [], packages: [], categories: [],
   });
@@ -34,6 +34,7 @@ export default function HeaderSearchLazy() {
       services={data.services}
       packages={data.packages}
       categories={data.categories}
+      headless={headless}
     />
   );
 }

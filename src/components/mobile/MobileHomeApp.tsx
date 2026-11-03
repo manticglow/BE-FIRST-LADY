@@ -20,6 +20,7 @@ import { formatPrice, formatDuration, waLink } from '@/lib/utils';
 import { useCart } from '@/hooks/useCart';
 import Petals from '@/components/ui/Petals';
 import HeartButton from '@/components/ui/HeartButton';
+import HeaderSearchLazy from '@/components/layout/HeaderSearchLazy';
 
 interface Props {
   categories: Category[];
@@ -179,6 +180,9 @@ export default function MobileHomeApp({ categories, services, packages, user, to
   return (
     <div className="md:hidden min-h-screen bg-white pb-24">
 
+      {/* ═══ البحث · headless · يستجيب للـcustom event ═══ */}
+      <HeaderSearchLazy headless />
+
       {/* ═══ Top bar · فاخر + glass ═══ */}
       <header className="sticky top-0 z-30 bg-gradient-to-b from-cream-50 via-white/95 to-white/80 backdrop-blur-xl border-b border-gold-light/15">
         {/* ─── greeting row ─── */}
@@ -228,17 +232,22 @@ export default function MobileHomeApp({ categories, services, packages, user, to
           </div>
         </div>
 
-        {/* ─── شريط البحث ─── */}
+        {/* ─── شريط البحث · يفتح overlay البحث الحقيقي ─── */}
         <div className="px-4 pb-3 relative">
-          <Link
-            href="/booking"
-            className="group flex items-center gap-2.5 w-full bg-gradient-to-br from-cream-50 to-amber-50/40 border border-gold-light/25 rounded-full px-4 py-3 text-ink-soft text-sm active:scale-[0.98] transition-all"
+          <button
+            type="button"
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                window.dispatchEvent(new Event('bfl:open-search'));
+              }
+            }}
+            className="group flex items-center gap-2.5 w-full bg-gradient-to-br from-cream-50 to-amber-50/40 border border-gold-light/25 rounded-full px-4 py-3 text-ink-soft text-sm active:scale-[0.98] transition-all text-right"
           >
-            <div className="w-7 h-7 rounded-full bg-gold-light/15 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-full bg-gold-light/15 flex items-center justify-center shrink-0">
               <Search className="w-3.5 h-3.5 text-gold-deep" />
             </div>
-            <span>ابحثي عن خدمة · بكج · عرض...</span>
-          </Link>
+            <span className="flex-1">ابحثي عن خدمة · بكج · عرض...</span>
+          </button>
         </div>
       </header>
 

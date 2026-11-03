@@ -22,11 +22,13 @@ interface Props {
   services: Service[];
   packages: Package[];
   categories: Category[];
+  /** headless: ما يعرض زرار الـtrigger · overlay + event listener فقط */
+  headless?: boolean;
 }
 
 const RECENT_KEY = 'bfl_recent_searches';
 
-export default function HeaderSearch({ services, packages, categories }: Props) {
+export default function HeaderSearch({ services, packages, categories, headless }: Props) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [selectedIdx, setSelectedIdx] = useState(0);
@@ -42,7 +44,7 @@ export default function HeaderSearch({ services, packages, categories }: Props) 
     } catch { /* ignore */ }
   }, []);
 
-  // ─── Cmd/Ctrl + K shortcut ───
+  // ─── Cmd/Ctrl + K shortcut + custom open event ───
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -53,8 +55,15 @@ export default function HeaderSearch({ services, packages, categories }: Props) 
         setOpen(false);
       }
     }
+    function onOpenEvent() {
+      setOpen(true);
+    }
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener('bfl:open-search' as any, onOpenEvent);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('bfl:open-search' as any, onOpenEvent);
+    };
   }, []);
 
   // ─── focus input when opened ───
@@ -151,29 +160,32 @@ export default function HeaderSearch({ services, packages, categories }: Props) 
 
   return (
     <>
-      {/* Trigger Button */}
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="hidden md:inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white/70 backdrop-blur-sm border border-gold-light/30 text-ink-soft hover:border-gold-light hover:bg-white hover:text-gold-deep transition-all text-sm"
-        aria-label="بحث"
-      >
-        <Search className="w-4 h-4" />
-        <span>بحث...</span>
-        <kbd className="hidden lg:inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-cream-100 border border-cream-300 rounded text-[10px] font-en-display text-ink-soft">
-          ⌘K
-        </kbd>
-      </button>
+      {/* Trigger Button (مخفيّ لو headless) */}
+      {!headless && (
+        <>
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className="hidden md:inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white/70 backdrop-blur-sm border border-gold-light/30 text-ink-soft hover:border-gold-light hover:bg-white hover:text-gold-deep transition-all text-sm"
+            aria-label="بحث"
+          >
+            <Search className="w-4 h-4" />
+            <span>بحث...</span>
+            <kbd className="hidden lg:inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-cream-100 border border-cream-300 rounded text-[10px] font-en-display text-ink-soft">
+              ⌘K
+            </kbd>
+          </button>
 
-      {/* Mobile · أيقونة فقط */}
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="md:hidden w-10 h-10 rounded-full border border-gold-light/30 bg-white/70 text-gold-deep flex items-center justify-center hover:border-gold-light"
-        aria-label="بحث"
-      >
-        <Search className="w-4 h-4" />
-      </button>
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className="md:hidden w-10 h-10 rounded-full border border-gold-light/30 bg-white/70 text-gold-deep flex items-center justify-center hover:border-gold-light"
+            aria-label="بحث"
+          >
+            <Search className="w-4 h-4" />
+          </button>
+        </>
+      )}
 
       {/* ─── Overlay ─── */}
       {open && (
