@@ -27,9 +27,11 @@ import ReviewsSection from '@/components/sections/ReviewsSection';
 import HoursSection from '@/components/sections/HoursSection';
 import LashesBannerSection from '@/components/sections/LashesBannerSection';
 import ContactSection from '@/components/sections/ContactSection';
+import FAQSection from '@/components/sections/FAQSection';
 import FloatingButtons from '@/components/ui/FloatingButtons';
 import LoaderScreen from '@/components/ui/LoaderScreen';
 import MobileHomeApp from '@/components/mobile/MobileHomeApp';
+import Reveal from '@/components/ui/Reveal';
 
 export const revalidate = 60; // أعد التحميل كل دقيقة
 
@@ -85,36 +87,41 @@ export default async function HomePage() {
           <HeroSection />
 
           {/* 2. قصّتنا */}
-          <StorySection />
+          <Reveal direction="up"><StorySection /></Reveal>
 
           {/* 3. الخدمات المميّزة · Bento Grid */}
-          <SignatureServicesSection />
+          <Reveal direction="up" delay={80}><SignatureServicesSection /></Reveal>
 
           {/* 4. العرض الصيفي (إذا موجود) */}
-          {offer && <SummerOfferSection offer={offer} />}
+          {offer && <Reveal direction="scale"><SummerOfferSection offer={offer} /></Reveal>}
 
           {/* 5. قائمة الخدمات الكاملة */}
           {categories && services && (
-            <ServicesSection categories={categories} services={services} isLoggedIn={!!user} />
+            <Reveal direction="up">
+              <ServicesSection categories={categories} services={services} isLoggedIn={!!user} />
+            </Reveal>
           )}
 
           {/* 6. الأرقام والوعود */}
-          <TrustSection />
+          <Reveal direction="up"><TrustSection /></Reveal>
 
           {/* 7. معرض الأعمال */}
-          {gallery && <GallerySection items={gallery} />}
+          {gallery && <Reveal direction="up"><GallerySection items={gallery} /></Reveal>}
 
           {/* 8. اللاش بانر */}
-          <LashesBannerSection />
+          <Reveal direction="scale"><LashesBannerSection /></Reveal>
 
           {/* 9. آراء العميلات */}
-          {reviews && <ReviewsSection reviews={reviews} />}
+          {reviews && <Reveal direction="up"><ReviewsSection reviews={reviews} /></Reveal>}
 
           {/* 10. ساعات العمل */}
-          <HoursSection hours={hours || []} />
+          <Reveal direction="up"><HoursSection hours={hours || []} /></Reveal>
 
-          {/* 11. تواصل */}
-          <ContactSection />
+          {/* 11. أسئلة شائعة */}
+          <Reveal direction="up"><FAQSection /></Reveal>
+
+          {/* 12. تواصل */}
+          <Reveal direction="up"><ContactSection /></Reveal>
         </main>
         <Footer />
         <FloatingButtons />

@@ -441,14 +441,30 @@ function StatTile({ icon: Icon, label, value, color }: {
     pink:    'from-pink-500/15 to-pink-500/5 text-pink-600',
     violet:  'from-violet-500/15 to-violet-500/5 text-violet-600',
   }[color];
+  const glow = {
+    gold:    'rgba(201, 169, 110, 0.25)',
+    emerald: 'rgba(16, 185, 129, 0.2)',
+    pink:    'rgba(236, 72, 153, 0.2)',
+    violet:  'rgba(139, 92, 246, 0.2)',
+  }[color];
 
   return (
-    <div className="bg-white rounded-2xl p-4 md:p-5 border border-cream-200 shadow-sm hover:shadow-md transition-shadow">
-      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${colors} flex items-center justify-center mb-3`}>
-        <Icon className="w-5 h-5" />
+    <div
+      className="group relative glass-card rounded-2xl p-4 md:p-5 overflow-hidden hover:scale-[1.02] transition-transform"
+      style={{ boxShadow: `0 4px 20px -8px ${glow}` }}
+    >
+      {/* ضوء ذهبي يظهر عند الـhover */}
+      <div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+        style={{ background: `radial-gradient(circle at 50% 0%, ${glow}, transparent 60%)` }}
+      />
+      <div className="relative">
+        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${colors} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
+          <Icon className="w-5 h-5" />
+        </div>
+        <div className="font-en-display text-xl md:text-2xl font-bold text-ink truncate">{value}</div>
+        <div className="text-[11px] md:text-xs text-ink-soft mt-0.5 font-semibold truncate">{label}</div>
       </div>
-      <div className="font-en-display text-xl md:text-2xl font-bold text-ink truncate">{value}</div>
-      <div className="text-[11px] md:text-xs text-ink-soft mt-0.5 font-semibold truncate">{label}</div>
     </div>
   );
 }

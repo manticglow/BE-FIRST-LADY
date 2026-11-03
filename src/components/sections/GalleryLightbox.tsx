@@ -42,29 +42,52 @@ export default function GalleryLightbox({ items }: { items: GalleryItem[] }) {
 
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-        {items.map((item, i) => (
-          <button
-            key={item.id}
-            onClick={() => setOpen(i)}
-            className={`relative aspect-square bg-cream-100 rounded-2xl overflow-hidden group ${
-              item.is_featured ? 'md:col-span-2 md:row-span-2 md:aspect-auto' : ''
-            }`}
-          >
-            <img
-              src={item.image_url}
-              alt={item.title_ar || 'Be First Lady'}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              loading="lazy"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-start p-4">
-              <div className="flex items-center gap-2 text-cream-50">
-                <ZoomIn className="w-4 h-4" />
-                <span className="text-xs font-bold">عرض بالكامل</span>
+      {/* ─── Masonry via CSS columns ─── */}
+      <div className="columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3">
+        {items.map((item, i) => {
+          // ارتفاعات متنوّعة لـorganic masonry
+          const heights = ['aspect-[3/4]', 'aspect-square', 'aspect-[4/5]', 'aspect-[3/4]'];
+          const heightClass = item.is_featured ? 'aspect-[2/3]' : heights[i % heights.length];
+          return (
+            <button
+              key={item.id}
+              onClick={() => setOpen(i)}
+              className={`relative w-full bg-cream-100 rounded-2xl overflow-hidden group block mb-3 break-inside-avoid ${heightClass}`}
+            >
+              <img
+                src={item.image_url}
+                alt={item.title_ar || 'Be First Lady'}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                loading="lazy"
+              />
+              {/* overlay gradient على الصورة · دائماً خفيف · يقوى عند الـhover */}
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/0 to-transparent opacity-30 group-hover:opacity-80 transition-opacity" />
+
+              {/* badge "مميّزة" */}
+              {item.is_featured && (
+                <div className="absolute top-3 right-3 px-2 py-1 bg-gradient-to-br from-gold-deep to-ink text-cream-50 text-[10px] font-bold rounded-full shadow-lg">
+                  ⭐ مميّزة
+                </div>
+              )}
+
+              {/* معلومات الصورة · تظهر عند الـhover */}
+              <div className="absolute inset-x-0 bottom-0 p-4 translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all">
+                {item.title_ar && (
+                  <div className="font-ar-display font-bold text-cream-50 text-sm mb-1">
+                    {item.title_ar}
+                  </div>
+                )}
+                <div className="flex items-center gap-1 text-cream-50 text-[11px] bg-black/30 backdrop-blur-sm w-fit px-2 py-1 rounded-full">
+                  <ZoomIn className="w-3 h-3" />
+                  <span className="font-bold">عرض كامل</span>
+                </div>
               </div>
-            </div>
-          </button>
-        ))}
+
+              {/* إطار ذهبي يظهر عند الـhover */}
+              <div className="absolute inset-0 border-2 border-gold-light/0 group-hover:border-gold-light/60 rounded-2xl transition-colors pointer-events-none" />
+            </button>
+          );
+        })}
       </div>
 
       {/* Lightbox */}
