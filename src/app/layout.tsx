@@ -7,7 +7,8 @@
 import type { Metadata, Viewport } from 'next';
 import { Toaster } from 'sonner';
 import PWARegister from '@/components/ui/PWARegister';
-import AppSplash from '@/components/mobile/AppSplash';
+import FirstLoadSplash from '@/components/ui/FirstLoadSplash';
+import LoaderScreen from '@/components/ui/LoaderScreen';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import ScrollProgress from '@/components/fx/ScrollProgress';
 import CartFab from '@/components/cart/CartFab';
@@ -136,7 +137,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-screen bg-cream-50 md:bg-brand-radial md:bg-fixed pb-20 md:pb-0 text-ink">
         <ScrollProgress />
-        <AppSplash />
+        <FirstLoadSplash />
+        <LoaderScreen />
         {children}
         <Analytics />
         <SpeedInsights />

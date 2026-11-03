@@ -29,7 +29,6 @@ import LashesBannerSection from '@/components/sections/LashesBannerSection';
 import ContactSection from '@/components/sections/ContactSection';
 import FAQSection from '@/components/sections/FAQSection';
 import FloatingButtons from '@/components/ui/FloatingButtons';
-import LoaderScreen from '@/components/ui/LoaderScreen';
 import MobileHomeApp from '@/components/mobile/MobileHomeApp';
 import Reveal from '@/components/ui/Reveal';
 
@@ -67,8 +66,6 @@ export default async function HomePage() {
 
   return (
     <>
-      <LoaderScreen />
-
       {/* ═══ تجربة التطبيق · للموبايل فقط ═══ */}
       {categories && services && (
         <MobileHomeApp
