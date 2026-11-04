@@ -30,9 +30,9 @@ CREATE TABLE IF NOT EXISTS site_themes (
   -- حالة التفعيل
   is_active       BOOLEAN DEFAULT FALSE,
 
-  -- جدولة تلقائيّة (اختياريّة)
-  auto_start_date DATE,                       -- يبدأ تلقائياً في هذا التاريخ من كل سنة
-  auto_end_date   DATE,                       -- ينتهي تلقائياً
+  -- جدولة تلقائيّة (اختياريّة) · بصيغة MM-DD (شهر-يوم) · يتكرّر كل سنة
+  auto_start_date TEXT,                       -- مثل: "09-20"
+  auto_end_date   TEXT,                       -- مثل: "09-25"
 
   created_at      TIMESTAMPTZ DEFAULT NOW(),
   updated_at      TIMESTAMPTZ DEFAULT NOW()
