@@ -9,6 +9,7 @@ import { Toaster } from 'sonner';
 import PWARegister from '@/components/ui/PWARegister';
 import FirstLoadSplash from '@/components/ui/FirstLoadSplash';
 import LoaderScreen from '@/components/ui/LoaderScreen';
+import ThemeProvider from '@/components/theme/ThemeProvider';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import ScrollProgress from '@/components/fx/ScrollProgress';
 import CartFab from '@/components/cart/CartFab';
@@ -139,6 +140,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ScrollProgress />
         <FirstLoadSplash />
         <LoaderScreen />
+        <ThemeProvider />
         {children}
         <Analytics />
         <SpeedInsights />
