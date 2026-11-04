@@ -7,6 +7,7 @@
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { invalidate, CACHE_TAGS } from '@/lib/cache';
 
 const createSchema = z.object({
   title: z.string().min(2).max(200),
@@ -56,6 +57,7 @@ export async function POST(req: NextRequest) {
   const admin = createAdminClient();
   const { data, error } = await admin.from('banners').insert(parsed.data).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  invalidate(CACHE_TAGS.BANNERS);
   return NextResponse.json({ ok: true, item: data });
 }
 
@@ -71,6 +73,7 @@ export async function PATCH(req: NextRequest) {
   const admin = createAdminClient();
   const { error } = await admin.from('banners').update({ ...updates, updated_at: new Date().toISOString() }).eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  invalidate(CACHE_TAGS.BANNERS);
   return NextResponse.json({ ok: true });
 }
 
@@ -85,5 +88,6 @@ export async function DELETE(req: NextRequest) {
   const admin = createAdminClient();
   const { error } = await admin.from('banners').delete().eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  invalidate(CACHE_TAGS.BANNERS);
   return NextResponse.json({ ok: true });
 }

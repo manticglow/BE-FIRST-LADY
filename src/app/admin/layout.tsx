@@ -32,6 +32,7 @@ const SIDEBAR: SidebarItem[] = [
   { href: '/admin/push',        label: 'الإشعارات',  iconKey: 'Bell',            roles: ['owner', 'manager'] },
   { href: '/admin/reports',     label: 'التقارير',   iconKey: 'BarChart3',       roles: ['owner'] },
   { href: '/admin/backup',      label: 'النسخ الاحتياطيّة', iconKey: 'Cloud',    roles: ['owner'] },
+  { href: '/admin/health',      label: 'مراقبة النظام',   iconKey: 'Activity', roles: ['owner', 'manager'] },
   { href: '/admin/salon-location', label: 'موقع الصالون', iconKey: 'LayoutDashboard', roles: ['owner', 'manager'] },
   { href: '/admin/users',       label: 'اليوزرات',   iconKey: 'Shield',          roles: ['owner'] },
   { href: '/admin/security',    label: 'الأمن',      iconKey: 'Shield',          roles: ['owner'] },

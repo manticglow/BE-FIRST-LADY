@@ -6,6 +6,7 @@
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { invalidate, CACHE_TAGS } from '@/lib/cache';
 
 const activateSchema = z.object({
   id: z.string().uuid(),
@@ -60,6 +61,7 @@ export async function POST(req: NextRequest) {
     .eq('id', parsed.data.id);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  invalidate(CACHE_TAGS.THEMES);
   return NextResponse.json({ ok: true });
 }
 
@@ -78,5 +80,6 @@ export async function PATCH(req: NextRequest) {
     .update({ ...updates, updated_at: new Date().toISOString() })
     .eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  invalidate(CACHE_TAGS.THEMES);
   return NextResponse.json({ ok: true });
 }
