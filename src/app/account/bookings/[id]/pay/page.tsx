@@ -4,7 +4,7 @@
  * - تعرض ملخّص الحجز + PaymentSelector
  * - صلاحيّات: فقط صاحبة الحجز
  */
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { redirect, notFound } from 'next/navigation';
 import PaymentSelector from '@/components/payment/PaymentSelector';
 import Link from 'next/link';
@@ -40,7 +40,9 @@ export default async function PayPage({
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/login?redirect=/account/bookings/${id}/pay`);
 
-  const { data: bookingRaw } = await supabase
+  // نستخدم admin client لتجاوز RLS · نحن نتحقّق من الصلاحيّة يدوياً تحت
+  const admin = createAdminClient();
+  const { data: bookingRaw } = await admin
     .from('bookings')
     .select('id, customer_id, customer_phone, total, status, payment_status, booking_date, booking_time, customer_name')
     .eq('id', id)
@@ -56,7 +58,7 @@ export default async function PayPage({
   const isOwner = booking.customer_id === user.id;
 
   // جلب بيانات المستخدم للتحقّق بالجوّال (لحجوزات الضيف)
-  const { data: userProfile } = await supabase
+  const { data: userProfile } = await admin
     .from('profiles')
     .select('phone')
     .eq('id', user.id)
@@ -70,20 +72,20 @@ export default async function PayPage({
 
   // ربط حجز الضيف بالحساب الحالي · مرّة واحدة
   if (!booking.customer_id && isPhoneMatch) {
-    await (supabase as any)
+    await (admin as any)
       .from('bookings')
       .update({ customer_id: user.id })
       .eq('id', booking.id);
   }
 
-  const { data: profileRaw } = await supabase
+  const { data: profileRaw } = await admin
     .from('profiles')
     .select('loyalty_points')
     .eq('id', user.id)
     .single();
   const profile = profileRaw as ProfileRow | null;
 
-  const { data: settingsRaw } = await supabase
+  const { data: settingsRaw } = await admin
     .from('company_settings')
     .select('payment_deposit_pct, payment_deposit_threshold, loyalty_point_value')
     .limit(1)
