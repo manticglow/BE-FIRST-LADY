@@ -320,15 +320,15 @@ export default function PaymentSelector({ opts }: { opts: PaymentOptions }) {
       <button
         onClick={proceed}
         disabled={submitting || (!isFree && !gateway)}
-        className="w-full py-4 rounded-2xl bg-gradient-to-br from-stone-900 via-amber-900 to-stone-900 text-white font-ar-display font-bold text-base flex items-center justify-center gap-2 disabled:opacity-50 hover:shadow-xl transition-all"
+        className="w-full py-4 rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700 text-white font-ar-display font-bold text-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg"
       >
         {submitting
-          ? <><Loader2 className="w-5 h-5 animate-spin" /> جارِ التحويل...</>
+          ? <><Loader2 className="w-6 h-6 animate-spin" /> جارِ تحويلكِ...</>
           : isFree
-            ? <><CheckCircle2 className="w-5 h-5" /> تأكيد الحجز بالمجّان</>
+            ? <><CheckCircle2 className="w-6 h-6" /> تأكيد الحجز بالمجّان</>
             : <>
-                <ChevronLeft className="w-5 h-5" />
-                ادفعي {payableNow.toFixed(2)} ر.س الآن
+                <CreditCard className="w-6 h-6" />
+                ادفعي {payableNow.toFixed(2)} ر.س
               </>}
       </button>
 

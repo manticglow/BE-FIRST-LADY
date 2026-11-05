@@ -205,28 +205,25 @@ export default function BookingWizard({ categories, services, packages, user, pr
       log.info('booking created', { id: data.booking_id, total: data.total, is_gift: data.is_gift });
       cart.clear();
 
-      // تحويل موثوق · window.location يضمن الذهاب حتى لو router عالق
-      const go = (url: string) => {
-        setTimeout(() => { window.location.href = url; }, 400);
-      };
+      // تحويل فوري بدون تأخير · window.location يضمن النقل الكامل
+      const go = (url: string) => { window.location.href = url; };
 
-      // 🎁 الهدايا · ما تحتاج دفع من المرسِلة
+      // 🎁 هدية · تذهب للرئيسيّة مباشرة
       if (data.is_gift) {
-        toast.success('تمّت الهدية 🎁 سيتم إرسال الدعوة لها قريباً');
+        toast.success('🎁 تمّت الهدية بنجاح');
         go(user ? '/account' : `/?booked=${data.booking_number}`);
         return;
       }
 
-      // 💳 المجموع = صفر؟ (تمّ الدفع بكوبون/هدية/نقاط)
+      // 💳 مجّاني (كوبون/نقاط غطّت الكل)
       const total = Number(data.total) || 0;
       if (total <= 0) {
-        toast.success('تم تأكيد حجزكِ بنجاح 🌸');
-        go(user ? '/account' : `/?booked=${data.booking_number}`);
+        toast.success('🌸 تمّ تأكيد حجزكِ');
+        go(`/account/bookings/${data.booking_id}?payment=success`);
         return;
       }
 
-      // 💰 دفع فوري: تحويل مباشر لصفحة الدفع
-      toast.success(`جاري تحويلكِ لصفحة الدفع · ${total} ر.س 💳`);
+      // 💰 تحويل مباشر لصفحة الدفع (بدون toast مزعج)
       go(`/account/bookings/${data.booking_id}/pay`);
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'حدث خطأ';

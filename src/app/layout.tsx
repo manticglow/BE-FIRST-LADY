@@ -9,6 +9,8 @@ import { Toaster } from 'sonner';
 import PWARegister from '@/components/ui/PWARegister';
 import FirstLoadSplash from '@/components/ui/FirstLoadSplash';
 import LoaderScreen from '@/components/ui/LoaderScreen';
+import ScrollToTop from '@/components/ui/ScrollToTop';
+import { Suspense } from 'react';
 import ThemeProvider from '@/components/theme/ThemeProvider';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import ScrollProgress from '@/components/fx/ScrollProgress';
@@ -137,6 +139,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="min-h-screen bg-cream-50 md:bg-brand-radial md:bg-fixed pb-20 md:pb-0 text-ink">
+        <Suspense fallback={null}><ScrollToTop /></Suspense>
         <ScrollProgress />
         <FirstLoadSplash />
         <LoaderScreen />
