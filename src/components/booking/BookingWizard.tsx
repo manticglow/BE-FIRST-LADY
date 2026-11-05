@@ -202,13 +202,27 @@ export default function BookingWizard({ categories, services, packages, user, pr
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'حدث خطأ');
 
+      cart.clear();
+
+      // 🎁 الهدايا · ما تحتاج دفع من المرسِلة (لاحقاً المستلِمة تدفع لو تبي)
       if (data.is_gift) {
         toast.success('تمّت الهدية 🎁 سيتم إرسال الدعوة لها قريباً');
-      } else {
-        toast.success('تم إرسال طلب الحجز بنجاح 🌸');
+        router.push(user ? '/account' : `/?booked=${data.booking_number}`);
+        router.refresh();
+        return;
       }
-      cart.clear();
-      router.push(user ? '/account' : `/?booked=${data.booking_number}`);
+
+      // 💳 المجموع = صفر؟ (تمّ الدفع بكوبون/هدية/نقاط) → صفحة التأكيد
+      if (!data.total || data.total === 0) {
+        toast.success('تم تأكيد حجزكِ بنجاح 🌸');
+        router.push(user ? '/account' : `/?booked=${data.booking_number}`);
+        router.refresh();
+        return;
+      }
+
+      // 💰 دفع فوري: تحويل مباشر لصفحة الدفع
+      toast.success('جاري تحويلكِ لصفحة الدفع · أمان وسرعة 🔒');
+      router.push(`/account/bookings/${data.booking_id}/pay`);
       router.refresh();
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'حدث خطأ';

@@ -14,7 +14,8 @@ export const dynamic = 'force-dynamic';
 
 type BookingRow = {
   id: string;
-  customer_id: string;
+  customer_id: string | null;
+  customer_phone: string | null;
   total: number;
   status: string;
   payment_status: string;
@@ -41,15 +42,38 @@ export default async function PayPage({
 
   const { data: bookingRaw } = await supabase
     .from('bookings')
-    .select('id, customer_id, total, status, payment_status, booking_date, booking_time, customer_name')
+    .select('id, customer_id, customer_phone, total, status, payment_status, booking_date, booking_time, customer_name')
     .eq('id', id)
     .single();
   const booking = bookingRaw as BookingRow | null;
 
   if (!booking) notFound();
-  if (booking.customer_id !== user.id) redirect('/account');
   if (booking.payment_status === 'paid') {
     redirect(`/account/bookings/${id}?payment=already_paid`);
+  }
+
+  // التحقّق من الصلاحيّة · بثلاث طرق
+  const isOwner = booking.customer_id === user.id;
+
+  // جلب بيانات المستخدم للتحقّق بالجوّال (لحجوزات الضيف)
+  const { data: userProfile } = await supabase
+    .from('profiles')
+    .select('phone')
+    .eq('id', user.id)
+    .single();
+  const userPhone = (userProfile as { phone: string | null } | null)?.phone;
+  const isPhoneMatch = !booking.customer_id && booking.customer_phone === userPhone;
+
+  if (!isOwner && !isPhoneMatch) {
+    redirect('/account');
+  }
+
+  // ربط حجز الضيف بالحساب الحالي · مرّة واحدة
+  if (!booking.customer_id && isPhoneMatch) {
+    await (supabase as any)
+      .from('bookings')
+      .update({ customer_id: user.id })
+      .eq('id', booking.id);
   }
 
   const { data: profileRaw } = await supabase
