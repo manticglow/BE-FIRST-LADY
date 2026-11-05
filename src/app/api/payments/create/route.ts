@@ -229,7 +229,13 @@ export async function POST(req: NextRequest) {
   const intent = intentRaw as PaymentIntentRow | null;
 
   if (intentErr || !intent) {
-    return NextResponse.json({ error: 'فشل إنشاء العمليّة' }, { status: 500 });
+    console.error('[payments/create] insert payment_intent failed', intentErr);
+    return NextResponse.json({
+      error: 'فشل إنشاء العمليّة',
+      debug: intentErr?.message || 'unknown',
+      code: intentErr?.code,
+      hint: intentErr?.hint || intentErr?.details,
+    }, { status: 500 });
   }
 
   // ─── الاتصال بالبوّابة المناسبة ───
