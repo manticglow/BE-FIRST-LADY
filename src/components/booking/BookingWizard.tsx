@@ -202,28 +202,32 @@ export default function BookingWizard({ categories, services, packages, user, pr
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'حدث خطأ');
 
+      log.info('booking created', { id: data.booking_id, total: data.total, is_gift: data.is_gift });
       cart.clear();
 
-      // 🎁 الهدايا · ما تحتاج دفع من المرسِلة (لاحقاً المستلِمة تدفع لو تبي)
+      // تحويل موثوق · window.location يضمن الذهاب حتى لو router عالق
+      const go = (url: string) => {
+        setTimeout(() => { window.location.href = url; }, 400);
+      };
+
+      // 🎁 الهدايا · ما تحتاج دفع من المرسِلة
       if (data.is_gift) {
         toast.success('تمّت الهدية 🎁 سيتم إرسال الدعوة لها قريباً');
-        router.push(user ? '/account' : `/?booked=${data.booking_number}`);
-        router.refresh();
+        go(user ? '/account' : `/?booked=${data.booking_number}`);
         return;
       }
 
-      // 💳 المجموع = صفر؟ (تمّ الدفع بكوبون/هدية/نقاط) → صفحة التأكيد
-      if (!data.total || data.total === 0) {
+      // 💳 المجموع = صفر؟ (تمّ الدفع بكوبون/هدية/نقاط)
+      const total = Number(data.total) || 0;
+      if (total <= 0) {
         toast.success('تم تأكيد حجزكِ بنجاح 🌸');
-        router.push(user ? '/account' : `/?booked=${data.booking_number}`);
-        router.refresh();
+        go(user ? '/account' : `/?booked=${data.booking_number}`);
         return;
       }
 
       // 💰 دفع فوري: تحويل مباشر لصفحة الدفع
-      toast.success('جاري تحويلكِ لصفحة الدفع · أمان وسرعة 🔒');
-      router.push(`/account/bookings/${data.booking_id}/pay`);
-      router.refresh();
+      toast.success(`جاري تحويلكِ لصفحة الدفع · ${total} ر.س 💳`);
+      go(`/account/bookings/${data.booking_id}/pay`);
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'حدث خطأ';
       log.error('submit failed', err);
