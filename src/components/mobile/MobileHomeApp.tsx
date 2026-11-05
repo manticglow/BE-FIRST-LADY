@@ -13,7 +13,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, MapPin, MessageCircle, User } from 'lucide-react';
+import { Search, MessageCircle } from 'lucide-react';
 import type { Category, Service, Package } from '@/types/database';
 import { waLink } from '@/lib/utils';
 import HeaderSearchLazy from '@/components/layout/HeaderSearchLazy';
@@ -101,62 +101,51 @@ export default function MobileHomeApp({
       {/* البحث · headless · يستجيب للـcustom event */}
       <HeaderSearchLazy headless />
 
-      {/* ═══ Top bar · فاخر + glass ═══ */}
-      <header className="sticky top-0 z-30 bg-gradient-to-b from-cream-50 via-white/95 to-white/80 backdrop-blur-xl border-b border-gold-light/15">
-        <div className="px-4 pt-4 pb-3 flex items-center justify-between gap-3 relative">
-          <div className="absolute top-0 left-1/3 w-40 h-16 bg-gold-light/10 blur-2xl pointer-events-none" />
-
-          <a
-            href={waLink()}
-            target="_blank"
-            className="relative w-11 h-11 rounded-full bg-gradient-to-br from-emerald-50 to-green-50 border border-emerald-200/60 flex items-center justify-center text-emerald-600 active:scale-95 transition-all shadow-sm"
-            aria-label="واتساب"
-          >
-            <MessageCircle className="w-5 h-5" />
-            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white animate-pulse" />
-          </a>
-
-          <div className="flex items-center gap-2.5 min-w-0 relative">
-            {user?.full_name ? (
-              <div className="text-right min-w-0">
-                <div className="text-[9px] text-ink-soft">{timeGreeting()}</div>
-                <div className="text-sm font-ar-display font-bold text-gold-deep truncate">
-                  {user.full_name.split(' ')[0]}
-                </div>
+      {/* ═══ Top bar · ناعم حديث ═══ */}
+      <header
+        className="sticky top-0 z-30 bg-cream-50/95 backdrop-blur-xl"
+        style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+      >
+        <div className="px-4 pt-3 pb-2 flex items-center justify-between gap-3">
+          {/* يمين · الترحيب */}
+          <Link href={user ? '/account' : '/login'} className="flex items-center gap-3 min-w-0 flex-1" aria-label="الحساب">
+            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-rose-blush to-gold-light flex items-center justify-center text-white font-en-display font-semibold text-base shrink-0 shadow-gold-soft">
+              {user?.full_name ? user.full_name.charAt(0) : '👋'}
+            </div>
+            <div className="min-w-0">
+              <div className="text-[10px] text-ink-soft leading-none mb-1">
+                {timeGreeting().replace(/[☀️🌤️🌙]/g, '').trim()}
               </div>
-            ) : (
-              <div className="text-right">
-                <div className="text-[9px] text-ink-soft flex items-center gap-1 justify-end">
-                  <MapPin className="w-2.5 h-2.5 text-gold-light" />
-                  المدينة المنوّرة
-                </div>
-                <div className="text-xs font-bold text-gold-deep font-ar-display">أهلاً بكِ 🌸</div>
+              <div className="font-en-display text-base font-medium text-ink truncate leading-none">
+                {user?.full_name ? user.full_name.split(' ')[0] : 'أهلاً بكِ'}
               </div>
-            )}
-            <Link
-              href={user ? '/account' : '/login'}
-              className="relative w-11 h-11 rounded-full bg-gradient-to-br from-gold-light/15 to-amber-100/30 border border-gold-light/40 flex items-center justify-center text-gold-deep active:scale-95 transition-all shadow-sm"
-              aria-label="الحساب"
+            </div>
+          </Link>
+
+          {/* يسار · أيقونات */}
+          <div className="flex items-center gap-2 shrink-0">
+            <a
+              href={waLink()}
+              target="_blank"
+              className="w-10 h-10 rounded-full bg-white shadow-card flex items-center justify-center text-success-deep active:scale-95 transition-transform relative"
+              aria-label="واتساب"
             >
-              <User className="w-5 h-5" />
-              {user && (
-                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-white" />
-              )}
-            </Link>
+              <MessageCircle className="w-[18px] h-[18px]" strokeWidth={2} />
+              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-success animate-pulse ring-2 ring-cream-50" />
+            </a>
           </div>
         </div>
 
-        {/* شريط البحث · يفتح overlay البحث الحقيقي */}
-        <div className="px-4 pb-3 relative">
+        {/* شريط البحث · ناعم بدون حدود ثقيلة */}
+        <div className="px-4 pb-3">
           <button
             type="button"
             onClick={openSearch}
-            className="group flex items-center gap-2.5 w-full bg-gradient-to-br from-cream-50 to-amber-50/40 border border-gold-light/25 rounded-full px-4 py-3 text-ink-soft text-sm active:scale-[0.98] transition-all text-right"
+            className="flex items-center gap-3 w-full bg-white rounded-2xl px-4 py-3 text-ink-soft text-sm active:scale-[0.98] transition-transform text-right shadow-card"
           >
-            <div className="w-7 h-7 rounded-full bg-gold-light/15 flex items-center justify-center shrink-0">
-              <Search className="w-3.5 h-3.5 text-gold-deep" />
-            </div>
-            <span className="flex-1">ابحثي عن خدمة · بكج · عرض...</span>
+            <Search className="w-4 h-4 text-gold" strokeWidth={2} />
+            <span className="flex-1 text-[13px]">ابحثي عن خدمة · باقة...</span>
+            <div className="text-[9px] text-gold-light font-en-label tracking-wider">SEARCH</div>
           </button>
         </div>
       </header>
@@ -186,11 +175,13 @@ export default function MobileHomeApp({
         )}
       </section>
 
-      {/* ═══ شبكة الفئات ═══ */}
-      <section className="px-4 pt-6">
-        <SectionHeader title="التصنيفات" href="/services" />
-        <div className="grid grid-cols-2 gap-3 mt-3">
-          {categories.slice(0, 6).map((cat) => (
+      {/* ═══ شريط الفئات أفقي ═══ */}
+      <section className="pt-5">
+        <div className="px-4">
+          <SectionHeader title="التصنيفات" href="/services" />
+        </div>
+        <div className="flex gap-4 overflow-x-auto scrollbar-hide px-4 pt-3 pb-1">
+          {categories.slice(0, 8).map((cat) => (
             <CategoryTile key={cat.id} category={cat} />
           ))}
         </div>

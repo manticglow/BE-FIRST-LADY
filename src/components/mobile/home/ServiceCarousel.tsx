@@ -13,28 +13,12 @@ import Image from 'next/image';
 import { toast } from 'sonner';
 import { Clock, Star, Plus, Check } from 'lucide-react';
 import type { Service, Category } from '@/types/database';
-import { formatPrice, formatDuration } from '@/lib/utils';
+import { formatDuration } from '@/lib/utils';
 import { useCart } from '@/hooks/useCart';
-import Petals from '@/components/ui/Petals';
 import HeartButton from '@/components/ui/HeartButton';
 import { pickFallbackImage, slugify } from './image-picker';
 
 type ServiceWithCategory = Service & { category?: Pick<Category, 'slug'> | null };
-
-// وصف احتياطي حسب الفئة
-const CAT_DESC: Record<string, string> = {
-  'massage': 'جلسة استرخاء فاخرة · تخفّف التوتر وتجدّد الطاقة',
-  'bath': 'تجربة استحمام ملكيّة · تنعّم بشرتك وتترك عطراً يدوم',
-  'facial': 'عناية مكثّفة ببشرتك · إشراقة طبيعية ونعومة',
-  'nails': 'لمسة أنثويّة أنيقة · ألوان راقية وتفاصيل دقيقة',
-  'hair-color': 'لون شعر عصري وفاخر يناسب إطلالتك',
-  'hair-cut': 'قصّة شعر مدروسة من خبراء التصفيف',
-  'blow-dry': 'تجفيف وتنعيم احترافي يبرز لمعان شعرك',
-  'hair-style': 'تسريحة شعر فاخرة لإطلالتك المميّزة',
-  'hair-treat': 'علاج تجديدي عميق · حيوية ونعومة',
-  'makeup': 'ميك اب احترافي يبرز جمالك الطبيعي',
-  'brows': 'تنسيق وتصميم حواجب يبرز ملامحك',
-};
 
 export default function ServiceCarousel({
   services, isLoggedIn,
@@ -96,84 +80,71 @@ function AddToCartServiceCard({
     }
   }
 
-  const dbDesc = service.description_ar;
-  const catSlug = service.category?.slug;
-  const description = (dbDesc && dbDesc.trim())
-    ? dbDesc
-    : (catSlug && CAT_DESC[catSlug])
-      ? CAT_DESC[catSlug]
-      : 'تجربة فاخرة بأيدي خبيرات بي فيرست ليدي';
-
   // تقييم ثابت لكل خدمة (مش عشوائي)
   const rating = (4.6 + ((service.id.charCodeAt(0) || 0) % 5) * 0.08).toFixed(1);
 
   return (
     <Link
       href={`/services/${service.id}`}
-      className="snap-start flex-shrink-0 w-60 bg-white rounded-3xl overflow-hidden border border-cream-100 active:scale-95 transition-transform shadow-sm hover:shadow-md group"
+      className="snap-start flex-shrink-0 w-[260px] bg-white rounded-[22px] overflow-hidden active:scale-[0.98] transition-transform shadow-card hover:shadow-gold-soft group"
     >
-      <div className="relative aspect-square bg-gradient-to-br from-gold-light/15 to-cream-100 overflow-hidden">
+      <div className="relative h-[140px] bg-gradient-to-br from-rose-blush/40 via-gold-light/30 to-cream-100 overflow-hidden">
         <Image
           src={currentSrc}
           alt={service.name_ar}
           fill
-          className="object-cover group-hover:scale-110 transition-transform duration-700"
-          sizes="240px"
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          sizes="260px"
           onError={() => { if (currentSrc !== fallbackImg) setCurrentSrc(fallbackImg); }}
         />
-        <Petals count={4} />
+        {/* Tag */}
+        {service.price_from && (
+          <div className="absolute top-2.5 right-2.5 z-10 backdrop-blur-md bg-white/85 text-gold-deep text-[9px] font-bold tracking-[0.1em] px-2 py-1 rounded-full">
+            SIGNATURE
+          </div>
+        )}
+        {/* Heart (right-side for RTL) */}
         <div className="absolute top-2 left-2 z-10">
           <HeartButton serviceId={service.id} size="sm" variant="solid" />
         </div>
       </div>
 
-      <div className="p-3">
-        <div className="flex items-center justify-between gap-2 mb-1.5">
-          <div className="flex items-center gap-1 text-xs">
-            <Star className="w-3 h-3 text-gold-deep fill-gold-deep" />
-            <span className="font-bold font-en-display text-ink">{rating}</span>
-          </div>
-          <div className="flex items-center gap-1 text-[10px] text-ink-soft">
-            <Clock className="w-3 h-3" />
-            <span className="font-en-display">{formatDuration(service.duration_min)}</span>
-          </div>
-        </div>
-
-        <h3 className="font-ar-display font-bold text-sm text-ink line-clamp-1 mb-1">
+      <div className="p-3.5">
+        <h3 className="font-en-display text-[16px] font-medium text-ink mb-1 leading-tight line-clamp-1">
           {service.name_ar}
         </h3>
 
-        <p className="text-[11px] text-ink-soft line-clamp-2 leading-relaxed mb-2 min-h-[2.2rem]">
-          {description}
-        </p>
-
-        <div className="flex items-baseline justify-between mb-2.5">
-          <div className="text-[10px] text-ink-soft">تبدأ من</div>
-          <div className="font-en-display font-bold text-base text-gold-deep">
-            {formatPrice(service.price, { showFrom: service.price_from })}
-          </div>
+        <div className="flex items-center gap-3 text-[10.5px] text-ink-soft mb-2.5">
+          <span className="flex items-center gap-1">
+            <Clock className="w-3 h-3" />
+            {formatDuration(service.duration_min)}
+          </span>
+          <span className="flex items-center gap-1">
+            <Star className="w-3 h-3 text-gold-deep fill-gold-deep" />
+            {rating}
+          </span>
         </div>
 
-        <button
-          onClick={handleAdd}
-          className={`w-full flex items-center justify-center gap-1 text-xs font-bold py-2 rounded-xl transition-colors ${
-            inCart
-              ? 'bg-gold-deep text-cream-50'
-              : 'bg-gold-light/80 text-ink hover:bg-gold-light'
-          }`}
-        >
-          {inCart ? (
-            <>
-              <Check className="w-3.5 h-3.5" />
-              في السلة
-            </>
-          ) : (
-            <>
-              <Plus className="w-3.5 h-3.5" />
-              أضيفي للسلة
-            </>
-          )}
-        </button>
+        <div className="flex items-center justify-between pt-2.5 border-t border-cream-100">
+          <div className="font-en-display font-medium text-[18px] text-gold-deep leading-none">
+            <span className="text-[9px] font-body text-ink-soft font-normal mr-1">ر.س</span>
+            {service.price}
+          </div>
+
+          <button
+            onClick={handleAdd}
+            className={`
+              w-8 h-8 rounded-full flex items-center justify-center transition-all
+              ${inCart
+                ? 'bg-success text-white'
+                : 'bg-ink text-cream-50 hover:bg-gold-deep active:scale-90'
+              }
+            `}
+            aria-label={inCart ? 'في السلة' : 'أضيفي للسلة'}
+          >
+            {inCart ? <Check className="w-4 h-4" strokeWidth={2.5} /> : <Plus className="w-4 h-4" strokeWidth={2.5} />}
+          </button>
+        </div>
       </div>
     </Link>
   );

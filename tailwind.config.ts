@@ -22,9 +22,15 @@ const config: Config = {
           DEFAULT: '#2a1c10', // النصوص
           soft: '#6b5a42', // النصوص الفرعية
         },
+        // ═══ Soft accents · لمسات ناعمة ═══
+        rose: {
+          blush: '#e8cfc5', // وردي ناعم للـhero/بطاقات
+          deep:  '#c89787', // وردي عميق للـaccent
+        },
         // ═══ Semantic ═══
-        success: '#3f7d54',
-        danger:  '#b04a4a',
+        success: '#6fa380',        // ناعم فاخر (كان قاتم زيادة)
+        'success-deep': '#4f7e63', // للـhover والـgradient
+        danger:  '#c57b6b',        // أهدأ من القديم
         warning: '#b08a3b',
         whatsapp: '#25D366',
       },
@@ -42,6 +48,11 @@ const config: Config = {
         soft: '0 6px 28px rgba(125,97,59,.10)',
         deep: '0 14px 40px rgba(90,70,40,.18)',
         gold: '0 10px 28px rgba(125,97,59,.3)',
+        'gold-soft': '0 4px 16px -4px rgba(125,97,59,.2)',
+        'rose-soft': '0 10px 28px -8px rgba(200,151,135,.4)',
+        'success-soft': '0 10px 24px -8px rgba(79,126,99,.5)',
+        card: '0 2px 12px -2px rgba(125,97,59,.08)',
+        fab: '0 10px 24px -6px rgba(125,97,59,.5)',
       },
       transitionTimingFunction: {
         out: 'cubic-bezier(0.16, 1, 0.3, 1)',
