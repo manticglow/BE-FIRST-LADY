@@ -97,8 +97,6 @@ export async function sendWhatsAppText(to: string, body: string): Promise<SendRe
     return { ok: false, error: 'WhatsApp API غير مُفعّلة في البيئة' };
   }
 
-  const phone = formatPhoneForWhatsApp(to);
-
   try {
     const res = await fetch(
       `https://graph.facebook.com/${API_VERSION}/${phoneNumberId}/messages`,
