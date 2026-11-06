@@ -60,18 +60,31 @@ export async function POST(req: NextRequest) {
   else if (phone.startsWith('0')) phone = '966' + phone.slice(1);
   else if (!phone.startsWith('966')) phone = '966' + phone;
 
-  // أرسلي قالب hello_world (الموجود افتراضياً مع Test Number)
+  // اختاري بين القالب والنص الحر
+  const mode = body.mode as 'template' | 'text' | undefined;
+  const text = body.text as string | undefined;
+
   const apiUrl = `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`;
 
-  const payload = {
-    messaging_product: 'whatsapp',
-    to: phone,
-    type: 'template',
-    template: {
-      name: 'hello_world',
-      language: { code: 'en_US' },
-    },
-  };
+  const payload: any = mode === 'text'
+    ? {
+        messaging_product: 'whatsapp',
+        to: phone,
+        type: 'text',
+        text: {
+          preview_url: false,
+          body: text || '🌸 مرحباً من Be First Lady\n\nهذي رسالة اختبار من النظام · لو وصلتك معناه كل شي يشتغل تمام ✨',
+        },
+      }
+    : {
+        messaging_product: 'whatsapp',
+        to: phone,
+        type: 'template',
+        template: {
+          name: 'hello_world',
+          language: { code: 'en_US' },
+        },
+      };
 
   try {
     const res = await fetch(apiUrl, {
@@ -89,7 +102,7 @@ export async function POST(req: NextRequest) {
       ok: res.ok,
       status_code: res.status,
       phone_sent_to: phone,
-      template_used: 'hello_world (en_US)',
+      mode_used: mode === 'text' ? 'free text (24h window)' : 'template hello_world',
       meta_response: data,
       interpretation: res.ok
         ? '✅ تمّ الإرسال! شوفي واتسابك خلال 5-15 ثانية'
