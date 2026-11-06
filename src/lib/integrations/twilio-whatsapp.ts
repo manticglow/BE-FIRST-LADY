@@ -52,26 +52,30 @@ export async function sendTwilioWhatsApp(
   const toFormatted = formatTwilioPhone(to);
   const apiUrl = `https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`;
 
-  // استراتيجيّة: نجرّب Body عادي أوّل (ينفع داخل نافذة 24 ساعة)
-  // لو فشل بـ"ContentSid Required" نرجع بـContentSid (لو مُحدّد في env)
-  const contentSid = process.env.TWILIO_CONTENT_SID;
+  // Twilio Sandbox يرفض الرسائل الحرّة · لازم ContentSid حتى داخل 24h
+  // الـDefault: قالب Sandbox "appointment_reminder" الجاهز
+  //   النص: "Your appointment is coming up on {{1}} at {{2}}"
+  // مع Production template مخصّص نضع TWILIO_CONTENT_SID في env
+  const SANDBOX_DEFAULT = 'HXb5b62575e6e4ff6129ad7c8efe1f983e';
+  const contentSid = process.env.TWILIO_CONTENT_SID || SANDBOX_DEFAULT;
+  const isSandboxDefault = contentSid === SANDBOX_DEFAULT;
+
+  // للقالب الافتراضي يحتاج {{1}} و{{2}} · نقسّم النص
+  // للقوالب المخصّصة نرسل {{1}} = النص كامل
+  const contentVariables = isSandboxDefault
+    ? JSON.stringify({
+        '1': body.slice(0, 60).replace(/\n/g, ' '),
+        '2': body.slice(60, 120).replace(/\n/g, ' ') || 'الموعد',
+      })
+    : JSON.stringify({ '1': body.slice(0, 1024) });
 
   // Twilio يستقبل البيانات كـform-urlencoded
-  const baseParams: Record<string, string> = {
+  const formData = new URLSearchParams({
     From: from,
     To: toFormatted,
-  };
-
-  // لو في TWILIO_CONTENT_SID مُحدّد نستخدمه (للـproduction)
-  // غير كذا نستخدم Body (نافذة 24 ساعة)
-  if (contentSid) {
-    baseParams.ContentSid = contentSid;
-    baseParams.ContentVariables = JSON.stringify({ '1': body.slice(0, 1024) });
-  } else {
-    baseParams.Body = body;
-  }
-
-  const formData = new URLSearchParams(baseParams);
+    ContentSid: contentSid,
+    ContentVariables: contentVariables,
+  });
 
   // Basic Auth = base64(sid:token)
   const auth = Buffer.from(`${sid}:${token}`).toString('base64');
