@@ -21,7 +21,7 @@ export default function CategoryTile({
 
   return (
     <Link
-      href={`/booking?category=${category.slug}`}
+      href={`/services?category=${category.slug}`}
       className="group flex flex-col items-center gap-2 shrink-0 cursor-pointer"
     >
       <div
