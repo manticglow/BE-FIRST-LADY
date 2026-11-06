@@ -65,7 +65,12 @@ export default function Footer() {
   }
 
   return (
-    <footer className="bg-gradient-to-br from-ink via-gold-deep to-ink text-cream-50 relative overflow-hidden">
+    <>
+      {/* ═══ فوتر الجوّال · مختصر وناعم ═══ */}
+      <MobileFooter />
+
+      {/* ═══ فوتر سطح المكتب · الكامل (مخفي على الجوّال) ═══ */}
+      <footer className="hidden md:block bg-gradient-to-br from-ink via-gold-deep to-ink text-cream-50 relative overflow-hidden">
 
       {/* زخارف خلفيّة */}
       <div className="absolute top-10 left-10 opacity-5 pointer-events-none" aria-hidden="true">
@@ -209,10 +214,77 @@ export default function Footer() {
       <button
         onClick={scrollToTop}
         aria-label="للأعلى"
-        className="fixed bottom-24 left-5 md:bottom-10 md:left-10 w-11 h-11 rounded-full bg-gold-light text-ink shadow-lg shadow-gold-deep/30 flex items-center justify-center hover:scale-110 transition-transform z-30"
+        className="hidden md:flex fixed bottom-10 left-10 w-11 h-11 rounded-full bg-gold-light text-ink shadow-lg shadow-gold-deep/30 items-center justify-center hover:scale-110 transition-transform z-30"
       >
         <ArrowUp className="w-5 h-5" />
       </button>
+    </footer>
+    </>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+/* MobileFooter · ناعم مختصر للجوّال فقط                       */
+/* ═══════════════════════════════════════════════════════════ */
+
+function MobileFooter() {
+  return (
+    <footer className="md:hidden bg-gradient-to-b from-cream-50 to-cream-100 border-t border-cream-200 pb-28 pt-6">
+      <div className="px-5">
+        {/* شعار + اسم */}
+        <div className="flex items-center justify-center gap-2.5 mb-4">
+          <Image src="/images/logo.svg" alt="" width={36} height={36} />
+          <div className="text-right">
+            <div className="font-en-display italic text-lg text-gold-deep leading-none">Be First Lady</div>
+            <div className="text-[9px] font-en-label tracking-[0.3em] text-gold">SALON · MADINAH</div>
+          </div>
+        </div>
+
+        {/* روابط سريعة · أفقي */}
+        <div className="flex flex-wrap justify-center gap-x-3 gap-y-1.5 mb-4 text-[11px]">
+          <Link href="/legal/privacy" className="text-ink-soft hover:text-gold-deep">الخصوصيّة</Link>
+          <span className="text-gold-light">·</span>
+          <Link href="/legal/terms" className="text-ink-soft hover:text-gold-deep">الشروط</Link>
+          <span className="text-gold-light">·</span>
+          <Link href="/legal/refund" className="text-ink-soft hover:text-gold-deep">الاسترجاع</Link>
+          <span className="text-gold-light">·</span>
+          <Link href="/gift-cards" className="text-ink-soft hover:text-gold-deep">بطاقات هديّة</Link>
+        </div>
+
+        {/* روابط التواصل · أيقونات */}
+        <div className="flex justify-center gap-2.5 mb-4">
+          <a
+            href={waLink()}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="واتساب"
+            className="w-9 h-9 rounded-full bg-white shadow-card flex items-center justify-center text-success-deep active:scale-95 transition-transform"
+          >
+            <MessageCircle className="w-4 h-4" />
+          </a>
+          <a
+            href="tel:+966500000000"
+            aria-label="اتصال"
+            className="w-9 h-9 rounded-full bg-white shadow-card flex items-center justify-center text-gold-deep active:scale-95 transition-transform"
+          >
+            <Phone className="w-4 h-4" />
+          </a>
+          <a
+            href="https://instagram.com/befirstlady"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="إنستغرام"
+            className="w-9 h-9 rounded-full bg-white shadow-card flex items-center justify-center text-gold-deep active:scale-95 transition-transform"
+          >
+            <Instagram className="w-4 h-4" />
+          </a>
+        </div>
+
+        {/* copyright */}
+        <div className="text-[10px] text-center text-ink-soft mt-2">
+          © {new Date().getFullYear()} Be First Lady · المدينة المنوّرة
+        </div>
+      </div>
     </footer>
   );
 }
