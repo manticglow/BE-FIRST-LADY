@@ -94,6 +94,25 @@ export async function POST(request: NextRequest) {
     const { data: userData } = await supabase.auth.getUser();
     const admin = createAdminClient();
 
+    // ❗ المسؤولات والموظّفات لا يحجزن من هنا · تجنّباً لخلط البيانات
+    if (userData?.user?.id) {
+      const { data: profile } = await admin
+        .from('profiles')
+        .select('role')
+        .eq('id', userData.user.id)
+        .single();
+      const role = (profile as { role?: string } | null)?.role;
+      if (role === 'owner' || role === 'manager' || role === 'staff') {
+        return NextResponse.json(
+          {
+            error: 'لا يمكن إنشاء حجز من حساب إداري · استخدمي حساب عميلة منفصل',
+            code: 'admin_cannot_book',
+          },
+          { status: 403 }
+        );
+      }
+    }
+
     // احسب الإجمالي والمدة ───────────
     let subtotal = 0;
     let duration = 0;

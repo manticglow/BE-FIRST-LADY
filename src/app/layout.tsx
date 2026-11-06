@@ -10,6 +10,7 @@ import PWARegister from '@/components/ui/PWARegister';
 import FirstLoadSplash from '@/components/ui/FirstLoadSplash';
 import LoaderScreen from '@/components/ui/LoaderScreen';
 import ScrollToTop from '@/components/ui/ScrollToTop';
+import AdminModeGuard from '@/components/ui/AdminModeGuard';
 import { Suspense } from 'react';
 import ThemeProvider from '@/components/theme/ThemeProvider';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
@@ -144,6 +145,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <FirstLoadSplash />
         <LoaderScreen />
         <ThemeProvider />
+        {/* بنر "أنتِ تتصفّحين كـمديرة" لحسابات الإدارة · يظهر أعلى كل الصفحات ما عدا /admin و /staff */}
+        <Suspense fallback={null}><AdminModeGuard /></Suspense>
         {children}
         <Analytics />
         <SpeedInsights />
