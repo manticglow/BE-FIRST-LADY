@@ -90,6 +90,21 @@ export async function sendWhatsAppText(to: string, body: string): Promise<SendRe
     return { ok: true, messageId: 'test-' + Date.now() };
   }
 
+  // 🚀 Twilio Provider · لو مفعّل · نستخدمه بدل Meta
+  if (process.env.WHATSAPP_PROVIDER === 'twilio') {
+    const { sendTwilioWhatsApp } = await import('./twilio-whatsapp');
+    const result = await sendTwilioWhatsApp(phone, body);
+    await logToDb({
+      phone, message: body,
+      status: result.ok ? 'sent' : 'failed',
+      mode: 'live',
+      messageId: result.messageId,
+      error: result.error,
+      response: { provider: 'twilio' },
+    });
+    return result;
+  }
+
   const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
   const token = process.env.WHATSAPP_ACCESS_TOKEN;
 
