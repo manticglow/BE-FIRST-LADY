@@ -27,6 +27,7 @@ const SIDEBAR: SidebarItem[] = [
   { href: '/admin/payroll',     label: 'الرواتب',    iconKey: 'Banknote',        roles: ['owner'] },
   { href: '/admin/expenses',    label: 'المصروفات',  iconKey: 'Banknote',        roles: ['owner', 'manager'] },
   { href: '/admin/templates',   label: 'قوالب الرسائل', iconKey: 'MessageSquare', roles: ['owner', 'manager'] },
+  { href: '/admin/whatsapp',    label: 'سجلّ واتساب',   iconKey: 'MessageCircle', roles: ['owner', 'manager'] },
   { href: '/admin/banners',     label: 'البنرات',    iconKey: 'ImageIcon',       roles: ['owner', 'manager'] },
   { href: '/admin/themes',      label: 'ثيم الموقع',  iconKey: 'Palette',        roles: ['owner', 'manager'] },
   { href: '/admin/push',        label: 'الإشعارات',  iconKey: 'Bell',            roles: ['owner', 'manager'] },

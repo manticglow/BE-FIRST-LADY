@@ -41,9 +41,55 @@ export function formatPhoneForWhatsApp(phone: string): string {
 }
 
 // ═══════════════════════════════════════════════════════════
+// 🧪 Test Mode · حفظ الرسالة في DB بدل الإرسال
+// يُفعّل بـ WHATSAPP_TEST_MODE=true في env
+// ═══════════════════════════════════════════════════════════
+const isTestMode = () =>
+  (process.env.WHATSAPP_TEST_MODE || '').toLowerCase() === 'true' ||
+  (process.env.WHATSAPP_TEST_MODE || '') === '1';
+
+async function logToDb(opts: {
+  phone: string;
+  message: string;
+  status: 'test' | 'sent' | 'failed';
+  response?: unknown;
+  error?: string;
+  messageId?: string;
+  templateCode?: string;
+  mode: 'live' | 'test';
+}): Promise<void> {
+  try {
+    const { createAdminClient } = await import('@/lib/supabase/server');
+    const admin = createAdminClient();
+    await (admin as any).from('whatsapp_log').insert({
+      phone: opts.phone,
+      message: opts.message,
+      status: opts.status,
+      gateway_response: opts.response || null,
+      gateway_message_id: opts.messageId || null,
+      error_message: opts.error || null,
+      template_code: opts.templateCode || null,
+      mode: opts.mode,
+      sent_at: opts.status === 'sent' || opts.status === 'test' ? new Date().toISOString() : null,
+    });
+  } catch (e) {
+    log.warn('failed to log to db', { err: e });
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
 // رسالة نصيّة · للمحادثات المفتوحة (24 ساعة من آخر رد للعميلة)
 // ═══════════════════════════════════════════════════════════
 export async function sendWhatsAppText(to: string, body: string): Promise<SendResult> {
+  const phone = formatPhoneForWhatsApp(to);
+
+  // 🧪 Test Mode · ما نرسل · نحفظ فقط
+  if (isTestMode()) {
+    await logToDb({ phone, message: body, status: 'test', mode: 'test' });
+    log.info('TEST MODE · message saved to db', { phone, preview: body.slice(0, 50) });
+    return { ok: true, messageId: 'test-' + Date.now() };
+  }
+
   const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
   const token = process.env.WHATSAPP_ACCESS_TOKEN;
 
@@ -74,11 +120,18 @@ export async function sendWhatsAppText(to: string, body: string): Promise<SendRe
     const data = await res.json();
     if (!res.ok) {
       log.error('text message failed', null, { data });
+      await logToDb({
+        phone, message: body, status: 'failed', mode: 'live',
+        response: data, error: data.error?.message,
+      });
       return { ok: false, error: data.error?.message || 'فشل الإرسال' };
     }
-    return { ok: true, messageId: data.messages?.[0]?.id };
+    const messageId = data.messages?.[0]?.id;
+    await logToDb({ phone, message: body, status: 'sent', mode: 'live', response: data, messageId });
+    return { ok: true, messageId };
   } catch (e: any) {
     log.error('text message exception', e);
+    await logToDb({ phone, message: body, status: 'failed', mode: 'live', error: e.message });
     return { ok: false, error: e.message };
   }
 }
