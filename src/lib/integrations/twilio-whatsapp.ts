@@ -52,12 +52,26 @@ export async function sendTwilioWhatsApp(
   const toFormatted = formatTwilioPhone(to);
   const apiUrl = `https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`;
 
+  // استراتيجيّة: نجرّب Body عادي أوّل (ينفع داخل نافذة 24 ساعة)
+  // لو فشل بـ"ContentSid Required" نرجع بـContentSid (لو مُحدّد في env)
+  const contentSid = process.env.TWILIO_CONTENT_SID;
+
   // Twilio يستقبل البيانات كـform-urlencoded
-  const formData = new URLSearchParams({
+  const baseParams: Record<string, string> = {
     From: from,
     To: toFormatted,
-    Body: body,
-  });
+  };
+
+  // لو في TWILIO_CONTENT_SID مُحدّد نستخدمه (للـproduction)
+  // غير كذا نستخدم Body (نافذة 24 ساعة)
+  if (contentSid) {
+    baseParams.ContentSid = contentSid;
+    baseParams.ContentVariables = JSON.stringify({ '1': body.slice(0, 1024) });
+  } else {
+    baseParams.Body = body;
+  }
+
+  const formData = new URLSearchParams(baseParams);
 
   // Basic Auth = base64(sid:token)
   const auth = Buffer.from(`${sid}:${token}`).toString('base64');
