@@ -24,10 +24,20 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files
-.env*.local
+# env files · security critical
+.env
 .env.local
+.env*.local
+.env.production
 .env.production.local
+.env.development.local
+.env.test.local
+# secrets & tokens
+*.pem
+*.key
+*.crt
+service-account*.json
+firebase-key*.json
 .env.development.local
 
 # vercel

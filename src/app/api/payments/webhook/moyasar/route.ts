@@ -16,6 +16,9 @@ export const runtime = 'nodejs';
 
 const WEBHOOK_SECRET = process.env.MOYASAR_WEBHOOK_SECRET || '';
 
+// 🔒 في production · فرضيّة: السرّ موجود
+const IS_PRODUCTION = process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production';
+
 type IntentRow = {
   id: string;
   customer_id: string | null;
@@ -39,10 +42,17 @@ type UpdatePayload = {
 export async function POST(req: NextRequest) {
   const { ip, ua } = extractRequestInfo(req);
 
-  // التحقّق من الـsecret (في header أو body)
+  // 🔒 التحقّق من الـsecret (إلزامي في production)
   const headerSecret = req.headers.get('x-moyasar-secret') || req.headers.get('secret-token');
+
+  // في production · السرّ لازم يكون موجود ومطابق · وإلا نرفض
+  if (IS_PRODUCTION && !WEBHOOK_SECRET) {
+    log.error('WEBHOOK_SECRET غير مُعيّن في production · webhook يُرفض');
+    return NextResponse.json({ error: 'webhook not configured' }, { status: 500 });
+  }
+
   if (WEBHOOK_SECRET && headerSecret !== WEBHOOK_SECRET) {
-    log.warn('invalid secret');
+    log.warn('invalid secret', { ip });
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
 
