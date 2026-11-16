@@ -148,61 +148,111 @@ export default async function AccountPage() {
             <StatTile icon={Crown} label="عضوة منذ" value={String(memberSince)} color="violet" />
           </div>
 
-          {/* ═══ شريط إجراءات ═══ */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8 md:mb-10">
-            {/* 🔁 كرّري آخر حجز (إذا موجود) */}
-            {lastCompleted && (
-              <ActionLink
-                href={`/booking?repeat=${lastCompleted.id}`}
-                title="كرّري آخر حجز"
-                subtitle={`نفس الخدمات · حجز بنقرة`}
-                icon={Clock}
-                variant="pink"
-              />
-            )}
-            <ActionLink
+          {/* ═══ إجراء سريع · حجز جديد ═══ */}
+          <div className="mb-6">
+            <Link
               href="/booking"
-              title="احجزي موعداً جديداً"
-              subtitle="خدمات مختارة بعناية"
-              icon={CalendarPlus}
-              variant="primary"
-              className={lastCompleted ? '' : 'sm:col-span-2'}
-            />
-            <ActionLink
-              href="/account/favorites"
-              title={`مفضّلتكِ · ${favoritesCount || 0}`}
-              subtitle="خدمات وموظفات حفظتِهن"
-              icon={Heart}
-              variant="light"
-            />
-            <ActionLink
-              href="/account/profile"
-              title="بياناتي"
-              subtitle="تعديل الاسم والجوال وتاريخ ميلادكِ 🎂"
-              icon={UserIcon}
-              variant="light"
-            />
-            <ActionLink
-              href="/account/beauty-profile"
-              title="ملف الجمال"
-              subtitle="نوع البشرة والشعر والحسّاسيّات ✨"
-              icon={Sparkles}
-              variant="light"
-            />
-            <ActionLink
-              href="/account/history"
-              title="تاريخ زياراتكِ"
-              subtitle="رحلة جمالكِ · صور قبل/بعد 💫"
-              icon={Heart}
-              variant="light"
-            />
-            <ActionLink
-              href="/account/referral"
-              title="ادعي صديقاتكِ"
-              subtitle="50 ر.س لكِ ولصديقتكِ عند أول حجز 🎁"
-              icon={Gift}
-              variant="pink"
-            />
+              className="block group relative overflow-hidden rounded-2xl p-5 bg-gradient-to-br from-gold-deep via-ink to-gold-dark text-cream-50 shadow-lg hover:shadow-xl transition-all"
+            >
+              <div className="absolute top-0 left-0 w-40 h-40 rounded-full bg-white/10 -translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
+              <div className="relative z-10 flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center shrink-0">
+                  <CalendarPlus className="w-7 h-7 text-cream-50" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-ar-display text-xl font-bold italic">احجزي موعداً جديداً</div>
+                  <div className="text-xs opacity-85 mt-0.5">خدمات مختارة بعناية خاصّة</div>
+                </div>
+                <ChevronLeft className="w-5 h-5 opacity-70 group-hover:opacity-100 group-hover:-translate-x-1 transition-all" />
+              </div>
+            </Link>
+          </div>
+
+          {/* ═══ iOS Grouped · الأقسام المنظّمة ═══ */}
+          <div className="space-y-6 mb-8 md:mb-10">
+
+            {/* المكرّر */}
+            {lastCompleted && (
+              <GroupSection label="SUGGESTED FOR YOU · مُقترح لكِ">
+                <GroupRow
+                  href={`/booking?repeat=${lastCompleted.id}`}
+                  icon={Clock}
+                  label="كرّري آخر حجز"
+                  value={lastCompleted.items?.[0]?.service_name || 'آخر خدمة'}
+                  iconBg="bg-rose-100"
+                  iconColor="text-rose-700"
+                />
+              </GroupSection>
+            )}
+
+            {/* النشاط */}
+            <GroupSection label="ACTIVITY · النشاط">
+              <GroupRow
+                href="/account/bookings"
+                icon={CalendarPlus}
+                label="حجوزاتي"
+                value={upcoming.length > 0 ? `${upcoming.length} قادمة` : 'عرض الكل'}
+                iconBg="bg-emerald-100"
+                iconColor="text-emerald-700"
+              />
+              <GroupRow
+                href="/account/favorites"
+                icon={Heart}
+                label="المفضّلة"
+                value={favoritesCount && favoritesCount > 0 ? `${favoritesCount}` : 'ابدأي بالإضافة'}
+                iconBg="bg-pink-100"
+                iconColor="text-pink-700"
+              />
+              <GroupRow
+                href="/account/history"
+                icon={Sparkles}
+                label="تاريخ زياراتكِ"
+                value={past.length > 0 ? `${past.length} زيارة` : ''}
+                iconBg="bg-amber-100"
+                iconColor="text-amber-700"
+              />
+            </GroupSection>
+
+            {/* الشخصيّة */}
+            <GroupSection label="PERSONAL · الشخصيّة">
+              <GroupRow
+                href="/account/profile"
+                icon={UserIcon}
+                label="بياناتي الشخصيّة"
+                value="تعديل"
+                iconBg="bg-cream-200"
+                iconColor="text-gold-deep"
+              />
+              <GroupRow
+                href="/account/beauty-profile"
+                icon={Sparkles}
+                label="ملف الجمال"
+                value="بشرة · شعر · تفضيلات"
+                iconBg="bg-rose-100"
+                iconColor="text-rose-700"
+              />
+            </GroupSection>
+
+            {/* المكافآت */}
+            <GroupSection label="REWARDS · المكافآت">
+              <GroupRow
+                href="/account/referral"
+                icon={Gift}
+                label="ادعي صديقاتكِ"
+                value="50 ر.س لكِ ولها"
+                iconBg="bg-gold-light/20"
+                iconColor="text-gold-deep"
+                highlight
+              />
+              <GroupRow
+                href="/gift-cards"
+                icon={Star}
+                label="بطاقات الهديّة"
+                value="أهدي من تحبّينَ"
+                iconBg="bg-gold-light/20"
+                iconColor="text-gold-deep"
+              />
+            </GroupSection>
           </div>
 
           {/* ═══ Push Notifications ═══ */}
@@ -368,72 +418,181 @@ function LoyaltyCardPremium({ points, tier, totalSpent }: { points: number; tier
   const info = TIER_INFO[tier] || TIER_INFO.bronze;
   const progress = info.next ? Math.min(100, (totalSpent / info.next) * 100) : 100;
   const remaining = info.next ? Math.max(0, info.next - totalSpent) : 0;
-  const circumference = 2 * Math.PI * 42; // r=42
-  const strokeOffset = circumference - (progress / 100) * circumference;
+  const tierLabelEn = tier === 'bronze' ? 'BRONZE' : tier === 'silver' ? 'SILVER' : tier === 'gold' ? 'GOLD' : 'DIAMOND';
+
+  // المميّزات حسب المستوى
+  const perks: Record<string, Array<{ icon: string; text: string }>> = {
+    bronze: [
+      { icon: '✦', text: 'استبدال النقاط بخصومات' },
+      { icon: '🎁', text: 'هديّة عيد ميلادكِ' },
+    ],
+    silver: [
+      { icon: '✦', text: 'خصم 5% دائم' },
+      { icon: '🎁', text: 'هديّة عيد ميلادكِ' },
+      { icon: '⏰', text: 'تذكير قبل انتهاء الكوبونات' },
+    ],
+    gold: [
+      { icon: '✦', text: 'خصم 15% دائم' },
+      { icon: '👑', text: 'أولويّة الحجز' },
+      { icon: '🎁', text: 'هديّة شهريّة' },
+    ],
+    diamond: [
+      { icon: '💎', text: 'خصم 25% دائم' },
+      { icon: '👑', text: 'أولويّة قصوى' },
+      { icon: '🏆', text: 'جلسة VIP شهريّة مجانيّة' },
+      { icon: '🎁', text: 'هدايا حصريّة' },
+    ],
+  };
+
+  const activePerks = perks[tier] || perks.bronze;
 
   return (
-    <div className={`mb-6 bg-gradient-to-br ${info.gradient} text-white rounded-3xl p-6 md:p-8 shadow-xl ${info.glow} relative overflow-hidden`}>
-      {/* زخرفة الخلفية */}
-      <div className="absolute -top-10 -left-10 opacity-10">
-        <Sparkles className="w-48 h-48" />
-      </div>
-      <div className="absolute bottom-0 right-0 opacity-5 text-9xl leading-none">
-        {info.emoji}
-      </div>
+    <div className="mb-6 space-y-3">
+      {/* ═══ بطاقة العضويّة · كبطاقة ائتمان فاخرة ═══ */}
+      <div className="relative overflow-hidden rounded-3xl p-6 md:p-7 border border-gold-light/40 shadow-xl"
+           style={{
+             background: 'linear-gradient(135deg, #f5eee0 0%, #ebe0c9 50%, #dcc9a2 100%)',
+             boxShadow: '0 10px 40px rgba(201, 168, 118, 0.25)',
+           }}>
+        {/* دوائر زخرفيّة */}
+        <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-white/40 pointer-events-none"></div>
+        <div className="absolute -bottom-20 -left-20 w-56 h-56 rounded-full bg-gold-deep/8 pointer-events-none"></div>
 
-      <div className="relative z-10 flex items-center gap-6 flex-wrap">
-        {/* الدائرة مع النقاط */}
-        <div className="relative shrink-0">
-          <svg className="w-32 h-32 md:w-36 md:h-36 -rotate-90" viewBox="0 0 100 100">
-            {/* الحلقة الخلفية */}
-            <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" strokeWidth="4" className="text-white/15" />
-            {/* الحلقة التقدّمية */}
-            {info.next && (
-              <circle
-                cx="50" cy="50" r="42"
-                fill="none" stroke="currentColor" strokeWidth="4"
-                strokeLinecap="round"
-                strokeDasharray={circumference}
-                strokeDashoffset={strokeOffset}
-                className="text-white transition-all duration-1000"
-              />
-            )}
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className="font-en-display text-3xl md:text-4xl font-bold leading-none">
-              {points.toLocaleString()}
+        {/* الصفّ العلوي: العلامة + المستوى */}
+        <div className="relative z-10 flex items-start justify-between mb-5">
+          <div>
+            <div className="font-en-display italic text-xl md:text-2xl text-gold-dark">
+              Be First Lady
             </div>
-            <div className="text-[10px] opacity-80 mt-1">نقطة</div>
+            <div className="font-en-label text-[9px] tracking-[0.3em] text-gold-deep mt-0.5">
+              MEMBERSHIP CARD
+            </div>
+          </div>
+          <div className="text-left">
+            <div className="inline-flex items-center gap-1 px-3 py-1 bg-white/70 backdrop-blur rounded-full border border-gold-light/40">
+              <span className="text-sm">{info.emoji}</span>
+              <span className="font-en-label text-[9px] tracking-[0.2em] text-gold-deep font-bold">
+                {tierLabelEn}
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* المعلومات */}
-        <div className="flex-1 min-w-[180px]">
-          <div className="flex items-center gap-1.5 mb-1.5 opacity-80">
-            <Award className="w-3.5 h-3.5" />
-            <span className="font-en-label text-[9px] tracking-[0.3em]">LOYALTY TIER</span>
+        {/* النقاط · العدد الكبير */}
+        <div className="relative z-10 mb-5">
+          <div className="font-en-label text-[9px] tracking-[0.3em] text-gold-deep mb-1">
+            AVAILABLE POINTS
           </div>
-          <div className="font-ar-display text-2xl md:text-3xl font-bold flex items-center gap-2 mb-2">
-            عضوة {info.label}
-            <span className="text-2xl">{info.emoji}</span>
+          <div className="font-en-display text-5xl md:text-6xl font-light text-gold-dark leading-none">
+            {points.toLocaleString()}
           </div>
-          {info.next ? (
-            <div className="space-y-1">
-              <div className="text-xs opacity-90">
-                <span className="font-bold font-en-display">{remaining.toLocaleString()}</span> ر.س للترقية
-              </div>
-              <div className="text-[10px] opacity-70">
-                كل 10 ر.س تنفقينها = نقطة ولاء · استبدليها بخصومات على الحجز
-              </div>
+          <div className="text-xs text-gold-deep mt-2 font-ar-display italic">
+            تعادل {Math.floor(points / 10).toLocaleString()} ر.س خصم على حجزكِ القادم
+          </div>
+        </div>
+
+        {/* شريط التقدّم */}
+        {info.next ? (
+          <div className="relative z-10">
+            <div className="h-2 bg-white/50 rounded-full overflow-hidden mb-2">
+              <div
+                className="h-full bg-gradient-to-r from-gold-deep to-gold transition-all duration-1000 rounded-full"
+                style={{ width: `${progress}%` }}
+              ></div>
             </div>
-          ) : (
-            <div className="text-sm font-bold">
-              ✨ أعلى طبقة · شكراً لولائكِ 💎
+            <div className="flex items-center justify-between text-[10px]">
+              <span className="text-gold-deep font-ar-display italic">
+                عضويّة {info.label}
+              </span>
+              <span className="font-en-label tracking-wider text-gold-deep font-bold">
+                {remaining.toLocaleString()} ر.س للترقية
+              </span>
             </div>
-          )}
+          </div>
+        ) : (
+          <div className="relative z-10 text-center py-2">
+            <div className="text-sm font-bold text-gold-dark font-ar-display">
+              ✨ أعلى مستوى · شكراً لولائكِ 💎
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ═══ مميّزاتكِ ═══ */}
+      <div className="bg-white rounded-2xl border border-cream-200 overflow-hidden">
+        <div className="px-5 py-3 border-b border-cream-100 flex items-center justify-between">
+          <div className="font-en-label text-[9px] tracking-[0.3em] text-gold-deep font-bold">
+            YOUR PERKS
+          </div>
+          <div className="text-[10px] text-ink-muted font-ar-display italic">
+            {activePerks.length} مميّزات مفعّلة
+          </div>
+        </div>
+        <div className="divide-y divide-cream-100">
+          {activePerks.map((p, i) => (
+            <div key={i} className="px-5 py-2.5 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-cream-100 flex items-center justify-center shrink-0 text-base">
+                {p.icon}
+              </div>
+              <div className="text-sm text-ink flex-1">{p.text}</div>
+              <span className="text-[10px] text-emerald-600 font-bold">✓</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>
+  );
+}
+
+function GroupSection({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <div className="font-en-label text-[10px] tracking-[0.3em] text-gold-light px-4 pb-2 font-bold">
+        {label}
+      </div>
+      <div className="bg-white rounded-2xl border border-cream-200 overflow-hidden shadow-sm">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function GroupRow({
+  href,
+  icon: Icon,
+  label,
+  value,
+  iconBg,
+  iconColor,
+  highlight,
+}: {
+  href: string;
+  icon: any;
+  label: string;
+  value?: string;
+  iconBg: string;
+  iconColor: string;
+  highlight?: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className={`flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-cream-50 border-b border-cream-100 last:border-b-0 ${highlight ? 'bg-gold-light/5' : ''}`}
+    >
+      <div className={`w-9 h-9 rounded-xl ${iconBg} ${iconColor} flex items-center justify-center shrink-0`}>
+        <Icon className="w-4 h-4" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="text-sm text-ink font-bold">{label}</div>
+      </div>
+      {value && (
+        <div className="text-xs text-ink-muted shrink-0 flex items-center gap-2">
+          <span>{value}</span>
+          <ChevronLeft className="w-3.5 h-3.5 text-ink-muted" />
+        </div>
+      )}
+      {!value && <ChevronLeft className="w-3.5 h-3.5 text-ink-muted" />}
+    </Link>
   );
 }
 

@@ -1,12 +1,16 @@
 /**
- * My Bookings — كل حجوزات العميلة
+ * My Bookings — كل حجوزات العميلة · Calendar Mini Layout
+ * ═══════════════════════════════════════════════════════════
+ * - تقويم شهري مُصغّر أعلى الصفحة
+ * - قائمة حجوزات اليوم المختار أسفل
+ * - زرّ للتبديل بين "التقويم" و"كل الحجوزات"
  */
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-import BookingCard from '@/components/account/BookingCard';
+import BookingsCalendarView from '@/components/account/BookingsCalendarView';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,23 +35,19 @@ export default async function MyBookingsPage() {
           <Link href="/account" className="text-sm text-ink-soft hover:text-gold-deep mb-4 inline-block">
             ← الحساب
           </Link>
-          <h1 className="font-ar-display text-3xl font-bold text-gold-deep mb-2">
-            جميع حجوزاتي
-          </h1>
-          <p className="text-ink-soft text-sm mb-8">
-            {bookings?.length || 0} حجز
-          </p>
+          <div className="mb-6">
+            <div className="font-en-label text-[10px] tracking-[0.3em] text-gold-light mb-1">
+              MY SCHEDULE
+            </div>
+            <h1 className="font-ar-display text-3xl md:text-4xl font-bold text-gold-deep italic">
+              جدولي
+            </h1>
+            <p className="text-ink-soft text-sm mt-1">
+              {bookings?.length || 0} حجز · اختاري يوم لعرض تفاصيله
+            </p>
+          </div>
 
-          {bookings.length === 0 ? (
-            <div className="bg-white rounded-2xl p-12 text-center border border-cream-200">
-              <div className="text-ink-soft mb-4">ما عندكِ أي حجوزات بعد</div>
-              <Link href="/booking" className="btn-primary">احجزي أول موعد</Link>
-            </div>
-          ) : (
-            <div className="grid md:grid-cols-2 gap-3">
-              {bookings.map((b) => <BookingCard key={b.id} booking={b} />)}
-            </div>
-          )}
+          <BookingsCalendarView bookings={bookings} />
         </div>
       </main>
       <Footer />

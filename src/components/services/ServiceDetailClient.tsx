@@ -145,74 +145,101 @@ export default function ServiceDetailClient({ service, reviews, avgRating, isLog
         </div>
       </div>
 
-      {/* ═══ المحتوى ═══ */}
+      {/* ═══ المحتوى · Sectioned Info ═══ */}
       <div className="px-4 pt-5 pb-6">
 
-        {/* الفئة · عنوان · تقييم */}
-        <div className="mb-3">
+        {/* ═══ العنوان ═══ */}
+        <div className="mb-5">
           {service.category && (
             <div className="font-en-label text-[10px] tracking-[0.3em] text-gold-light mb-1">
               {service.category.name_en?.toUpperCase() || 'SERVICE'}
             </div>
           )}
-          <h1 className="font-ar-display text-2xl md:text-3xl font-bold text-gold-deep leading-tight">
+          <h1 className="font-ar-display italic text-2xl md:text-3xl font-bold text-gold-deep leading-tight">
             {service.name_ar}
           </h1>
           <p className="font-en-display italic text-sm text-gold-light mt-1">
             {service.name_en}
           </p>
+        </div>
 
-          {/* تقييم + مدة */}
-          <div className="flex items-center gap-3 mt-3 text-sm">
-            {avgRating !== null && (
-              <div className="flex items-center gap-1 bg-gold-light/15 text-gold-deep font-bold rounded-full px-3 py-1">
-                <Star className="w-3.5 h-3.5 fill-current" />
-                <span className="font-en-display">{avgRating.toFixed(1)}</span>
-                <span className="text-[10px] text-ink-soft font-normal">({reviews.length})</span>
-              </div>
-            )}
-            <div className="flex items-center gap-1 text-ink-soft">
-              <Clock className="w-4 h-4" />
-              <span className="font-en-display">{formatDuration(service.duration_min)}</span>
+        {/* ═══ 3 إحصائيّات متوازية · Meta Row ═══ */}
+        <div className="grid grid-cols-3 gap-2 mb-5">
+          {/* المدّة */}
+          <div className="bg-white rounded-2xl p-3 text-center border border-cream-200">
+            <div className="font-en-label text-[9px] tracking-[0.2em] text-ink-muted mb-1.5 flex items-center justify-center gap-1">
+              <Clock className="w-3 h-3" /> المدّة
+            </div>
+            <div className="font-en-display font-bold text-xl md:text-2xl text-gold-deep">
+              {service.duration_min}
+            </div>
+            <div className="text-[9px] text-ink-muted">دقيقة</div>
+          </div>
+
+          {/* السعر */}
+          <div className="bg-gradient-to-br from-gold-light/15 to-cream-50 rounded-2xl p-3 text-center border border-gold-light/30">
+            <div className="font-en-label text-[9px] tracking-[0.2em] text-gold-deep mb-1.5 font-bold">
+              السعر
+            </div>
+            <div className="font-en-display font-bold text-xl md:text-2xl text-gold-deep">
+              {formatPrice(service.price, { showFrom: false })}
+            </div>
+            <div className="text-[9px] text-ink-muted">
+              {service.price_from ? 'يبدأ من' : 'ريال'}
+            </div>
+          </div>
+
+          {/* التقييم */}
+          <div className="bg-white rounded-2xl p-3 text-center border border-cream-200">
+            <div className="font-en-label text-[9px] tracking-[0.2em] text-ink-muted mb-1.5 flex items-center justify-center gap-1">
+              <Star className="w-3 h-3 fill-current" /> التقييم
+            </div>
+            <div className="font-en-display font-bold text-xl md:text-2xl text-gold-deep">
+              {avgRating !== null ? avgRating.toFixed(1) : '—'}
+            </div>
+            <div className="text-[9px] text-ink-muted">
+              {reviews.length > 0 ? `${reviews.length} تقييم` : 'جديدة'}
             </div>
           </div>
         </div>
 
-        {/* السعر */}
-        <div className="bg-gradient-to-l from-gold-light/15 to-transparent rounded-2xl p-4 mb-5 flex items-baseline justify-between">
-          <span className="text-xs text-ink-soft">السعر</span>
-          <div className="flex items-baseline gap-1.5">
-            {service.price_from && (
-              <span className="text-xs text-ink-soft">يبدأ من</span>
-            )}
-            <span className="font-en-display font-bold text-2xl md:text-3xl text-gold-deep">
-              {formatPrice(service.price, { showFrom: false })}
-            </span>
-          </div>
-        </div>
-
-        {/* الوصف · يبان دائماً */}
-        <section className="mb-6">
-          <h2 className="font-ar-display text-lg font-bold text-ink mb-2 flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-gold-deep" />
-            عن هذه الخدمة
-          </h2>
-          <p className="text-sm text-ink-soft leading-relaxed">
-            {getDescription(service)}
-          </p>
-        </section>
-
-        {/* الملاحظات */}
-        {service.notes_ar && (
-          <section className="mb-6 bg-amber-50 border border-amber-200 rounded-2xl p-4">
-            <h3 className="font-ar-display font-bold text-amber-900 text-sm mb-1">
-              ⚠️ ملاحظات مهمة
-            </h3>
-            <p className="text-xs text-amber-900/80 leading-relaxed">
-              {service.notes_ar}
+        {/* ═══ أقسام المعلومات ═══ */}
+        <div className="space-y-3 mb-6">
+          {/* ماذا تتوقّعين */}
+          <section className="bg-white rounded-2xl p-4 border border-cream-200">
+            <div className="font-en-label text-[10px] tracking-[0.3em] text-gold-deep mb-2 font-bold flex items-center gap-1.5">
+              <Sparkles className="w-3 h-3" />
+              WHAT TO EXPECT · ماذا تتوقّعين
+            </div>
+            <p className="text-sm text-ink leading-relaxed">
+              {getDescription(service)}
             </p>
           </section>
-        )}
+
+          {/* مناسب لـ */}
+          {service.category && (
+            <section className="bg-white rounded-2xl p-4 border border-cream-200">
+              <div className="font-en-label text-[10px] tracking-[0.3em] text-gold-deep mb-2 font-bold">
+                GOOD FOR · مناسب لـ
+              </div>
+              <p className="text-sm text-ink leading-relaxed">
+                جميع أنواع البشرة والشعر · في أجواء فاخرة وراحة تامّة · مع خبيرات في الصالون.
+              </p>
+            </section>
+          )}
+
+          {/* الملاحظات (إذا موجودة) */}
+          {service.notes_ar && (
+            <section className="bg-amber-50 rounded-2xl p-4 border border-amber-200">
+              <div className="font-en-label text-[10px] tracking-[0.3em] text-amber-700 mb-2 font-bold">
+                ⚠ IMPORTANT · ملاحظات
+              </div>
+              <p className="text-sm text-amber-900/90 leading-relaxed">
+                {service.notes_ar}
+              </p>
+            </section>
+          )}
+        </div>
 
         {/* ═══ التقييمات ═══ */}
         <section className="mb-6">
