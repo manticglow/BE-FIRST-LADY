@@ -2,11 +2,12 @@
  * /api/whatsapp/test — تشخيص سريع لإعدادات واتساب
  * ═══════════════════════════════════════════════════════════
  * يستخدم المكتبة الموحّدة (whatsapp.ts) اللي تختار المزوّد تلقائياً:
- *   • WHATSAPP_TEST_MODE=true  → تحفظ بدون إرسال
- *   • WHATSAPP_PROVIDER=twilio → ترسل عبر Twilio
- *   • افتراضي                  → ترسل عبر Meta Cloud API
+ *   • WHATSAPP_TEST_MODE=true     → تحفظ بدون إرسال
+ *   • WHATSAPP_PROVIDER=ultramsg  → ترسل عبر UltraMsg (الأفضل للسعودية)
+ *   • WHATSAPP_PROVIDER=twilio    → ترسل عبر Twilio
+ *   • افتراضي                      → ترسل عبر Meta Cloud API
  *
- * GET  → يفحص env variables ويخبرك ايش المزوّد المفعّل
+ * GET  → يفحص env variables ويخبرك ايش المزوّد المفعّل + حالة UltraMsg
  * POST → يرسل اختبار للرقم (body: { phone: "05xxx", text: "..." })
  */
 import { NextRequest, NextResponse } from 'next/server';
@@ -24,8 +25,23 @@ export async function GET() {
     token: !!process.env.TWILIO_AUTH_TOKEN,
     from: !!process.env.TWILIO_WHATSAPP_FROM,
   };
+  const ultramsg = {
+    instanceId: !!process.env.ULTRAMSG_INSTANCE_ID,
+    token: !!process.env.ULTRAMSG_TOKEN,
+  };
   const provider = process.env.WHATSAPP_PROVIDER || 'meta';
   const testMode = process.env.WHATSAPP_TEST_MODE === 'true' || process.env.WHATSAPP_TEST_MODE === '1';
+
+  // فحص حالة UltraMsg الـInstance (هل مربوط بواتساب نشط؟)
+  let ultramsgStatus: any = null;
+  if (ultramsg.instanceId && ultramsg.token) {
+    try {
+      const { checkUltraMsgStatus } = await import('@/lib/integrations/ultramsg-whatsapp');
+      ultramsgStatus = await checkUltraMsgStatus();
+    } catch (e: any) {
+      ultramsgStatus = { ok: false, error: e.message };
+    }
+  }
 
   return NextResponse.json({
     active_provider: testMode ? 'test-mode (DB only)' : provider,
@@ -39,11 +55,20 @@ export async function GET() {
       TWILIO_AUTH_TOKEN: twilio.token ? '✅' : '❌',
       TWILIO_WHATSAPP_FROM: twilio.from ? '✅' : '❌',
     },
+    ultramsg_config: {
+      ULTRAMSG_INSTANCE_ID: ultramsg.instanceId ? '✅' : '❌',
+      ULTRAMSG_TOKEN: ultramsg.token ? '✅' : '❌',
+      instance_status: ultramsgStatus
+        ? (ultramsgStatus.ok
+            ? `✅ ${ultramsgStatus.instance_status || 'authenticated'}`
+            : `❌ ${ultramsgStatus.instance_status || ultramsgStatus.error}`)
+        : '—',
+    },
     switch: {
       WHATSAPP_PROVIDER: provider,
       WHATSAPP_TEST_MODE: testMode,
     },
-    next_step: 'POST هنا بـ { "phone": "0596198999", "text": "رسالة اختبار" }',
+    next_step: 'POST هنا بـ { "phone": "0591234939", "text": "رسالة اختبار" }',
   });
 }
 

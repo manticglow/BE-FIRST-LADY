@@ -90,6 +90,21 @@ export async function sendWhatsAppText(to: string, body: string): Promise<SendRe
     return { ok: true, messageId: 'test-' + Date.now() };
   }
 
+  // 🚀 UltraMsg Provider · الأفضل للسعودية · رقم واتساب عادي
+  if (process.env.WHATSAPP_PROVIDER === 'ultramsg') {
+    const { sendUltraMsgWhatsApp } = await import('./ultramsg-whatsapp');
+    const result = await sendUltraMsgWhatsApp(phone, body);
+    await logToDb({
+      phone, message: body,
+      status: result.ok ? 'sent' : 'failed',
+      mode: 'live',
+      messageId: result.messageId,
+      error: result.error,
+      response: { provider: 'ultramsg' },
+    });
+    return result;
+  }
+
   // 🚀 Twilio Provider · لو مفعّل · نستخدمه بدل Meta
   if (process.env.WHATSAPP_PROVIDER === 'twilio') {
     const { sendTwilioWhatsApp } = await import('./twilio-whatsapp');
