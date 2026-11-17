@@ -2,8 +2,16 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "crons": [
     {
+      "path": "/api/cron/birthday-messages",
+      "schedule": "0 6 * * *"
+    },
+    {
       "path": "/api/cron/birthday-coupons",
       "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/recurring-bookings",
+      "schedule": "0 5 * * *"
     },
     {
       "path": "/api/cron/booking-reminders",

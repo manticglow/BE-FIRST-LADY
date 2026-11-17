@@ -13,6 +13,8 @@ export type AuditAction =
   | 'auth.otp.verify'
   | 'auth.password.reset'
   | 'auth.password.change'
+  | 'auth.webauthn.register'
+  | 'auth.webauthn.remove'
   // ─── Bookings ───
   | 'booking.create'
   | 'booking.update'
@@ -34,7 +36,17 @@ export type AuditAction =
   | 'admin.staff.update'
   | 'admin.staff.delete'
   | 'admin.settings.update'
-  | 'admin.data.export';
+  | 'admin.data.export'
+  // ─── Waitlist / Referrals / Marketing / Challenges / Shop ───
+  | 'waitlist.join'
+  | 'waitlist.notify'
+  | 'referral.join'
+  | 'referral.reward'
+  | 'campaign.create'
+  | 'campaign.send'
+  | 'challenge.claim'
+  | 'order.create'
+  | 'order.pay';
 
 interface LogOptions {
   userId?: string | null;
