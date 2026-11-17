@@ -17,7 +17,7 @@ import RevenueChart from '@/components/admin/RevenueChart';
 import SmartInsights from '@/components/admin/SmartInsights';
 import CapacityMeter from '@/components/admin/CapacityMeter';
 import LiveStaffStatus from '@/components/admin/LiveStaffStatus';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, saudiToday, saudiHour, shiftIsoDate, SAUDI_TZ } from '@/lib/utils';
 import {
   CalendarCheck, DollarSign, Users, TrendingUp, TrendingDown,
   AlertCircle, Bell, Plus, Scissors, UserPlus, BarChart3,
@@ -27,7 +27,7 @@ import {
 export const dynamic = 'force-dynamic';
 
 function timeGreeting(): { ar: string; emoji: string } {
-  const h = new Date().getHours();
+  const h = saudiHour();
   if (h < 12) return { ar: 'صباح الخير', emoji: '☀️' };
   if (h < 17) return { ar: 'مساء الخير', emoji: '🌤️' };
   if (h < 20) return { ar: 'مساء النور', emoji: '🌅' };
@@ -36,19 +36,17 @@ function timeGreeting(): { ar: string; emoji: string } {
 
 export default async function AdminDashboard() {
   const supabase = await createClient();
-  const today = new Date().toISOString().split('T')[0];
-  const yesterdayDate = new Date();
-  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-  const yesterday = yesterdayDate.toISOString().split('T')[0];
+  const today = saudiToday();
+  const yesterday = shiftIsoDate(today, -1);
 
-  const monthStart = new Date();
-  monthStart.setDate(1);
-  const monthStartStr = monthStart.toISOString().split('T')[0];
+  // أوّل يوم في الشهر الحالي · بتوقيت السعوديّة
+  const [curYear, curMonth] = today.split('-');
+  const monthStartStr = `${curYear}-${curMonth}-01`;
 
-  const lastMonthStart = new Date();
-  lastMonthStart.setMonth(lastMonthStart.getMonth() - 1);
-  lastMonthStart.setDate(1);
-  const lastMonthStartStr = lastMonthStart.toISOString().split('T')[0];
+  // أوّل يوم في الشهر الماضي · بتوقيت السعوديّة
+  const prevMonthDate = new Date(`${monthStartStr}T12:00:00Z`);
+  prevMonthDate.setUTCMonth(prevMonthDate.getUTCMonth() - 1);
+  const lastMonthStartStr = prevMonthDate.toISOString().split('T')[0];
 
   const { data: { user } } = await supabase.auth.getUser();
   const { data: me } = user
@@ -169,7 +167,7 @@ export default async function AdminDashboard() {
               <span className="text-xl md:text-3xl">{roleEmoji}</span>
             </h1>
             <p className="text-ink-soft dark:text-cream-100/60 text-sm mt-1.5">
-              {new Intl.DateTimeFormat('ar-SA', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date())}
+              {new Intl.DateTimeFormat('ar-SA', { weekday: 'long', day: 'numeric', month: 'long', timeZone: SAUDI_TZ }).format(new Date())}
               {(todayBookings || 0) > 0 && (
                 <> · <span className="font-bold text-gold-deep dark:text-gold-light">{todayBookings}</span> حجز اليوم</>
               )}

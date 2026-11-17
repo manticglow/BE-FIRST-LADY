@@ -52,3 +52,41 @@ export function slugify(text: string): string {
     .replace(/[\s_]+/g, '-')
     .replace(/[^؀-ۿݐ-ݿa-z0-9-]/g, '');
 }
+
+// ═══════════════════════════════════════════════════════════
+// التوقيت السعودي (Asia/Riyadh · UTC+3)
+// ═══════════════════════════════════════════════════════════
+// Vercel يشغّل بتوقيت UTC · لازم كل العرض والمنطق المرتبط باليوم
+// يستخدم توقيت السعودية الصحيح · حتى الـcron وحسابات اليوم.
+export const SAUDI_TZ = 'Asia/Riyadh';
+
+/** تاريخ اليوم بتوقيت الرياض بصيغة YYYY-MM-DD */
+export function saudiToday(): string {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: SAUDI_TZ,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date());
+  const y = parts.find((p) => p.type === 'year')?.value;
+  const m = parts.find((p) => p.type === 'month')?.value;
+  const d = parts.find((p) => p.type === 'day')?.value;
+  return `${y}-${m}-${d}`;
+}
+
+/** ساعة اليوم (0-23) بتوقيت الرياض */
+export function saudiHour(): number {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: SAUDI_TZ,
+    hour: '2-digit',
+    hour12: false,
+  }).formatToParts(new Date());
+  return Number(parts.find((p) => p.type === 'hour')?.value || '0');
+}
+
+/** إضافة/طرح أيام من تاريخ ISO-date */
+export function shiftIsoDate(iso: string, days: number): string {
+  const d = new Date(`${iso}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().split('T')[0];
+}

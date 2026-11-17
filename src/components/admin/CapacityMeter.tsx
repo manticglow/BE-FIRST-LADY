@@ -78,9 +78,9 @@ export default function CapacityMeter({
       <div className="p-5">
 
         {/* الدائرة المرئيّة */}
-        <div className="flex items-center gap-5 mb-5">
+        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5 mb-5">
           <div className="relative shrink-0">
-            <svg viewBox="0 0 100 100" className="w-28 h-28 -rotate-90">
+            <svg viewBox="0 0 100 100" className="w-24 h-24 sm:w-28 sm:h-28 -rotate-90">
               {/* الخلفيّة */}
               <circle
                 cx="50" cy="50" r="42"
@@ -106,7 +106,7 @@ export default function CapacityMeter({
               </defs>
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <div className="font-en-display font-bold text-3xl text-ink leading-none">
+              <div className="font-en-display font-bold text-2xl sm:text-3xl text-ink leading-none">
                 {utilization}%
               </div>
               <div className="text-[9px] text-ink-soft font-bold mt-0.5">{statusLabel}</div>
@@ -114,7 +114,7 @@ export default function CapacityMeter({
           </div>
 
           {/* الأرقام */}
-          <div className="flex-1 space-y-2.5">
+          <div className="flex-1 w-full min-w-0 space-y-2.5">
             <MeterStat icon={Clock} label="ساعات محجوزة" value={`${bookedHours}h`} />
             <MeterStat icon={TrendingUp} label="ساعات متاحة" value={`${availableHours}h`} />
             <MeterStat icon={Users} label="موظفات نشطات" value={String(activeStaffCount)} />
@@ -140,10 +140,12 @@ export default function CapacityMeter({
 
 function MeterStat({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
   return (
-    <div className="flex items-center gap-2 text-xs">
-      <Icon className="w-3.5 h-3.5 text-gold-light shrink-0" />
-      <span className="text-ink-soft">{label}</span>
-      <span className="font-en-display font-bold text-ink mr-auto">{value}</span>
+    <div className="flex items-center justify-between gap-2 text-xs min-w-0">
+      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+        <Icon className="w-3.5 h-3.5 text-gold-light shrink-0" />
+        <span className="text-ink-soft truncate">{label}</span>
+      </div>
+      <span className="font-en-display font-bold text-ink shrink-0">{value}</span>
     </div>
   );
 }

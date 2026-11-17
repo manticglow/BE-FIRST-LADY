@@ -7,6 +7,7 @@
  */
 import { createClient } from '@/lib/supabase/server';
 import { Clock, UserCheck, Coffee, UserX } from 'lucide-react';
+import { SAUDI_TZ, saudiToday } from '@/lib/utils';
 
 interface StaffWithBooking {
   id: string;
@@ -29,9 +30,24 @@ interface StaffWithBooking {
 export default async function LiveStaffStatus() {
   const supabase = await createClient();
   const now = new Date();
-  const todayStr = now.toISOString().split('T')[0];
-  const currentTime = now.toTimeString().slice(0, 5);
-  const dayOfWeek = now.getDay();
+  const todayStr = saudiToday();
+
+  // الوقت الحالي بتوقيت الرياض (HH:MM)
+  const timeParts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: SAUDI_TZ,
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).formatToParts(now);
+  const currentTime = `${timeParts.find(p => p.type === 'hour')?.value}:${timeParts.find(p => p.type === 'minute')?.value}`;
+
+  // يوم الأسبوع بتوقيت الرياض (0 = الأحد)
+  const weekdayStr = new Intl.DateTimeFormat('en-US', {
+    timeZone: SAUDI_TZ,
+    weekday: 'short',
+  }).format(now);
+  const weekdayMap: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+  const dayOfWeek = weekdayMap[weekdayStr] ?? 0;
 
   // جلب كل الموظفات النشطات
   const { data: allStaff } = await supabase
@@ -142,18 +158,23 @@ export default async function LiveStaffStatus() {
 
       {/* Header */}
       <div className="px-5 py-4 border-b border-cream-200 bg-gradient-to-l from-gold-light/5 to-transparent">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-ar-display text-lg font-bold text-gold-deep flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            حالة الموظفات الآن
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <h3 className="font-ar-display text-base sm:text-lg font-bold text-gold-deep flex items-center gap-2 min-w-0">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            <span className="truncate">حالة الموظفات الآن</span>
           </h3>
-          <span className="text-[10px] text-ink-soft font-en-display">
-            {now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })}
+          <span className="text-[10px] text-ink-soft font-en-display shrink-0" dir="ltr">
+            {now.toLocaleTimeString('en-GB', {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+              timeZone: 'Asia/Riyadh',
+            })}
           </span>
         </div>
 
         {/* ملخّص عددي */}
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
           <StatusPill count={counts.busy} label="مشغولة" color="rose" />
           <StatusPill count={counts.available} label="متاحة" color="emerald" />
           <StatusPill count={counts.break} label="استراحة" color="amber" />
@@ -234,9 +255,9 @@ function StatusPill({ count, label, color }: { count: number; label: string; col
   }[color];
 
   return (
-    <div className={`${colors} rounded-xl border p-2 text-center`}>
-      <div className="font-en-display font-bold text-lg leading-none">{count}</div>
-      <div className="text-[9px] font-semibold mt-1">{label}</div>
+    <div className={`${colors} rounded-xl border px-1.5 py-2 text-center min-w-0`}>
+      <div className="font-en-display font-bold text-base sm:text-lg leading-none">{count}</div>
+      <div className="text-[9px] font-semibold mt-1 truncate">{label}</div>
     </div>
   );
 }
