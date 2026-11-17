@@ -30,7 +30,7 @@ export default async function InvoicePage({ params }: { params: Promise<{ id: st
 
   const { data: tax } = await supabase.from('tax_settings').select('*').eq('is_active', true).maybeSingle();
 
-  const sellerName = tax?.business_name_ar || 'Be First Lady';
+  const sellerName = tax?.business_name_ar || 'The First Lady';
   const vatNumber = tax?.vat_number || '000000000000000';
   const vatRate = Number(tax?.vat_rate || 15);
   const applyVAT = tax?.apply_vat && tax?.vat_number;

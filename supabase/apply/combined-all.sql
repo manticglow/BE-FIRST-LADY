@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════
--- Be First Lady — Database Schema
+-- The First Lady — Database Schema
 -- Initial migration · 2026-10-13
 -- ═══════════════════════════════════════════════════════════
 --
@@ -319,7 +319,7 @@ CREATE TRIGGER trg_profiles_updated   BEFORE UPDATE ON profiles   FOR EACH ROW E
 CREATE TRIGGER trg_services_updated   BEFORE UPDATE ON services   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER trg_bookings_updated   BEFORE UPDATE ON bookings   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 -- ═══════════════════════════════════════════════════════════
--- Be First Lady — Row Level Security Policies
+-- The First Lady — Row Level Security Policies
 -- ═══════════════════════════════════════════════════════════
 --
 -- 🔒 الصلاحيات:
@@ -1064,7 +1064,7 @@ CREATE POLICY "Admin manage package services"
 CREATE TABLE IF NOT EXISTS tax_settings (
   id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   -- بيانات المنشأة
-  business_name_ar  TEXT NOT NULL DEFAULT 'Be First Lady',
+  business_name_ar  TEXT NOT NULL DEFAULT 'The First Lady',
   business_name_en  TEXT,
   commercial_reg    TEXT,              -- السجل التجاري
   vat_number        TEXT,              -- الرقم الضريبي (15 رقم)
@@ -1087,7 +1087,7 @@ CREATE TABLE IF NOT EXISTS tax_settings (
 
 -- أضيفي سجل افتراضي (بدون VAT في البداية — تفعّلها لاحقاً)
 INSERT INTO tax_settings (business_name_ar, apply_vat, vat_rate, prices_include_vat)
-SELECT 'Be First Lady · صالون السيدة الأولى', FALSE, 15.00, TRUE
+SELECT 'The First Lady · صالون السيدة الأولى', FALSE, 15.00, TRUE
 WHERE NOT EXISTS (SELECT 1 FROM tax_settings);
 
 -- RLS: الكل يقرأ، الأدمن يعدّل

@@ -89,7 +89,7 @@ export default function GiftCardPreview({ card }: { card: GiftCardData }) {
       pdf.setFont('helvetica', 'bold');
       pdf.setFontSize(18);
       pdf.setTextColor(60, 50, 40);
-      pdf.text('Be First Lady', pageWidth / 2, 20, { align: 'center' });
+      pdf.text('The First Lady', pageWidth / 2, 20, { align: 'center' });
       pdf.setFontSize(10);
       pdf.setTextColor(140, 130, 120);
       pdf.text('Luxury Gift Card', pageWidth / 2, 27, { align: 'center' });
@@ -107,7 +107,7 @@ export default function GiftCardPreview({ card }: { card: GiftCardData }) {
       // ختم
       pdf.setFontSize(7);
       pdf.setTextColor(170, 160, 150);
-      pdf.text('Be First Lady · Madinah, Saudi Arabia', pageWidth / 2, 287, { align: 'center' });
+      pdf.text('The First Lady · Madinah, Saudi Arabia', pageWidth / 2, 287, { align: 'center' });
 
       pdf.save(`gift-card-${card.code}.pdf`);
     } catch (e) {
@@ -120,7 +120,7 @@ export default function GiftCardPreview({ card }: { card: GiftCardData }) {
 
   const shareWhatsApp = () => {
     const text = encodeURIComponent(
-      `🎁 بطاقة هديّة فاخرة من Be First Lady\n\n` +
+      `🎁 بطاقة هديّة فاخرة من The First Lady\n\n` +
       `عزيزتي ${card.recipient_name}،\n` +
       (card.message ? `\n${card.message}\n` : '') +
       `\n💎 قيمة البطاقة: ${card.amount} ر.س` +
@@ -162,7 +162,7 @@ export default function GiftCardPreview({ card }: { card: GiftCardData }) {
     pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(18);
     pdf.setTextColor(60, 50, 40);
-    pdf.text('Be First Lady', pageWidth / 2, 20, { align: 'center' });
+    pdf.text('The First Lady', pageWidth / 2, 20, { align: 'center' });
     pdf.setFontSize(10);
     pdf.setTextColor(140, 130, 120);
     pdf.text('Luxury Gift Card', pageWidth / 2, 27, { align: 'center' });

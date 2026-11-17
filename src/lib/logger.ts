@@ -1,5 +1,5 @@
 /**
- * Logger · Be First Lady
+ * Logger · The First Lady
  * ═══════════════════════════════════════════════════════════
  * - في development: يطبع للـconsole مع prefix
  * - في production: الأخطاء ترسل تلقائياً لـSentry (إذا مفعّل)

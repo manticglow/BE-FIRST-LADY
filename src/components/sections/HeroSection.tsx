@@ -138,7 +138,7 @@ function HeroVisualCard() {
       <div className="relative aspect-[3/4] rounded-3xl overflow-hidden bg-gradient-to-br from-gold-light/20 to-cream-100 shadow-2xl shadow-gold-deep/15">
         <Image
           src="/images/gallery/bridal-look.jpg"
-          alt="Be First Lady experience"
+          alt="The First Lady experience"
           fill
           priority
           className="object-cover ken-burns"

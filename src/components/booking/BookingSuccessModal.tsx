@@ -49,7 +49,7 @@ export default function BookingSuccessModal() {
   }
 
   function sendWhatsapp() {
-    const message = `السلام عليكم 🌸\nحجزت الآن في Be First Lady\n#️⃣ رقم الحجز: ${bookingNumber}\nأرجو تأكيد الحجز 💛`;
+    const message = `السلام عليكم 🌸\nحجزت الآن في The First Lady\n#️⃣ رقم الحجز: ${bookingNumber}\nأرجو تأكيد الحجز 💛`;
     window.open(waLink(message), '_blank');
   }
 
@@ -119,14 +119,14 @@ export default function BookingSuccessModal() {
             اضغطي الزر لتأكيد الحجز معنا بشكل أسرع · هذا يفتح واتسابك
           </p>
 
-          {/* شارة مشاركة Be First Lady مع صديقاتها */}
+          {/* شارة مشاركة The First Lady مع صديقاتها */}
           <div className="mt-4">
             <ShareButton
               variant="ghost"
               size="md"
-              label="شاركي Be First Lady مع صديقاتك"
-              title="Be First Lady · Spa & Salon"
-              text="جرّبت تجربة فاخرة في Be First Lady · أنصحك بشدّة ✨"
+              label="شاركي The First Lady مع صديقاتك"
+              title="The First Lady · Spa & Salon"
+              text="جرّبت تجربة فاخرة في The First Lady · أنصحك بشدّة ✨"
               url="https://befirstlady.com"
               className="w-full justify-center !py-3"
             />

@@ -31,7 +31,7 @@ export default function TaxSettingsEditor() {
       .then((r) => r.json())
       .then((data) => {
         setForm(data.settings || {
-          business_name_ar: 'Be First Lady',
+          business_name_ar: 'The First Lady',
           business_name_en: '',
           commercial_reg: '',
           vat_number: '',

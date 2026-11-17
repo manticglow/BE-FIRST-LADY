@@ -14,7 +14,7 @@ import { formatPrice } from '@/lib/utils';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'تاريخ زياراتي · Be First Lady',
+  title: 'تاريخ زياراتي · The First Lady',
 };
 
 export default async function HistoryPage() {

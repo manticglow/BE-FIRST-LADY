@@ -118,7 +118,7 @@ export default function ReviewsSection({ reviews }: { reviews: Review[] }) {
               <div className="md:col-span-2">
                 <div className="relative bg-gradient-to-br from-gold-deep/5 to-amber-50 border-r-4 border-gold-deep p-5 rounded-2xl">
                   <div className="text-[10px] font-bold text-gold-deep tracking-widest uppercase mb-2">
-                    💛 ردّ Be First Lady
+                    💛 ردّ The First Lady
                   </div>
                   <p className="text-sm text-ink leading-relaxed">{featured.admin_reply}</p>
                 </div>

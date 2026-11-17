@@ -94,7 +94,7 @@ export default function AdminShell({ items, role, fullName, children }: Props) {
         {/* الهيدر داخل الـsidebar */}
         <div className="p-5 lg:p-6 border-b border-white/10 flex items-center justify-between">
           <div>
-            <div className="font-en-display italic text-2xl">Be First Lady</div>
+            <div className="font-en-display italic text-2xl">The First Lady</div>
             <div className="font-en-label text-[9px] tracking-[0.3em] text-gold-light mt-1">ADMIN PANEL</div>
           </div>
           {/* زر إغلاق · للموبايل فقط */}
@@ -192,7 +192,7 @@ export default function AdminShell({ items, role, fullName, children }: Props) {
               </button>
               {/* شعار مُصغّر · موبايل فقط */}
               <div className="lg:hidden font-en-display italic text-lg text-gold-deep dark:text-cream-100 truncate">
-                Be First Lady
+                The First Lady
               </div>
             </div>
 

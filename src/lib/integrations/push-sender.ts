@@ -201,7 +201,7 @@ export const PushTemplates = {
 
   reminder24h: (time: string) => ({
     title: '💛 تذكير',
-    body: `عندكِ موعد بكرة الساعة ${time} في Be First Lady`,
+    body: `عندكِ موعد بكرة الساعة ${time} في The First Lady`,
     data: { type: 'reminder_24h' },
   }),
 

@@ -14,7 +14,7 @@ import { formatPrice } from '@/lib/utils';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'البكجات · Be First Lady',
+  title: 'البكجات · The First Lady',
   description: 'بكجات خدمات مميّزة بأسعار موفّرة · احزمي عدّة خدمات بسعر خاص',
 };
 

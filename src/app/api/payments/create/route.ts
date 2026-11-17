@@ -240,8 +240,8 @@ export async function POST(req: NextRequest) {
 
   // ─── الاتصال بالبوّابة المناسبة ───
   const description = useDeposit
-    ? `عربون حجز Be First Lady · ${depositPct}%`
-    : 'حجز Be First Lady';
+    ? `عربون حجز The First Lady · ${depositPct}%`
+    : 'حجز The First Lady';
 
   let gatewayResult;
   const customer = {

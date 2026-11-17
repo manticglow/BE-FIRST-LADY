@@ -10,7 +10,7 @@ import { logger } from '@/lib/logger';
 
 const log = logger.scope('email');
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const RESEND_FROM = process.env.RESEND_FROM || 'Be First Lady <noreply@befirstlady.com>';
+const RESEND_FROM = process.env.RESEND_FROM || 'The First Lady <noreply@befirstlady.com>';
 
 export interface EmailAttachment {
   filename: string;

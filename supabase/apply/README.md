@@ -1,6 +1,6 @@
 # 📊 Supabase · Database Setup
 
-> دليل تطبيق قاعدة البيانات لـ Be First Lady
+> دليل تطبيق قاعدة البيانات لـ The First Lady
 
 ---
 

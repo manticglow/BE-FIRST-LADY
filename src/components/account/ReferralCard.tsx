@@ -18,7 +18,7 @@ interface Props {
 export default function ReferralCard({ code, credit, referrals, siteUrl }: Props) {
   const [copied, setCopied] = useState(false);
   const link = `${siteUrl}/signup?ref=${code}`;
-  const message = `أهلاً 💛\n\nأدعوكِ لتجربة Be First Lady — سبا وصالون فاخر في المدينة المنوّرة.\n\nاستخدمي كودي ${code} عند التسجيل وبتحصلين على 50 ر.س هدية 🌸\n\n${link}`;
+  const message = `أهلاً 💛\n\nأدعوكِ لتجربة The First Lady — سبا وصالون فاخر في المدينة المنوّرة.\n\nاستخدمي كودي ${code} عند التسجيل وبتحصلين على 50 ر.س هدية 🌸\n\n${link}`;
 
   function copy() {
     navigator.clipboard.writeText(link);
@@ -34,7 +34,7 @@ export default function ReferralCard({ code, credit, referrals, siteUrl }: Props
   async function nativeShare() {
     if (navigator.share) {
       try {
-        await navigator.share({ title: 'Be First Lady', text: message, url: link });
+        await navigator.share({ title: 'The First Lady', text: message, url: link });
       } catch {}
     } else {
       copy();

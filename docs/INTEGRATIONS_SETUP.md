@@ -1,6 +1,6 @@
 # 🔌 دليل تفعيل التكاملات الخارجية
 
-> **Be First Lady v2** — Group B External Integrations
+> **The First Lady v2** — Group B External Integrations
 > كل الملفات جاهزة. فعّلي بإضافة مفاتيح البيئة فقط.
 
 ---
@@ -81,7 +81,7 @@ const payment = await createPayment({
   amount: 350,                        // بالريال
   description: 'حجز #B-20241015-001',
   bookingId: booking.id,
-  callbackUrl: 'https://befirstlady.com/payment/callback',
+  callbackUrl: 'https://thefirstlady.com/payment/callback',
   source: { type: 'creditcard', ... },
 });
 
@@ -108,7 +108,7 @@ if (payment.ok) {
 ### الإعداد:
 1. سجّلي في [resend.com](https://resend.com)
 2. أضيفي دومينكِ:
-   - `befirstlady.com`
+   - `thefirstlady.com`
 3. أثبتيه عبر:
    - **SPF** record
    - **DKIM** record
@@ -117,7 +117,7 @@ if (payment.ok) {
 
 ```bash
 RESEND_API_KEY=re_xxxxxxxxxxxxx
-RESEND_FROM=noreply@befirstlady.com
+RESEND_FROM=noreply@thefirstlady.com
 ```
 
 ### الاستخدام:
@@ -187,4 +187,4 @@ if (!result.ok) {
 
 ---
 
-**Be First Lady** · نظام متكامل من Shaheen Design 🌸
+**The First Lady** · نظام متكامل من Shaheen Design 🌸

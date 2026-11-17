@@ -75,7 +75,7 @@ export default function LoaderScreen() {
 
       {/* اسم البراند */}
       <div className="font-en-display italic text-2xl text-ink mb-1 tracking-tight">
-        Be First Lady
+        The First Lady
       </div>
       <div className="font-en-label text-[9px] tracking-[0.4em] text-gold font-medium mb-8">
         SALON · MADINAH

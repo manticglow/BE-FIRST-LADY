@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
   // ─── إرسال ───
   const result = await sendEmail({
     to: d.to_email,
-    subject: `🎁 بطاقة هديّة فاخرة من Be First Lady · ${d.amount} ر.س`,
+    subject: `🎁 بطاقة هديّة فاخرة من The First Lady · ${d.amount} ر.س`,
     html,
     text,
     attachments: attachments.length > 0 ? attachments : undefined,

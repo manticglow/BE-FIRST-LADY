@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
   const provider = process.env.WHATSAPP_PROVIDER || 'meta';
   const testMode = process.env.WHATSAPP_TEST_MODE === 'true' || process.env.WHATSAPP_TEST_MODE === '1';
   const messageText = text ||
-    '🌸 مرحباً من Be First Lady\n\nهذي رسالة اختبار من النظام · لو وصلتك معناه كل شي يشتغل تمام ✨';
+    '🌸 مرحباً من The First Lady\n\nهذي رسالة اختبار من النظام · لو وصلتك معناه كل شي يشتغل تمام ✨';
 
   try {
     const { sendWhatsAppText } = await import('@/lib/integrations/whatsapp');

@@ -77,7 +77,7 @@ export default function PWARegister() {
         <div className="bg-white rounded-2xl shadow-2xl border border-gold-light/40 p-4 flex items-center gap-3">
           <img src="/icons/icon-192.png" alt="BFL" className="w-12 h-12 rounded-xl" />
           <div className="flex-1 min-w-0">
-            <div className="font-ar-display font-bold text-sm text-ink">ثبّتي Be First Lady</div>
+            <div className="font-ar-display font-bold text-sm text-ink">ثبّتي The First Lady</div>
             <div className="text-xs text-ink-soft mt-0.5">كتطبيق على جهازكِ ✨</div>
           </div>
           <button onClick={installApp} className="btn-primary !py-2 !px-4 text-xs flex items-center gap-1">

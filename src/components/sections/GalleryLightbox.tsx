@@ -56,7 +56,7 @@ export default function GalleryLightbox({ items }: { items: GalleryItem[] }) {
             >
               <img
                 src={item.image_url}
-                alt={item.title_ar || 'Be First Lady'}
+                alt={item.title_ar || 'The First Lady'}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 loading="lazy"
               />

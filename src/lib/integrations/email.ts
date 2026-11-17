@@ -36,7 +36,7 @@ export async function sendEmail(params: SendEmailParams): Promise<EmailResult> {
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        from: `Be First Lady <${from}>`,
+        from: `The First Lady <${from}>`,
         to: params.to,
         subject: params.subject,
         html: params.html,
@@ -54,7 +54,7 @@ export async function sendEmail(params: SendEmailParams): Promise<EmailResult> {
 // قوالب HTML بالهوية ─────────────────────────────────
 export const EmailTemplates = {
   bookingConfirmation: (name: string, date: string, time: string, bookingNumber: string, total: number) => ({
-    subject: `✨ تأكيد حجزكِ · Be First Lady`,
+    subject: `✨ تأكيد حجزكِ · The First Lady`,
     html: `
 <!DOCTYPE html>
 <html dir="rtl" lang="ar">
@@ -70,7 +70,7 @@ export const EmailTemplates = {
 <body>
   <div class="card">
     <div class="header">
-      <div style="font-size: 32px; font-style: italic; font-family: 'Cormorant Garamond', serif;">Be First Lady</div>
+      <div style="font-size: 32px; font-style: italic; font-family: 'Cormorant Garamond', serif;">The First Lady</div>
       <div style="font-size: 10px; letter-spacing: 4px; margin-top: 10px;">SPA & SALON</div>
     </div>
     <div class="content">
@@ -101,14 +101,14 @@ export const EmailTemplates = {
   }),
 
   passwordReset: (resetLink: string) => ({
-    subject: 'إعادة تعيين كلمة المرور · Be First Lady',
+    subject: 'إعادة تعيين كلمة المرور · The First Lady',
     html: `
 <!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head><meta charset="UTF-8"></head>
 <body style="font-family: 'Cairo', Arial, sans-serif; background: #fbf7ef; padding: 30px; text-align: center;">
   <div style="max-width: 400px; margin: auto; background: white; padding: 40px 30px; border-radius: 24px;">
-    <div style="font-size: 28px; color: #7d613b; font-style: italic; font-family: serif;">Be First Lady</div>
+    <div style="font-size: 28px; color: #7d613b; font-style: italic; font-family: serif;">The First Lady</div>
     <h2 style="color: #2a1c10;">إعادة تعيين كلمة المرور</h2>
     <p style="color: #6b5a42; font-size: 14px;">اضغطي الزر لتعيين كلمة مرور جديدة. الرابط صالح لـ 15 دقيقة فقط.</p>
     <a href="${resetLink}" style="display: inline-block; background: #7d613b; color: #fbf7ef; padding: 14px 36px; border-radius: 12px; text-decoration: none; font-weight: bold; margin: 20px 0;">إعادة التعيين</a>

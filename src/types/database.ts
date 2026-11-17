@@ -1,5 +1,5 @@
 /**
- * Database Types · Be First Lady
+ * Database Types · The First Lady
  * ═══════════════════════════════════════════════════════════
  * Hand-crafted types for the project tables (derived from
  * supabase/migrations/*.sql).

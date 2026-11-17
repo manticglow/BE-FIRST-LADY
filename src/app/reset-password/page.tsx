@@ -43,7 +43,7 @@ export default function ResetPasswordPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <div className="font-en-display italic text-3xl text-gold-deep">Be First Lady</div>
+            <div className="font-en-display italic text-3xl text-gold-deep">The First Lady</div>
           </Link>
         </div>
 

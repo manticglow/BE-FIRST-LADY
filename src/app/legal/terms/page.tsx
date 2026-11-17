@@ -19,7 +19,7 @@ export default function TermsPage() {
           <div className="space-y-6 text-ink leading-loose text-sm bg-white rounded-3xl p-8 border border-cream-200">
             <section>
               <h2 className="font-ar-display text-xl font-bold text-gold-deep mb-2">1. مقدّمة</h2>
-              <p>مرحباً بكِ في Be First Lady. باستخدامكِ لموقعنا أو حجز أي خدمة، فإنكِ توافقين على الشروط التالية.</p>
+              <p>مرحباً بكِ في The First Lady. باستخدامكِ لموقعنا أو حجز أي خدمة، فإنكِ توافقين على الشروط التالية.</p>
             </section>
 
             <section>

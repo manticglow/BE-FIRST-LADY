@@ -51,7 +51,7 @@ export default function StorySection() {
               <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl shadow-gold-deep/15">
                 <Image
                   src="/images/gallery/evening-glam.jpg"
-                  alt="Be First Lady atmosphere"
+                  alt="The First Lady atmosphere"
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 40vw"

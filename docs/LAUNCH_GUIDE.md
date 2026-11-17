@@ -1,4 +1,4 @@
-# 🚀 دليل الإطلاق الفعلي · Be First Lady
+# 🚀 دليل الإطلاق الفعلي · The First Lady
 
 > من صفر إلى موقع حيّ تجرّبيه كـ4 أدوار · **~40 دقيقة**
 
@@ -98,10 +98,10 @@ npx tsx scripts/create-test-users.ts
 
 | الدور | الإيميل | كلمة المرور |
 |------|--------|------------|
-| 👑 المالكة · غد | `owner@befirstlady.com` | `Owner@2026!` |
-| 🛡 المديرة · نورة | `manager@befirstlady.com` | `Manager@2026!` |
-| 💼 الموظّفة · هديل | `staff@befirstlady.com` | `Staff@2026!` |
-| 🌸 العميلة · سارة | `customer@befirstlady.com` | `Customer@2026!` |
+| 👑 المالكة · غد | `owner@thefirstlady.com` | `Owner@2026!` |
+| 🛡 المديرة · نورة | `manager@thefirstlady.com` | `Manager@2026!` |
+| 💼 الموظّفة · هديل | `staff@thefirstlady.com` | `Staff@2026!` |
+| 🌸 العميلة · سارة | `customer@thefirstlady.com` | `Customer@2026!` |
 
 > ⚠️ **غيّري الكلمات قبل الإطلاق الفعلي للناس**
 
@@ -134,7 +134,7 @@ cd befirstlady-v2
 # إنشاء git جديد
 git init
 git add .
-git commit -m "Be First Lady · initial deployment"
+git commit -m "The First Lady · initial deployment"
 
 # أنشئي repo جديد على github.com/new (private · recommended)
 git remote add origin https://github.com/YOUR_USER/befirstlady.git
@@ -173,7 +173,7 @@ NEXT_PUBLIC_WHATSAPP_NUMBER=966504389329
 
 ### 🌸 كعميلة
 1. افتحي `/login`
-2. سجّلي: `customer@befirstlady.com` / `Customer@2026!`
+2. سجّلي: `customer@thefirstlady.com` / `Customer@2026!`
 3. راح تلقين:
    - 1840 نقطة ولاء · طبقة ذهبيّة
    - موعد قادم بكرة الساعة 5 م
@@ -182,7 +182,7 @@ NEXT_PUBLIC_WHATSAPP_NUMBER=966504389329
 
 ### 💼 كموظّفة
 1. اذهبي إلى `/login`
-2. سجّلي: `staff@befirstlady.com` / `Staff@2026!`
+2. سجّلي: `staff@thefirstlady.com` / `Staff@2026!`
 3. راح يحوّلكِ لـ`/admin`
 4. راح تلقين:
    - **اليوم** · زرّ الحضور الكبير
@@ -191,7 +191,7 @@ NEXT_PUBLIC_WHATSAPP_NUMBER=966504389329
    - **إجازاتي** · تقدرين تطلبين
 
 ### 🛡 كمديرة
-1. سجّلي: `manager@befirstlady.com` / `Manager@2026!`
+1. سجّلي: `manager@thefirstlady.com` / `Manager@2026!`
 2. راح تلقين كل الصفحات ما عدا:
    - التقارير
    - الرواتب
@@ -199,7 +199,7 @@ NEXT_PUBLIC_WHATSAPP_NUMBER=966504389329
    - الإعدادات
 
 ### 👑 كمالكة
-1. سجّلي: `owner@befirstlady.com` / `Owner@2026!`
+1. سجّلي: `owner@thefirstlady.com` / `Owner@2026!`
 2. راح تلقين **كل شي**:
    - 13 صفحة في الـsidebar
    - 3 إشعارات في الجرس
@@ -245,7 +245,7 @@ NEXT_PUBLIC_WHATSAPP_NUMBER=966504389329
 ## 🎯 الخطوات التالية بعد النجاح
 
 ### مرحلة 1 (نفس اليوم):
-- [ ] اربطي دومينك الخاص (befirstlady.com) من Vercel → Domains
+- [ ] اربطي دومينك الخاص (thefirstlady.com) من Vercel → Domains
 - [ ] فعّلي SSL (تلقائي من Vercel)
 - [ ] جرّبي كل الـflows (حجز · إجازة · تقرير)
 
@@ -272,5 +272,5 @@ NEXT_PUBLIC_WHATSAPP_NUMBER=966504389329
 
 ---
 
-**Shaheen Design** · بنيناه لـ Be First Lady 🌸  
+**Shaheen Design** · بنيناه لـ The First Lady 🌸  
 *كل خطوة في هذا الدليل مُجرَّبة ومُختبرة · لو شي ما شتغل، المشكلة في البيئة مش في الكود.*

@@ -138,7 +138,7 @@ export default function ServiceDetailClient({ service, reviews, avgRating, isLog
             variant="icon"
             size="lg"
             title={service.name_ar}
-            text={`شوفي خدمة ${service.name_ar} في Be First Lady`}
+            text={`شوفي خدمة ${service.name_ar} في The First Lady`}
             url={typeof window !== 'undefined' ? window.location.href : `https://befirstlady.com/services/${service.id}`}
             className="bg-white/90 backdrop-blur shadow-sm"
           />

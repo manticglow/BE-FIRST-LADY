@@ -70,7 +70,7 @@ export default function UpcomingBookingHero({ booking, salonAddress = 'المد�
     const start = target.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
     const end = new Date(target.getTime() + booking.duration_min * 60000)
       .toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-    const title = encodeURIComponent(`Be First Lady · ${services || 'موعدي'}`);
+    const title = encodeURIComponent(`The First Lady · ${services || 'موعدي'}`);
     const details = encodeURIComponent(`رقم الحجز: ${booking.booking_number}\nالموظفة: ${booking.staff?.name || 'سيتم التعيين'}`);
     const location = encodeURIComponent(salonAddress);
     const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&details=${details}&location=${location}`;
@@ -78,7 +78,7 @@ export default function UpcomingBookingHero({ booking, salonAddress = 'المد�
   }
 
   function shareBooking() {
-    const text = `موعدي في Be First Lady · ${target.toLocaleDateString('ar-SA', { weekday: 'long', day: 'numeric', month: 'long' })} الساعة ${booking.booking_time.slice(0, 5)}`;
+    const text = `موعدي في The First Lady · ${target.toLocaleDateString('ar-SA', { weekday: 'long', day: 'numeric', month: 'long' })} الساعة ${booking.booking_time.slice(0, 5)}`;
     if (navigator.share) {
       navigator.share({ title: 'موعدي', text }).catch(() => {});
     } else {
@@ -125,7 +125,7 @@ export default function UpcomingBookingHero({ booking, salonAddress = 'المد�
             <div className="font-ar-display text-3xl md:text-4xl font-bold mb-1">
               موعدك الآن!
             </div>
-            <div className="text-xs opacity-80">نرحّب بكِ في Be First Lady</div>
+            <div className="text-xs opacity-80">نرحّب بكِ في The First Lady</div>
           </div>
         )}
 

@@ -33,7 +33,7 @@ const PRESET_RADII = [
 
 export default function SalonLocationManager() {
   const [location, setLocation] = useState<SalonLocation>({
-    name: 'Be First Lady',
+    name: 'The First Lady',
     address: '',
     latitude: null,
     longitude: null,
@@ -53,7 +53,7 @@ export default function SalonLocationManager() {
         if (data.location) {
           setLocation({
             id: data.location.id,
-            name: data.location.name || 'Be First Lady',
+            name: data.location.name || 'The First Lady',
             address: data.location.address || '',
             latitude: Number(data.location.latitude),
             longitude: Number(data.location.longitude),
@@ -175,7 +175,7 @@ export default function SalonLocationManager() {
             type="text"
             value={location.name}
             onChange={(e) => setLocation({ ...location, name: e.target.value })}
-            placeholder="Be First Lady"
+            placeholder="The First Lady"
             className="w-full px-4 py-2.5 rounded-xl border border-cream-200 focus:border-gold-deep outline-none bg-white text-sm"
           />
         </div>

@@ -79,7 +79,7 @@ export async function GET(req: NextRequest) {
       const message = `🎉 كل عام وأنتِ بخير يا ${customer.full_name?.split(' ')[0] || 'جميلة'} 💛
 
 🎂 بمناسبة عيد ميلادكِ · هديّتنا لكِ:
-كوبون خصم 20% على خدمتكِ القادمة في Be First Lady 🌸
+كوبون خصم 20% على خدمتكِ القادمة في The First Lady 🌸
 
 🎟️ الكود: ${code}
 📅 ساري لمدة 30 يوم

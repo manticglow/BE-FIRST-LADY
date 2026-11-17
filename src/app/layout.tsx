@@ -25,24 +25,24 @@ import './globals.css';
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://befirstlady.com'),
   title: {
-    default: 'Be First Lady — صالون السيدة الأولى · المدينة المنوّرة',
-    template: '%s · Be First Lady',
+    default: 'The First Lady — صالون السيدة الأولى · المدينة المنوّرة',
+    template: '%s · The First Lady',
   },
   description: 'مركز نسائي متكامل في قلب المدينة المنوّرة — ترفٌ يليق بك، وجمالٌ يُحكى عنه. مساج، حمّام مغربي، تنظيف بشرة، شعر، مكياج.',
   keywords: ['سبا', 'صالون', 'المدينة المنورة', 'مساج', 'حمام مغربي', 'تنظيف بشرة', 'مكياج', 'شعر'],
-  authors: [{ name: 'Be First Lady' }],
+  authors: [{ name: 'The First Lady' }],
   openGraph: {
     type: 'website',
     locale: 'ar_SA',
     url: '/',
-    title: 'Be First Lady — صالون السيدة الأولى',
+    title: 'The First Lady — صالون السيدة الأولى',
     description: 'نعتني بكِ لتُزهري · A Sanctuary for You to Bloom',
-    siteName: 'Be First Lady',
+    siteName: 'The First Lady',
     images: [{ url: '/images/og-image.jpg', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Be First Lady',
+    title: 'The First Lady',
     description: 'نعتني بكِ لتُزهري',
   },
   icons: {
@@ -60,10 +60,10 @@ export const metadata: Metadata = {
     // 'black-translucent' يسمح للمحتوى يمتدّ تحت الـnotch/Dynamic Island
     statusBarStyle: 'black-translucent',
     // عنوان مختصر يظهر تحت الأيقونة في home screen
-    title: 'Be First Lady',
+    title: 'The First Lady',
     startupImage: '/apple-splash.png',
   },
-  applicationName: 'Be First Lady · صالون السيّدة الأولى',
+  applicationName: 'The First Lady · صالون السيّدة الأولى',
   formatDetection: {
     telephone: true,
   },
@@ -102,7 +102,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'BeautySalon',
-              name: 'Be First Lady',
+              name: 'The First Lady',
               alternateName: 'بي فيرست ليدي',
               description: 'مركز نسائي متكامل في قلب المدينة المنوّرة · سبا · صالون · تجميل',
               url: 'https://befirstlady.com',

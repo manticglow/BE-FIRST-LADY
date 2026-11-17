@@ -6,7 +6,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // ═══ Brand Palette · هوية Be First Lady ═══
+        // ═══ Brand Palette · هوية The First Lady ═══
         cream: {
           50:  '#fbf7ef', // الخلفية الرئيسية
           100: '#f6eee0',

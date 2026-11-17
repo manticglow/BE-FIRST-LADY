@@ -135,7 +135,7 @@ export default function Header() {
                 <div className="absolute inset-0 -m-1 rounded-full bg-gold-light/0 group-hover:bg-gold-light/25 blur-md transition-all duration-500" />
                 <Image
                   src="/images/logo.svg"
-                  alt="Be First Lady"
+                  alt="The First Lady"
                   width={scrolled ? 40 : 48}
                   height={scrolled ? 40 : 48}
                   priority
@@ -144,7 +144,7 @@ export default function Header() {
               </div>
               <div className="hidden xl:block">
                 <div className="font-en-display italic text-gold-deep text-lg leading-none">
-                  Be First Lady
+                  The First Lady
                 </div>
                 <div className="font-en-label text-[8px] tracking-[0.4em] text-gold-light mt-1">
                   SPA · MADINAH
@@ -214,7 +214,7 @@ export default function Header() {
                 <div className="absolute inset-0 -m-1 rounded-full bg-gold-light/0 group-hover:bg-gold-light/25 blur-md transition-all" />
                 <Image
                   src="/images/logo.svg"
-                  alt="Be First Lady"
+                  alt="The First Lady"
                   width={36}
                   height={36}
                   priority
@@ -223,7 +223,7 @@ export default function Header() {
               </div>
               <div className="min-w-0">
                 <div className="font-en-display italic text-gold-deep text-sm leading-none truncate">
-                  Be First Lady
+                  The First Lady
                 </div>
                 <div className="font-en-label text-[7px] tracking-[0.3em] text-gold-light mt-0.5">
                   SPA · MADINAH
@@ -290,7 +290,7 @@ export default function Header() {
                   />
                 </div>
                 <div className="font-en-display italic text-cream-50 text-2xl leading-none">
-                  Be First Lady
+                  The First Lady
                 </div>
                 <div className="font-en-label text-[9px] tracking-[0.5em] text-gold-light mt-2.5">
                   SPA & SALON · MADINAH

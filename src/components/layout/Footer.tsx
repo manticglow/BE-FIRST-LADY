@@ -126,13 +126,13 @@ export default function Footer() {
             <div className="flex items-center gap-3 mb-5">
               <Image
                 src="/images/logo-gold.svg"
-                alt="Be First Lady"
+                alt="The First Lady"
                 width={56} height={56}
                 className="brightness-0 invert opacity-90"
               />
               <div>
                 <div className="font-en-display italic text-cream-50 text-2xl leading-none">
-                  Be First Lady
+                  The First Lady
                 </div>
                 <div className="editorial-eyebrow text-gold-light/70 mt-1">SPA & SALON · MADINAH</div>
               </div>
@@ -194,7 +194,7 @@ export default function Footer() {
         {/* ═══ Bottom bar ═══ */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-cream-100/60">
           <div>
-            © 2026 Be First Lady · جميع الحقوق محفوظة · صُنع بـ 💛 في المدينة المنوّرة
+            © 2026 The First Lady · جميع الحقوق محفوظة · صُنع بـ 💛 في المدينة المنوّرة
           </div>
           <div className="flex items-center gap-4 flex-wrap justify-center">
             {LEGAL_LINKS.map((link) => (
@@ -235,7 +235,7 @@ function MobileFooter() {
         <div className="flex items-center justify-center gap-2.5 mb-4">
           <Image src="/images/logo.svg" alt="" width={36} height={36} />
           <div className="text-right">
-            <div className="font-en-display italic text-lg text-gold-deep leading-none">Be First Lady</div>
+            <div className="font-en-display italic text-lg text-gold-deep leading-none">The First Lady</div>
             <div className="text-[9px] font-en-label tracking-[0.3em] text-gold">SALON · MADINAH</div>
           </div>
         </div>
@@ -282,7 +282,7 @@ function MobileFooter() {
 
         {/* copyright */}
         <div className="text-[10px] text-center text-ink-soft mt-2">
-          © {new Date().getFullYear()} Be First Lady · المدينة المنوّرة
+          © {new Date().getFullYear()} The First Lady · المدينة المنوّرة
         </div>
       </div>
     </footer>

@@ -462,7 +462,7 @@ function LoyaltyCardPremium({ points, tier, totalSpent }: { points: number; tier
         <div className="relative z-10 flex items-start justify-between mb-5">
           <div>
             <div className="font-en-display italic text-xl md:text-2xl text-gold-dark">
-              Be First Lady
+              The First Lady
             </div>
             <div className="font-en-label text-[9px] tracking-[0.3em] text-gold-deep mt-0.5">
               MEMBERSHIP CARD
@@ -672,7 +672,7 @@ function EmptyBookings() {
         ما عندكِ حجوزات قادمة بعد
       </div>
       <div className="text-sm text-ink-soft mb-5">
-        دللي نفسكِ بتجربة فاخرة في Be First Lady
+        دللي نفسكِ بتجربة فاخرة في The First Lady
       </div>
       <Link
         href="/booking"

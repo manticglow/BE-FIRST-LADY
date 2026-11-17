@@ -1,4 +1,4 @@
-# 🇸🇦 دليل التوطين السعودي · Be First Lady
+# 🇸🇦 دليل التوطين السعودي · The First Lady
 
 > كل الخدمات والاستضافة والرسائل والتوثيق من داخل المملكة العربيّة السعوديّة  
 > آخر تحديث: 2026-11-05
@@ -169,7 +169,7 @@ await fetch('https://api.taqnyat.sa/v1/messages', {
   headers: { Authorization: `Bearer ${process.env.TAQNYAT_KEY}` },
   body: JSON.stringify({
     recipients: ['966501234567'],
-    body: 'حجزكِ تم بنجاح · Be First Lady',
+    body: 'حجزكِ تم بنجاح · The First Lady',
     sender: 'BeFirstLady',
   }),
 });
@@ -201,7 +201,7 @@ await fetch('https://api.taqnyat.sa/v1/messages', {
 
 ### الأنواع المتاحة:
 - `befirstlady.sa` — الأفخم والأحدث
-- `befirstlady.com.sa` — التقليدي التجاري
+- `thefirstlady.com.sa` — التقليدي التجاري
 - `befirstlady.net.sa` — للشبكات
 - `بي-فيرست-ليدي.السعودية` — IDN عربي (ميزة تنافسيّة!)
 

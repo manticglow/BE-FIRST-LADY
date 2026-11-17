@@ -50,7 +50,7 @@ INSERT INTO message_templates (code, name_ar, description, channel, body_ar, var
   'تأكيد الحجز',
   'يُرسَل تلقائياً للعميلة فور إتمام الحجز',
   'whatsapp',
-  E'🌸 أهلاً بكِ يا {{customer_name}}\n\nتمّ تأكيد حجزكِ في Be First Lady:\n\n📅 التاريخ: {{booking_date}}\n⏰ الوقت: {{booking_time}}\n💆‍♀️ الخدمات: {{services}}\n💰 الإجمالي: {{total}} ر.س\n\nرقم الحجز: {{booking_number}}\n\nنتشرّف بخدمتكِ · نراكِ قريباً 💛',
+  E'🌸 أهلاً بكِ يا {{customer_name}}\n\nتمّ تأكيد حجزكِ في The First Lady:\n\n📅 التاريخ: {{booking_date}}\n⏰ الوقت: {{booking_time}}\n💆‍♀️ الخدمات: {{services}}\n💰 الإجمالي: {{total}} ر.س\n\nرقم الحجز: {{booking_number}}\n\nنتشرّف بخدمتكِ · نراكِ قريباً 💛',
   ARRAY['customer_name', 'booking_date', 'booking_time', 'services', 'total', 'booking_number'],
   'booking'
 ),
@@ -59,7 +59,7 @@ INSERT INTO message_templates (code, name_ar, description, channel, body_ar, var
   'تذكير قبل 24 ساعة',
   'تذكير آلي قبل الحجز بيوم',
   'whatsapp',
-  E'🌼 صباحك جميل {{customer_name}}\n\nهذا تذكير بموعدكِ غداً في Be First Lady:\n\n📅 {{booking_date}}\n⏰ {{booking_time}}\n💆‍♀️ {{services}}\n\nنتطلّع لاستقبالكِ · لو احتجتِ تعديل · راسلينا 💛',
+  E'🌼 صباحك جميل {{customer_name}}\n\nهذا تذكير بموعدكِ غداً في The First Lady:\n\n📅 {{booking_date}}\n⏰ {{booking_time}}\n💆‍♀️ {{services}}\n\nنتطلّع لاستقبالكِ · لو احتجتِ تعديل · راسلينا 💛',
   ARRAY['customer_name', 'booking_date', 'booking_time', 'services'],
   'reminder'
 ),
@@ -68,7 +68,7 @@ INSERT INTO message_templates (code, name_ar, description, channel, body_ar, var
   'تذكير قبل ساعة',
   'تذكير آلي قبل الحجز بساعة',
   'whatsapp',
-  E'✨ {{customer_name}}\n\nموعدكِ بعد ساعة في Be First Lady.\n\n⏰ {{booking_time}}\n📍 {{address}}\n\nحبيباتنا بانتظاركِ 💛',
+  E'✨ {{customer_name}}\n\nموعدكِ بعد ساعة في The First Lady.\n\n⏰ {{booking_time}}\n📍 {{address}}\n\nحبيباتنا بانتظاركِ 💛',
   ARRAY['customer_name', 'booking_time', 'address'],
   'reminder'
 ),
@@ -77,7 +77,7 @@ INSERT INTO message_templates (code, name_ar, description, channel, body_ar, var
   'تسليم بطاقة هديّة',
   'يُرسَل للمستلمة عند إصدار بطاقة هديّة باسمها',
   'whatsapp',
-  E'🎁 {{recipient_name}}\n\nعندكِ هديّة فاخرة من {{sender_name}} 💛\n\n💳 كود البطاقة: {{gift_code}}\n💰 القيمة: {{amount}} ر.س\n📆 صالحة حتى: {{expires_at}}\n\nرسالتها لكِ:\n"{{message}}"\n\nاستخدمي الكود في موقع Be First Lady للحجز.',
+  E'🎁 {{recipient_name}}\n\nعندكِ هديّة فاخرة من {{sender_name}} 💛\n\n💳 كود البطاقة: {{gift_code}}\n💰 القيمة: {{amount}} ر.س\n📆 صالحة حتى: {{expires_at}}\n\nرسالتها لكِ:\n"{{message}}"\n\nاستخدمي الكود في موقع The First Lady للحجز.',
   ARRAY['recipient_name', 'sender_name', 'gift_code', 'amount', 'expires_at', 'message'],
   'gift'
 ),
@@ -95,7 +95,7 @@ INSERT INTO message_templates (code, name_ar, description, channel, body_ar, var
   'عرض عيد الميلاد',
   'يُرسَل في عيد ميلاد العميلة',
   'whatsapp',
-  E'🎂 كل عام وأنتِ أجمل {{customer_name}} 💛\n\nهديّة Be First Lady لعيد ميلادكِ:\n\n🎁 كوبون خصم {{discount}}%\nالكود: {{coupon_code}}\nصالح لمدّة {{valid_days}} أيّام\n\nدلّلي نفسكِ · أنتِ تستحقّين ✨',
+  E'🎂 كل عام وأنتِ أجمل {{customer_name}} 💛\n\nهديّة The First Lady لعيد ميلادكِ:\n\n🎁 كوبون خصم {{discount}}%\nالكود: {{coupon_code}}\nصالح لمدّة {{valid_days}} أيّام\n\nدلّلي نفسكِ · أنتِ تستحقّين ✨',
   ARRAY['customer_name', 'discount', 'coupon_code', 'valid_days'],
   'marketing'
 )

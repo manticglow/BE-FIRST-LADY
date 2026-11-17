@@ -67,7 +67,7 @@ export default function StaffProfileTab({
             <h2 className="font-ar-display font-bold text-xl truncate">{user.fullName}</h2>
             <div className="text-[11px] opacity-75 flex items-center gap-1 mt-1">
               <Award className="w-3 h-3" />
-              <span>موظّفة في Be First Lady</span>
+              <span>موظّفة في The First Lady</span>
             </div>
           </div>
         </div>
@@ -169,7 +169,7 @@ export default function StaffProfileTab({
 
       {/* نسخة البرنامج */}
       <div className="text-center text-[10px] text-ink-soft/60 pt-4">
-        Be First Lady · staff app v1.0
+        The First Lady · staff app v1.0
       </div>
     </div>
   );

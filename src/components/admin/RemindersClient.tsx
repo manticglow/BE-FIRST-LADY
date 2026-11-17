@@ -31,7 +31,7 @@ export default function RemindersClient({ bookings, today, tomorrow, dayAfter }:
   function buildMessage(b: Booking, isToday: boolean) {
     const serviceNames = b.items?.map((i) => i.service_name).join('، ') || 'الخدمة المختارة';
     const greeting = isToday ? 'صباح الخير' : 'مساء الخير';
-    const prefix = isToday ? '🌸 تذكير بموعدكِ اليوم في Be First Lady:' : '✨ تذكير بموعدكِ بكرا في Be First Lady:';
+    const prefix = isToday ? '🌸 تذكير بموعدكِ اليوم في The First Lady:' : '✨ تذكير بموعدكِ بكرا في The First Lady:';
 
     return (
       `${greeting} ${b.customer_name} 💛\n\n` +

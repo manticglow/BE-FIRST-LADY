@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
     const serviceName = b.items?.[0]?.service_name || 'الخدمة';
     const reviewUrl = `https://befirstlady.com/review/${b.booking_number || b.id}`;
 
-    const msg = `🌸 *شكراً لزيارتكِ · Be First Lady*
+    const msg = `🌸 *شكراً لزيارتكِ · The First Lady*
 
 مرحباً ${b.customer_name || 'عميلتنا'} 💛
 

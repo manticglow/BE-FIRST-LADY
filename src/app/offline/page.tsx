@@ -10,7 +10,7 @@ export default function OfflinePage() {
       <div className="max-w-md w-full text-center">
         <Image
           src="/images/logo.svg"
-          alt="Be First Lady"
+          alt="The First Lady"
           width={100}
           height={100}
           className="mx-auto opacity-60"

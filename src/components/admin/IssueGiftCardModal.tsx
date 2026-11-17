@@ -378,7 +378,7 @@ function buildWhatsAppMessage(card: IssuedCard): string {
     ? `📅 صالحة حتى: ${new Date(card.expires_at).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' })}`
     : '';
 
-  return `🎁 *هديّتكِ من Be First Lady*
+  return `🎁 *هديّتكِ من The First Lady*
 
 مرحباً ${card.recipient_name} 💛
 
@@ -394,5 +394,5 @@ ${expiryLine}
 ✨ استخدمي الكود عند أي حجز في المركز · أو ذكريه عند الاستقبال.
 
 نتشرّف باستقبالكِ 🌸
-Be First Lady · المدينة المنوّرة`;
+The First Lady · المدينة المنوّرة`;
 }

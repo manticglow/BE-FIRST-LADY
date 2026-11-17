@@ -59,7 +59,7 @@ function LoginForm() {
         {/* الهيدر */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <div className="font-en-display italic text-3xl text-gold-deep">Be First Lady</div>
+            <div className="font-en-display italic text-3xl text-gold-deep">The First Lady</div>
             <div className="font-en-label text-[10px] tracking-[0.3em] text-gold mt-1">MADINAH, KSA</div>
           </Link>
         </div>

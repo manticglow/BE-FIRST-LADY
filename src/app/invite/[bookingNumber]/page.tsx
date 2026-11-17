@@ -57,7 +57,7 @@ export default async function InvitationPage({ params }: Props) {
             <div className="relative z-10">
               <Image
                 src="/images/logo-white.svg"
-                alt="Be First Lady"
+                alt="The First Lady"
                 width={100}
                 height={100}
                 className="mx-auto drop-shadow-lg"
@@ -66,7 +66,7 @@ export default async function InvitationPage({ params }: Props) {
                 SPA & SALON · MADINAH
               </div>
               <div className="font-en-display italic text-2xl mt-1">
-                Be First Lady
+                The First Lady
               </div>
             </div>
           </div>

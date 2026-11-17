@@ -74,7 +74,7 @@ export function buildGiftCardEmailHtml(data: GiftCardEmailData): string {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>بطاقة هديّة من Be First Lady</title>
+<title>بطاقة هديّة من The First Lady</title>
 </head>
 <body style="margin:0; padding:0; background:#f8f4ec; font-family: -apple-system, 'Segoe UI', Tahoma, Arial, sans-serif;">
 
@@ -206,7 +206,7 @@ export function buildGiftCardEmailHtml(data: GiftCardEmailData): string {
         <tr>
           <td style="padding:20px 30px 24px; background:#faf6ee; text-align:center; border-top:1px solid #f0e8d8;">
             <div style="font-size:11px; color:#a89668; letter-spacing:1px; margin-bottom:6px;">
-              Be First Lady · المدينة المنوّرة
+              The First Lady · المدينة المنوّرة
             </div>
             <div style="font-size:10px; color:#b8a888;">
               📞 للاستفسار · 920000000 · بطاقة غير قابلة للاسترداد النقدي
@@ -218,7 +218,7 @@ export function buildGiftCardEmailHtml(data: GiftCardEmailData): string {
 
       <!-- Below card tip -->
       <div style="max-width:580px; margin:16px auto 0; font-size:11px; color:#8a7a68; text-align:center; line-height:1.6;">
-        هذه رسالة مُؤتمتة من <strong>Be First Lady</strong> · لا تردّي على هذا الإيميل.
+        هذه رسالة مُؤتمتة من <strong>The First Lady</strong> · لا تردّي على هذا الإيميل.
       </div>
 
     </td>
@@ -233,7 +233,7 @@ export function buildGiftCardEmailText(data: GiftCardEmailData): string {
   const expiryText = data.expires_at
     ? new Date(data.expires_at).toLocaleDateString('ar-SA')
     : 'بلا تاريخ انتهاء';
-  return `🎁 بطاقة هديّة فاخرة من Be First Lady
+  return `🎁 بطاقة هديّة فاخرة من The First Lady
 
 عزيزتي ${data.recipient_name}،
 ${data.message ? `\n${data.message}\n` : ''}
@@ -245,7 +245,7 @@ ${data.message ? `\n${data.message}\n` : ''}
 1. احجزي من befirstlady.com أو مباشرة من الصالون
 2. أدخلي الكود عند الدفع · أو أظهري QR عند الاستقبال
 
-Be First Lady · المدينة المنوّرة`;
+The First Lady · المدينة المنوّرة`;
 }
 
 function escapeHtml(str: string): string {

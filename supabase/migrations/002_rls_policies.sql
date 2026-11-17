@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════
--- Be First Lady — Row Level Security Policies
+-- The First Lady — Row Level Security Policies
 -- ═══════════════════════════════════════════════════════════
 --
 -- 🔒 الصلاحيات:

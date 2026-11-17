@@ -12,7 +12,7 @@ import { ChevronRight, Sparkles } from 'lucide-react';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'ملف الجمال · Be First Lady',
+  title: 'ملف الجمال · The First Lady',
 };
 
 export default async function BeautyProfilePage() {

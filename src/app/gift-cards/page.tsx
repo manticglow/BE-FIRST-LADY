@@ -85,7 +85,7 @@ export default function GiftCardsPage() {
               <div className="absolute top-4 right-4 text-6xl opacity-20">{design.badge}</div>
               <div className="relative z-10">
                 <div className="font-en-label text-[10px] tracking-[0.4em] opacity-90">GIFT CARD</div>
-                <div className="font-ar-display text-xl font-bold mt-1">Be First Lady</div>
+                <div className="font-ar-display text-xl font-bold mt-1">The First Lady</div>
 
                 <div className="my-8 text-center">
                   <div className="text-xs opacity-80 mb-2">قيمة البطاقة</div>
@@ -157,7 +157,7 @@ export default function GiftCardsPage() {
               بطاقات هدية فاخرة
             </h1>
             <p className="text-sm text-ink-soft mt-2 leading-relaxed">
-              أهدي من تحبّين تجربة ملكية من Be First Lady 💛
+              أهدي من تحبّين تجربة ملكية من The First Lady 💛
               <br />
               تختار الخدمة بنفسها، وتستخدم الكود عند الحجز.
             </p>

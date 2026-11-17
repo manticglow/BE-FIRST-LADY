@@ -1,4 +1,4 @@
-# 📱 دليل إعداد WhatsApp Business — Be First Lady
+# 📱 دليل إعداد WhatsApp Business — The First Lady
 
 > دليل خطوة بخطوة لتفعيل:
 > ✅ تسجيل الدخول برقم الجوال (OTP عبر واتساب)
@@ -30,13 +30,13 @@
 1. افتحي: **https://business.facebook.com**
 2. اضغطي **Create Account**
 3. البيانات:
-   - **Business Name:** `Be First Lady` أو `بي فيرست ليدي`
+   - **Business Name:** `The First Lady` أو `بي فيرست ليدي`
    - **Your Name:** اسمك الكامل
-   - **Business Email:** إيميل العمل (الأفضل `info@befirstlady.com`)
+   - **Business Email:** إيميل العمل (الأفضل `info@thefirstlady.com`)
 
 ### 1.2 أضيفي معلومات النشاط
 - **Country:** Saudi Arabia
-- **Website:** `https://befirstlady.com` (أو رابط Vercel حالياً)
+- **Website:** `https://thefirstlady.com` (أو رابط Vercel حالياً)
 - **Industry:** `Beauty, Cosmetics & Personal Care`
 - **Description:** مركز نسائي متكامل للسبا والصالون في المدينة المنوّرة
 
@@ -51,7 +51,7 @@
 4. اختاري:
    - **Use case:** `Other`
    - **App type:** `Business`
-   - **App name:** `Be First Lady Backend`
+   - **App name:** `The First Lady Backend`
    - **Business Account:** اختاري اللي أنشأتيه قبل
 
 ### 2.2 أضيفي WhatsApp
@@ -160,7 +160,7 @@ Meta Business → **WhatsApp Manager** → **Templates** → **Create Template**
 
 **Footer:**
 ```
-Be First Lady · المدينة المنوّرة
+The First Lady · المدينة المنوّرة
 ```
 
 **Buttons:**
@@ -179,7 +179,7 @@ Be First Lady · المدينة المنوّرة
 ```
 ✨ أهلاً {{1}} 💛
 
-تم تأكيد حجزكِ في Be First Lady 🌸
+تم تأكيد حجزكِ في The First Lady 🌸
 
 📅 التاريخ: {{2}}
 ⏰ الوقت: {{3}}
@@ -190,7 +190,7 @@ Be First Lady · المدينة المنوّرة
 
 **Footer:**
 ```
-Be First Lady · 0504389329
+The First Lady · 0504389329
 ```
 
 ### 6.4 قالب تذكير 24 ساعة قبل الموعد
@@ -204,7 +204,7 @@ Be First Lady · 0504389329
 ```
 💛 تذكير يا {{1}}
 
-موعدكِ في Be First Lady غداً {{2}} الساعة {{3}}
+موعدكِ في The First Lady غداً {{2}} الساعة {{3}}
 
 نراكِ قريباً 🌸
 ```

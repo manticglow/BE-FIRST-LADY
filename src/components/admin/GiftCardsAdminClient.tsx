@@ -98,7 +98,7 @@ function CardRow({ card }: { card: Card }) {
 
   function sendWA() {
     if (!card.recipient_phone) return;
-    const msg = `🎁 بطاقة هديّة من Be First Lady\n\nمرحباً ${card.recipient_name || ''}\nكود البطاقة: *${card.code}*\nالرصيد: ${card.balance} ر.س`;
+    const msg = `🎁 بطاقة هديّة من The First Lady\n\nمرحباً ${card.recipient_name || ''}\nكود البطاقة: *${card.code}*\nالرصيد: ${card.balance} ر.س`;
     window.open(waLink(msg, card.recipient_phone), '_blank');
   }
 
@@ -217,7 +217,7 @@ function CardRowMobile({ card }: { card: Card }) {
 
   function sendWA() {
     if (!card.recipient_phone) return;
-    const msg = `🎁 بطاقة هديّة من Be First Lady\nكود: *${card.code}*\nالرصيد: ${card.balance} ر.س`;
+    const msg = `🎁 بطاقة هديّة من The First Lady\nكود: *${card.code}*\nالرصيد: ${card.balance} ر.س`;
     window.open(waLink(msg, card.recipient_phone), '_blank');
   }
 

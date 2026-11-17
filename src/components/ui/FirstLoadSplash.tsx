@@ -115,7 +115,7 @@ export default function FirstLoadSplash() {
                 <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold-light/30 to-amber-300/20 blur-2xl" />
                 <Image
                   src="/images/logo.svg"
-                  alt="Be First Lady"
+                  alt="The First Lady"
                   width={140}
                   height={140}
                   priority
@@ -140,7 +140,7 @@ export default function FirstLoadSplash() {
                 transition={{ duration: 0.6, delay: 1.2 }}
                 className="font-en-display italic text-3xl text-gold-deep mt-2"
               >
-                Be First Lady
+                The First Lady
               </motion.div>
 
               {/* فاصل ذهبي متحرّك */}

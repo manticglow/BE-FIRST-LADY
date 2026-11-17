@@ -1,4 +1,4 @@
-# 📋 دليل التنصيب الكامل · Be First Lady
+# 📋 دليل التنصيب الكامل · The First Lady
 
 > خطوات تنصيب النظام من الصفر على حسابات جديدة
 
@@ -195,14 +195,14 @@ WHERE email = 'YOUR_OWNER_EMAIL@gmail.com';
 #### الأرخص: Cloudflare (~40 ريال/سنة)
 ```
 افتحي: https://www.cloudflare.com/products/registrar
-ابحثي: befirstlady.com
+ابحثي: thefirstlady.com
 اشتري
 ```
 
 #### الأسهل سعودياً: Hostinger (~45 ريال/سنة)
 ```
 افتحي: https://www.hostinger.sa/domain-checker
-ابحثي: befirstlady.com
+ابحثي: thefirstlady.com
 اشتري
 ```
 
@@ -210,7 +210,7 @@ WHERE email = 'YOUR_OWNER_EMAIL@gmail.com';
 
 ```
 Vercel → Project → Settings → Domains
-Add Domain: befirstlady.com
+Add Domain: thefirstlady.com
 ```
 
 Vercel يعطيكِ Records · ضيفيهم في لوحة النطاق:
@@ -253,7 +253,7 @@ Dashboard → API Keys → انسخي:
 
 ```
 Dashboard → Webhooks → Add Endpoint
-URL: https://befirstlady.com/api/payments/webhook/moyasar
+URL: https://thefirstlady.com/api/payments/webhook/moyasar
 أحداث: payment_paid · payment_failed · payment_refunded
 Secret: [عشوائي قوي] → MOYASAR_WEBHOOK_SECRET
 ```
@@ -299,7 +299,7 @@ fetch('/api/whatsapp/test', {
   headers: {'Content-Type': 'application/json'},
   body: JSON.stringify({
     phone: '0501234567',  // رقمكِ للاختبار
-    text: 'تجربة من Be First Lady'
+    text: 'تجربة من The First Lady'
   })
 }).then(r => r.json()).then(console.log)
 ```
@@ -311,7 +311,7 @@ fetch('/api/whatsapp/test', {
 ```
 افتحي: https://resend.com/signup
 Dashboard → API Keys → Create → انسخي → RESEND_API_KEY
-Domains → Add Domain: befirstlady.com
+Domains → Add Domain: thefirstlady.com
 ```
 
 Resend يعطيكِ MX records · ضيفيهم في DNS.

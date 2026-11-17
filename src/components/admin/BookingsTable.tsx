@@ -60,7 +60,7 @@ export default function BookingsTable({
     const reviewUrl = `${window.location.origin}/review/${b.booking_number}`;
     const message = encodeURIComponent(
       `أهلاً ${b.customer_name} 💛\n\n` +
-      `شكراً لزيارتكِ Be First Lady 🌸\n` +
+      `شكراً لزيارتكِ The First Lady 🌸\n` +
       `رأيكِ يهمّنا — خذي دقيقة وقيّمي تجربتكِ:\n${reviewUrl}\n\n` +
       `نتمنى نراكِ قريباً مرة أخرى ✨`
     );
@@ -74,7 +74,7 @@ export default function BookingsTable({
     const serviceNames = b.items?.map((i) => i.service_name).join('، ') || 'الخدمة المختارة';
     const message = encodeURIComponent(
       `السلام عليكم ${b.customer_name} 🌸\n\n` +
-      `تم تأكيد حجزكِ في Be First Lady:\n\n` +
+      `تم تأكيد حجزكِ في The First Lady:\n\n` +
       `📅 التاريخ: ${b.booking_date}\n` +
       `🕒 الوقت: ${b.booking_time.slice(0, 5)}\n` +
       `💆‍♀️ الخدمة: ${serviceNames}\n` +
@@ -97,7 +97,7 @@ export default function BookingsTable({
     const serviceNames = b.items?.map((i) => i.service_name).join('، ') || 'الخدمة المختارة';
     const message = encodeURIComponent(
       `صباح الخير ${b.customer_name} ✨\n\n` +
-      `تذكير بموعدكِ بكرا في Be First Lady:\n\n` +
+      `تذكير بموعدكِ بكرا في The First Lady:\n\n` +
       `📅 ${b.booking_date}\n` +
       `🕒 الساعة ${b.booking_time.slice(0, 5)}\n` +
       `💆‍♀️ ${serviceNames}\n\n` +
@@ -116,7 +116,7 @@ export default function BookingsTable({
     const inviteUrl = `${window.location.origin}/invite/${b.booking_number}`;
     const message = encodeURIComponent(
       `✨ أهلاً ${b.customer_name} 💛\n\n` +
-      `عندكِ دعوة فاخرة من ${b.gift_from_name} في Be First Lady — المدينة المنوّرة 🌸\n\n` +
+      `عندكِ دعوة فاخرة من ${b.gift_from_name} في The First Lady — المدينة المنوّرة 🌸\n\n` +
       `اضغطي الرابط لعرض الدعوة والـ QR:\n${inviteUrl}\n\n` +
       `📅 الموعد: ${b.booking_date} الساعة ${b.booking_time.slice(0, 5)}\n` +
       `#️⃣ رقم الحجز: ${b.booking_number}\n\n` +

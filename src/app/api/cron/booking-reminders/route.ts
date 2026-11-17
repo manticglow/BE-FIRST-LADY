@@ -118,7 +118,7 @@ async function sendBatch(
     });
 
     const msg = type === '24h'
-      ? `🌸 *تذكير · Be First Lady*
+      ? `🌸 *تذكير · The First Lady*
 
 مرحباً ${b.customer_name || 'عميلتنا'} 💛
 
@@ -131,7 +131,7 @@ async function sendBatch(
 
 لتعديل أو إلغاء الحجز:
 https://befirstlady.com/account/bookings`
-      : `✨ *موعدكِ قريب · Be First Lady*
+      : `✨ *موعدكِ قريب · The First Lady*
 
 مرحباً ${b.customer_name || 'عميلتنا'} 💛
 

@@ -6,7 +6,7 @@
 CREATE TABLE IF NOT EXISTS tax_settings (
   id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   -- بيانات المنشأة
-  business_name_ar  TEXT NOT NULL DEFAULT 'Be First Lady',
+  business_name_ar  TEXT NOT NULL DEFAULT 'The First Lady',
   business_name_en  TEXT,
   commercial_reg    TEXT,              -- السجل التجاري
   vat_number        TEXT,              -- الرقم الضريبي (15 رقم)
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS tax_settings (
 
 -- أضيفي سجل افتراضي (بدون VAT في البداية — تفعّلها لاحقاً)
 INSERT INTO tax_settings (business_name_ar, apply_vat, vat_rate, prices_include_vat)
-SELECT 'Be First Lady · صالون السيدة الأولى', FALSE, 15.00, TRUE
+SELECT 'The First Lady · صالون السيدة الأولى', FALSE, 15.00, TRUE
 WHERE NOT EXISTS (SELECT 1 FROM tax_settings);
 
 -- RLS: الكل يقرأ، الأدمن يعدّل

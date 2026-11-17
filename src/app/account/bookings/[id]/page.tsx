@@ -174,7 +174,7 @@ export default async function BookingDetailPage({
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-gold-deep" />
-                <span className="font-ar-display font-bold text-gold-deep">Be First Lady</span>
+                <span className="font-ar-display font-bold text-gold-deep">The First Lady</span>
               </div>
               <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${
                 isPaid
