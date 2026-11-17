@@ -68,7 +68,7 @@ export async function GET() {
       WHATSAPP_PROVIDER: provider,
       WHATSAPP_TEST_MODE: testMode,
     },
-    next_step: 'POST هنا بـ { "phone": "0591234939", "text": "رسالة اختبار" }',
+    next_step: 'POST هنا بـ { "phone": "05xxxxxxxx", "text": "رسالة اختبار" }',
   });
 }
 

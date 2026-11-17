@@ -1,59 +1,117 @@
-# 🗄️ تطبيق قاعدة البيانات · دليل الاستخدام
+# 📊 Supabase · Database Setup
 
-## 📋 الملفات بالترتيب (22 ملف)
-
-افتحي **Supabase Dashboard → SQL Editor** · ونفّذي الملفات بالترتيب التالي:
-
-### 🏗️ الأساسيات (مرة واحدة فقط · لأوّل مرة)
-
-| # | الملف | الوظيفة |
-|---|---|---|
-| 1 | `001_initial_schema.sql` | الجداول الأساسيّة (profiles · categories · services · bookings · ...) |
-| 2 | `002_rls_policies.sql` | سياسات الأمان (RLS) |
-| 3 | `003_gift_bookings.sql` | حجوزات الهدايا |
-| 4 | `004_phase2_features.sql` | staff_schedule · blocked_dates · loyalty · coupons |
-| 5 | `005_hr_attendance.sql` | الحضور والانصراف + leave_requests |
-| 6 | `006_system_hardening.sql` | تحسينات أمنيّة |
-| 7 | `007_fix_junction_rls.sql` | إصلاح junction tables RLS |
-| 8 | `008_tax_settings.sql` | الضرائب (VAT · ZATCA) |
-| 9 | `009_gift_cards_referral_inventory.sql` | بطاقات الهديّة · الإحالة · المخزون |
-| 10 | `010_mobile_app.sql` | إعدادات التطبيق الجوّال |
-
-### 📅 أكتوبر 2026
-
-| # | الملف | الوظيفة |
-|---|---|---|
-| 11 | `20261019_otp_codes.sql` | رموز OTP للدخول بالجوّال |
-| 12 | `20261020_customer_experience.sql` | تحسينات تجربة العميلة |
-
-### 📅 نوفمبر 2026
-
-| # | الملف | الوظيفة |
-|---|---|---|
-| 13 | `20261101_expenses_and_notes.sql` | المصروفات والملاحظات |
-| 14 | `20261101_security_hardening.sql` | تشديد الأمان |
-| 15 | `20261102_beauty_profile.sql` | ملف الجمال (العميلة) |
-| 16 | `20261102_customer_prefs.sql` | تفضيلات العميلة |
-| 17 | `20261102_gift_cards_email.sql` | إيميل بطاقات الهديّة |
-| 18 | `20261102_payments.sql` | **المدفوعات (موياسر · تابي · تمارا)** |
-| 19 | `20261102_reminders.sql` | التذكيرات التلقائيّة |
-| 20 | `20261103_newsletter.sql` | **اشتراك النشرة البريديّة** |
-| 21 | `20261103_push_subscriptions.sql` | **Web Push notifications** |
-| 22 | `20261104_staff_requests.sql` | ⭐ **نظام طلبات الموظّفات (الأحدث)** |
+> دليل تطبيق قاعدة البيانات لـ Be First Lady
 
 ---
 
-## ✅ ملاحظات مهمّة
+## 🚀 التثبيت السريع (مشروع جديد)
 
-- **كل الملفات idempotent** — تقدرين تنفّذي أي ملف أكثر من مرّة بدون مشاكل (تستخدم `IF NOT EXISTS`)
-- لو كنتِ طبّقتي بعضها من قبل · شغّلي فقط الملفات الجديدة من 20 إلى 22
-- لو تبدأين من الصفر · شغّلي كل الـ22 بالترتيب
-- بعد كل ملف · شوفي رسالة النجاح قبل ما تنتقلي للي بعده
+لقاعدة بيانات Supabase جديدة تماماً:
+
+```sql
+-- شغّلي هذا الملف الواحد في SQL Editor:
+combined-all.sql
+```
+
+يُنشئ:
+- 23 جدول · كل الـschema
+- 90+ سياسة RLS
+- كل الـfunctions والـtriggers
+- كل الـviews والـmaterialized views
+
+**الوقت المتوقّع:** 10-30 ثانية
 
 ---
 
-## 🚀 طريقة سريعة (إذا الملفات كثيرة)
+## 🔄 التحديثات (مشروع موجود)
 
-افتحي `combined-all.sql` (مُجمَّع في نفس المجلّد) ونفّذيه مرّة واحدة.
+### آخر تحديث أمني · يجب تطبيقه:
 
-> ⚠️ **تحذير:** الملف الـcombined كبير (~2200 سطر). Supabase SQL Editor يقبله لكن ممكن ياخذ 20-30 ثانية.
+```sql
+-- يُضيف حماية لـgift_cards + reviews
+security-gift-cards.sql
+```
+
+---
+
+## 📁 ملفات أخرى
+
+| الملف | الاستخدام |
+|-------|-----------|
+| `combined-all.sql` | ✅ **الوحيد المطلوب** لمشروع جديد |
+| `security-gift-cards.sql` | 🔒 تحديث أمني إلزامي |
+| `fix-payments.sql` | 🛠️ إصلاح جدول payment_intents (موجود في combined) |
+| `whatsapp-log.sql` | 📱 جدول whatsapp_log (موجود في combined) |
+| `safe-latest.sql` | 🔄 تحديث آخر migration بأمان لو شي ناقص |
+| `safe-themes.sql` | 🎨 تحديث themes فقط |
+| `latest-only.sql` | 📝 آخر migration لوحده (مرجعي) |
+
+---
+
+## 🎯 سيناريوهات شائعة
+
+### 1. تنصيب لأوّل مرّة
+```sql
+-- في Supabase SQL Editor:
+-- Step 1: تطبيق الـschema الكامل
+   → combined-all.sql
+
+-- Step 2: التحديث الأمني الأخير
+   → security-gift-cards.sql
+```
+
+### 2. تحديث من نسخة سابقة
+```sql
+-- طبّقي فقط التحديثات الجديدة بالترتيب:
+-- 1. safe-latest.sql       ← يضيف ما نقص
+-- 2. security-gift-cards.sql  ← الأمان
+```
+
+### 3. مشكلة في جدول معيّن
+```sql
+-- شغّلي الملف المناسب:
+-- payments مفقود:     fix-payments.sql
+-- whatsapp_log مفقود: whatsapp-log.sql
+-- themes متضاربة:     safe-themes.sql
+```
+
+---
+
+## ⚠️ تحذير · قبل التنفيذ
+
+قبل تشغيل أي migration على قاعدة بيانات موجودة:
+
+1. ✅ خذي نسخة احتياطيّة:
+   ```
+   Supabase → Database → Backups → Create Backup
+   ```
+
+2. ✅ اختبري على بيئة التطوير أوّلاً
+
+3. ✅ تحقّقي من رسالة النجاح:
+   ```
+   Success. No rows returned
+   ```
+
+---
+
+## 📚 التاريخ · Migrations الأصليّة
+
+الـcombined-all.sql يحتوي على كل هذي بالترتيب:
+
+| # | الملف | الوصف |
+|---|-------|--------|
+| 001 | initial_schema.sql | profiles · services · bookings · categories · packages · staff |
+| 002 | rls_policies.sql | سياسات Row Level Security |
+| 003 | gift_bookings.sql | الحجوزات كهديّة |
+| 004 | phase2_features.sql | reviews · coupons · banners |
+| 005 | hr_attendance.sql | الحضور والدوام |
+| 006 | system_hardening.sql | audit logs · rate limits |
+| 007 | fix_junction_rls.sql | إصلاح junction tables |
+| 008 | tax_settings.sql | إعدادات الضريبة (ZATCA) |
+| 009 | gift_cards.sql | بطاقات الهديّة |
+| 010 | mobile_app.sql | دعم تطبيق الجوّال |
+| 2026-10 | customer_experience.sql | تجربة العميلة · OTP |
+| 2026-11 | security + beauty + payments | تحديثات نوفمبر |
+
+كلّها مُدمجة في `combined-all.sql` · ما تحتاجين تطبّقينها فرديّاً.
