@@ -41,7 +41,7 @@ graph TD
 ## 🗂️ هيكل الملفات
 
 ```
-befirstlady-v2/
+thefirstlady-v2/
 │
 ├── 📄 package.json              → تعريفات الحزم (Next 15.5.4 · React 19)
 ├── 📄 next.config.ts            → إعدادات Next.js

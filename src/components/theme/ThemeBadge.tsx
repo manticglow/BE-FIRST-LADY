@@ -18,7 +18,7 @@ export default function ThemeBadge({ text, emoji }: Props) {
   useEffect(() => {
     // اقرئي من localStorage
     try {
-      const key = `bfl-theme-badge-${text}`;
+      const key = `tfl-theme-badge-${text}`;
       const dismissed = localStorage.getItem(key);
       setHidden(!!dismissed);
     } catch {
@@ -29,7 +29,7 @@ export default function ThemeBadge({ text, emoji }: Props) {
   function dismiss() {
     setHidden(true);
     try {
-      localStorage.setItem(`bfl-theme-badge-${text}`, '1');
+      localStorage.setItem(`tfl-theme-badge-${text}`, '1');
     } catch {}
   }
 

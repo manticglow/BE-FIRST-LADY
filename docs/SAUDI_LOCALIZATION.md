@@ -157,7 +157,7 @@ if (EMAIL_PROVIDER === 'ses') {
 ```
 1. سجّلي في taqnyat.sa
 2. أرفقي السجل التجاري / وثيقة العمل الحر
-3. اطلبي Sender ID: "BeFirstLady" أو "BFL" (يحتاج موافقة CITC — ~3 أيام)
+3. اطلبي Sender ID: "TheFirstLady" أو "TFL" (يحتاج موافقة CITC — ~3 أيام)
 4. اشتري رصيد SAR عبر Mada
 5. استخدمي API:
 ```
@@ -170,7 +170,7 @@ await fetch('https://api.taqnyat.sa/v1/messages', {
   body: JSON.stringify({
     recipients: ['966501234567'],
     body: 'حجزكِ تم بنجاح · The First Lady',
-    sender: 'BeFirstLady',
+    sender: 'TheFirstLady',
   }),
 });
 ```
@@ -188,7 +188,7 @@ await fetch('https://api.taqnyat.sa/v1/messages', {
 **الخطوات:**
 ```
 1. زوري: register.nic.sa
-2. اختاري النطاق: befirstlady.sa  أو  bfl.com.sa
+2. اختاري النطاق: thefirstlady.sa  أو  tfl.com.sa
 3. ارفعي:
    - صورة الهويّة الوطنيّة
    - وثيقة العمل الحر (freelancer license)
@@ -200,9 +200,9 @@ await fetch('https://api.taqnyat.sa/v1/messages', {
 ```
 
 ### الأنواع المتاحة:
-- `befirstlady.sa` — الأفخم والأحدث
+- `thefirstlady.sa` — الأفخم والأحدث
 - `thefirstlady.com.sa` — التقليدي التجاري
-- `befirstlady.net.sa` — للشبكات
+- `thefirstlady.net.sa` — للشبكات
 - `بي-فيرست-ليدي.السعودية` — IDN عربي (ميزة تنافسيّة!)
 
 ---

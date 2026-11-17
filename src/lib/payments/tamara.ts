@@ -74,7 +74,7 @@ export async function createTamaraCheckout(opts: {
         first_name: firstName,
         last_name: lastName,
         phone_number: opts.customer.phone,
-        email: opts.customer.email || `${opts.customer.phone}@befirstlady.phone`,
+        email: opts.customer.email || `${opts.customer.phone}@thefirstlady.phone`,
       },
       shipping_address: {
         first_name: firstName,

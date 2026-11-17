@@ -24,7 +24,7 @@ export default function PWARegister() {
       setDeferredPrompt(e);
 
       // ما يظهر لو تم تجاهله خلال 7 أيام
-      const dismissed = localStorage.getItem('bfl_install_dismissed');
+      const dismissed = localStorage.getItem('tfl_install_dismissed');
       if (dismissed) {
         const days = (Date.now() - Number(dismissed)) / 86400000;
         if (days < 7) return;
@@ -43,7 +43,7 @@ export default function PWARegister() {
 
     if (isIos && !isStandalone) {
       setIsIOS(true);
-      const dismissed = localStorage.getItem('bfl_ios_install_dismissed');
+      const dismissed = localStorage.getItem('tfl_ios_install_dismissed');
       if (!dismissed || (Date.now() - Number(dismissed)) / 86400000 > 7) {
         setTimeout(() => setShowIOSPrompt(true), 15000);
       }
@@ -61,12 +61,12 @@ export default function PWARegister() {
   }
 
   function dismiss() {
-    localStorage.setItem('bfl_install_dismissed', String(Date.now()));
+    localStorage.setItem('tfl_install_dismissed', String(Date.now()));
     setShowPrompt(false);
   }
 
   function dismissIOS() {
-    localStorage.setItem('bfl_ios_install_dismissed', String(Date.now()));
+    localStorage.setItem('tfl_ios_install_dismissed', String(Date.now()));
     setShowIOSPrompt(false);
   }
 
@@ -75,7 +75,7 @@ export default function PWARegister() {
     return (
       <div className="fixed bottom-24 md:bottom-4 left-4 right-4 md:left-auto md:w-96 z-[9999] animate-fade-in">
         <div className="bg-white rounded-2xl shadow-2xl border border-gold-light/40 p-4 flex items-center gap-3">
-          <img src="/icons/icon-192.png" alt="BFL" className="w-12 h-12 rounded-xl" />
+          <img src="/icons/icon-192.png" alt="TFL" className="w-12 h-12 rounded-xl" />
           <div className="flex-1 min-w-0">
             <div className="font-ar-display font-bold text-sm text-ink">ثبّتي The First Lady</div>
             <div className="text-xs text-ink-soft mt-0.5">كتطبيق على جهازكِ ✨</div>
@@ -98,7 +98,7 @@ export default function PWARegister() {
       <div className="fixed bottom-24 md:bottom-4 left-4 right-4 md:left-auto md:w-96 z-[9999] animate-fade-in">
         <div className="bg-white rounded-2xl shadow-2xl border border-gold-light/40 p-4">
           <div className="flex items-start gap-3">
-            <img src="/icons/icon-192.png" alt="BFL" className="w-12 h-12 rounded-xl" />
+            <img src="/icons/icon-192.png" alt="TFL" className="w-12 h-12 rounded-xl" />
             <div className="flex-1">
               <div className="font-ar-display font-bold text-sm text-ink">ثبّتي التطبيق على آيفونك</div>
               <ol className="text-xs text-ink-soft mt-2 space-y-1 list-decimal pr-4">

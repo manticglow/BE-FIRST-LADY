@@ -31,8 +31,8 @@ export default async function InvitationPage({ params }: Props) {
   if (!booking) notFound();
 
   // رابط Google Maps للصالون (عدّليه من الإعدادات لاحقاً)
-  const salonUrl = 'https://maps.app.goo.gl/befirstlady';
-  const qrData = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://befirstlady.com'}/invite/${bookingNumber}`;
+  const salonUrl = 'https://maps.app.goo.gl/thefirstlady';
+  const qrData = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://thefirstlady.sa'}/invite/${bookingNumber}`;
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(qrData)}&color=5a4628&bgcolor=fbf7ef&margin=2`;
 
   return (

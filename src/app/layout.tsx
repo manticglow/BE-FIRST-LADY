@@ -23,7 +23,7 @@ import './globals.css';
 
 // ═══════ Metadata (SEO) ═══════
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://befirstlady.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://thefirstlady.sa'),
   title: {
     default: 'The First Lady — صالون السيدة الأولى · المدينة المنوّرة',
     template: '%s · The First Lady',
@@ -105,11 +105,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               name: 'The First Lady',
               alternateName: 'بي فيرست ليدي',
               description: 'مركز نسائي متكامل في قلب المدينة المنوّرة · سبا · صالون · تجميل',
-              url: 'https://befirstlady.com',
-              logo: 'https://befirstlady.com/images/logo.png',
-              image: 'https://befirstlady.com/images/og-image.jpg',
+              url: 'https://thefirstlady.sa',
+              logo: 'https://thefirstlady.sa/images/logo.png',
+              image: 'https://thefirstlady.sa/images/og-image.jpg',
               telephone: '+966504389329',
-              email: 'info@befirstlady.com',
+              email: 'info@thefirstlady.sa',
               priceRange: '$$$',
               address: {
                 '@type': 'PostalAddress',
@@ -131,7 +131,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 closes: '23:00',
               },
               sameAs: [
-                'https://instagram.com/befirstlady',
+                'https://instagram.com/thefirstlady',
                 'https://wa.me/966504389329',
               ],
               aggregateRating: {

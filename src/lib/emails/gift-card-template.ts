@@ -186,7 +186,7 @@ export function buildGiftCardEmailHtml(data: GiftCardEmailData): string {
               🌸 كيف تستخدمي البطاقة؟
             </h3>
             <ol style="margin:0; padding:0 20px 0 0; font-size:13px; color:#6a5a48; line-height:1.9;">
-              <li>احجزي من موقعنا <a href="https://befirstlady.com" style="color:${d.accent}; text-decoration:none; font-weight:600;">befirstlady.com</a> أو مباشرة من الصالون</li>
+              <li>احجزي من موقعنا <a href="https://thefirstlady.sa" style="color:${d.accent}; text-decoration:none; font-weight:600;">thefirstlady.sa</a> أو مباشرة من الصالون</li>
               <li>عند الدفع · أدخلي كود البطاقة <strong style="color:#3a2a18; font-family:monospace;">${escapeHtml(data.code)}</strong></li>
               <li>أو أظهري كود QR أعلاه عند الاستقبال</li>
             </ol>
@@ -196,7 +196,7 @@ export function buildGiftCardEmailHtml(data: GiftCardEmailData): string {
         <!-- CTA Button -->
         <tr>
           <td align="center" style="padding:24px 30px 30px;">
-            <a href="https://befirstlady.com/book" style="display:inline-block; background:linear-gradient(135deg, ${d.bgTop} 0%, ${d.bgBottom} 100%); color:${d.text}; text-decoration:none; padding:14px 36px; border-radius:12px; font-size:14px; font-weight:700; letter-spacing:1px; box-shadow:0 4px 14px rgba(58,42,24,0.3);">
+            <a href="https://thefirstlady.sa/book" style="display:inline-block; background:linear-gradient(135deg, ${d.bgTop} 0%, ${d.bgBottom} 100%); color:${d.text}; text-decoration:none; padding:14px 36px; border-radius:12px; font-size:14px; font-weight:700; letter-spacing:1px; box-shadow:0 4px 14px rgba(58,42,24,0.3);">
               احجزي الآن ✨
             </a>
           </td>
@@ -242,7 +242,7 @@ ${data.message ? `\n${data.message}\n` : ''}
 📅 ${expiryText}
 
 كيف تستخدمينها؟
-1. احجزي من befirstlady.com أو مباشرة من الصالون
+1. احجزي من thefirstlady.sa أو مباشرة من الصالون
 2. أدخلي الكود عند الدفع · أو أظهري QR عند الاستقبال
 
 The First Lady · المدينة المنوّرة`;

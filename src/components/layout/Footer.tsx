@@ -148,7 +148,7 @@ export default function Footer() {
               <SocialBtn href="https://instagram.com" icon={Instagram} label="إنستغرام" />
               <SocialBtn href={waLink()} icon={MessageCircle} label="واتساب" />
               <SocialBtn href="tel:+966504389329" icon={Phone} label="اتصال" />
-              <SocialBtn href="mailto:info@befirstlady.com" icon={Mail} label="إيميل" />
+              <SocialBtn href="mailto:info@thefirstlady.sa" icon={Mail} label="إيميل" />
             </div>
           </div>
 
@@ -270,7 +270,7 @@ function MobileFooter() {
             <Phone className="w-4 h-4" />
           </a>
           <a
-            href="https://instagram.com/befirstlady"
+            href="https://instagram.com/thefirstlady"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="إنستغرام"

@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
     if (!phone || phone.length < 11) continue;
 
     const serviceName = b.items?.[0]?.service_name || 'الخدمة';
-    const reviewUrl = `https://befirstlady.com/review/${b.booking_number || b.id}`;
+    const reviewUrl = `https://thefirstlady.sa/review/${b.booking_number || b.id}`;
 
     const msg = `🌸 *شكراً لزيارتكِ · The First Lady*
 

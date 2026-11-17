@@ -27,7 +27,7 @@
 1. اذهبي إلى [supabase.com](https://supabase.com) · اضغطي **Start your project**
 2. سجّلي بـGitHub أو إيميل · **مجاناً**
 3. **New Project**:
-   - **Name**: `befirstlady`
+   - **Name**: `thefirstlady`
    - **Database Password**: اختاري كلمة قويّة · **احفظيها**
    - **Region**: `West EU (Ireland)` ← أقرب للسعوديّة بسرعة ممتازة
 4. انتظري 2 دقيقة · المشروع يتجهّز
@@ -83,7 +83,7 @@ supabase/seed/01_categories_services.sql
 على كمبيوتركِ (بعد ما تستلمي المشروع):
 
 ```bash
-cd befirstlady-v2
+cd thefirstlady-v2
 npm install --legacy-peer-deps
 
 # اضبطي المتغيّرات
@@ -129,7 +129,7 @@ supabase/seed/02_sample_data.sql
 ## 6️⃣ رفع المشروع على GitHub
 
 ```bash
-cd befirstlady-v2
+cd thefirstlady-v2
 
 # إنشاء git جديد
 git init
@@ -137,7 +137,7 @@ git add .
 git commit -m "The First Lady · initial deployment"
 
 # أنشئي repo جديد على github.com/new (private · recommended)
-git remote add origin https://github.com/YOUR_USER/befirstlady.git
+git remote add origin https://github.com/YOUR_USER/thefirstlady.git
 git branch -M main
 git push -u origin main
 ```
@@ -148,7 +148,7 @@ git push -u origin main
 
 ### الخطوات:
 1. اذهبي إلى [vercel.com](https://vercel.com) · سجّلي بـGitHub
-2. **Import Project** → اختاري `befirstlady`
+2. **Import Project** → اختاري `thefirstlady`
 3. **Framework Preset**: Next.js (تلقائي)
 4. **Environment Variables** · أضيفي:
 
@@ -156,7 +156,7 @@ git push -u origin main
 NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbG...
 SUPABASE_SERVICE_ROLE_KEY=eyJhbG...
-NEXT_PUBLIC_SITE_URL=https://befirstlady.vercel.app
+NEXT_PUBLIC_SITE_URL=https://thefirstlady.vercel.app
 NEXT_PUBLIC_WHATSAPP_NUMBER=966504389329
 ```
 
@@ -164,7 +164,7 @@ NEXT_PUBLIC_WHATSAPP_NUMBER=966504389329
 
 ### النتيجة:
 ```
-🌐 https://befirstlady.vercel.app
+🌐 https://thefirstlady.vercel.app
 ```
 
 ---

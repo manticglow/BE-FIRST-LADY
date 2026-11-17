@@ -9,7 +9,7 @@ import { createAdminClient } from '@/lib/supabase/server';
 
 const VAPID_PUBLIC = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '';
 const VAPID_PRIVATE = process.env.VAPID_PRIVATE_KEY || '';
-const VAPID_SUBJECT = process.env.VAPID_SUBJECT || 'mailto:info@befirstlady.com';
+const VAPID_SUBJECT = process.env.VAPID_SUBJECT || 'mailto:info@thefirstlady.sa';
 
 export function isWebPushConfigured(): boolean {
   return VAPID_PUBLIC.length > 0 && VAPID_PRIVATE.length > 0;

@@ -60,8 +60,8 @@
 
 ```bash
 # 1. استنساخ المشروع
-git clone https://github.com/YOUR_ORG/be-first-lady.git
-cd be-first-lady
+git clone https://github.com/YOUR_ORG/the-first-lady.git
+cd the-first-lady
 
 # 2. تثبيت المكتبات
 npm install
@@ -162,7 +162,7 @@ Rose Soft: #d4a5a0 · Sage: #a0b090
 ## 📦 الهيكلة
 
 ```
-be-first-lady/
+the-first-lady/
 ├── 📁 src/
 │   ├── 📁 app/              # Next.js App Router
 │   │   ├── 📁 (customer)/   # صفحات العميلة

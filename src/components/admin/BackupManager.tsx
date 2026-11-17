@@ -95,7 +95,7 @@ export default function BackupManager() {
             إعدادات النسخ
           </h2>
           <button
-            onClick={() => setEditing({ provider: 'google_drive', schedule: 'daily', time_of_day: '03:00', is_active: false, include_db: true, include_uploads: true, retention_days: 30, folder_path: 'BeFirstLady/Backups' })}
+            onClick={() => setEditing({ provider: 'google_drive', schedule: 'daily', time_of_day: '03:00', is_active: false, include_db: true, include_uploads: true, retention_days: 30, folder_path: 'TheFirstLady/Backups' })}
             className="text-xs bg-gold-deep text-cream-50 px-3 py-1.5 rounded-lg font-bold hover:bg-ink"
           >
             + إضافة مزوّد

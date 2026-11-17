@@ -94,7 +94,7 @@ export default function Header() {
                className="hover:text-gold-light transition-all hover:scale-110">
               <Instagram className="w-3.5 h-3.5" />
             </a>
-            <a href="mailto:info@befirstlady.com" aria-label="Email"
+            <a href="mailto:info@thefirstlady.sa" aria-label="Email"
                className="hover:text-gold-light transition-all hover:scale-110">
               <Mail className="w-3.5 h-3.5" />
             </a>
@@ -421,7 +421,7 @@ export default function Header() {
                  className="w-9 h-9 rounded-full bg-white border border-cream-200 flex items-center justify-center text-gold-deep hover:bg-gradient-to-br hover:from-pink-500 hover:to-orange-400 hover:text-white hover:border-transparent hover:scale-110 transition-all">
                 <Instagram className="w-4 h-4" />
               </a>
-              <a href="mailto:info@befirstlady.com" aria-label="Email"
+              <a href="mailto:info@thefirstlady.sa" aria-label="Email"
                  className="w-9 h-9 rounded-full bg-white border border-cream-200 flex items-center justify-center text-gold-deep hover:bg-gold-deep hover:text-white hover:border-gold-deep hover:scale-110 transition-all">
                 <Mail className="w-4 h-4" />
               </a>

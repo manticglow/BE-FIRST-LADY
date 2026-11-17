@@ -57,7 +57,7 @@ export default function AdminShell({ items, role, fullName, children }: Props) {
   useEffect(() => {
     const admin = document.querySelector('[data-admin-root]');
     admin?.classList.remove('dark');
-    try { localStorage.removeItem('bfl_admin_theme'); } catch {}
+    try { localStorage.removeItem('tfl_admin_theme'); } catch {}
   }, []);
 
   // منع scroll الصفحة لمّا الـdrawer مفتوح

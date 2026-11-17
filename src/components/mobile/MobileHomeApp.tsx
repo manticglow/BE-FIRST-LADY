@@ -91,7 +91,7 @@ export default function MobileHomeApp({
 
   function openSearch() {
     if (typeof window !== 'undefined') {
-      window.dispatchEvent(new Event('bfl:open-search'));
+      window.dispatchEvent(new Event('tfl:open-search'));
     }
   }
 

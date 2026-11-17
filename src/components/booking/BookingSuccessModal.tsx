@@ -127,7 +127,7 @@ export default function BookingSuccessModal() {
               label="شاركي The First Lady مع صديقاتك"
               title="The First Lady · Spa & Salon"
               text="جرّبت تجربة فاخرة في The First Lady · أنصحك بشدّة ✨"
-              url="https://befirstlady.com"
+              url="https://thefirstlady.sa"
               className="w-full justify-center !py-3"
             />
           </div>

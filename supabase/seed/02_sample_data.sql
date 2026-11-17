@@ -8,14 +8,14 @@ UPDATE profiles
 SET loyalty_points = 1840,
     loyalty_tier = 'gold',
     total_spent = 6840
-WHERE email = 'customer@befirstlady.com';
+WHERE email = 'customer@thefirstlady.sa';
 
 -- ─── إنشاء صف الموظّفة هديل في جدول staff ──────────────
 INSERT INTO staff (profile_id, name, job_title, specialties, is_active, display_order)
 SELECT p.id, 'هديل القحطاني', 'أخصّائية مساج وحمّام',
        ARRAY['مساج', 'حمّام', 'بشرة']::TEXT[], true, 1
 FROM profiles p
-WHERE p.email = 'staff@befirstlady.com'
+WHERE p.email = 'staff@thefirstlady.sa'
   AND NOT EXISTS (SELECT 1 FROM staff s WHERE s.profile_id = p.id);
 
 -- ─── حجز قادم (باستخدام staff.id) ─────────────────────
@@ -26,12 +26,12 @@ INSERT INTO bookings (
   source, staff_id, booking_number
 )
 SELECT
-  (SELECT id FROM profiles WHERE email = 'customer@befirstlady.com'),
+  (SELECT id FROM profiles WHERE email = 'customer@thefirstlady.sa'),
   'سارة الزهراني', '0504389329',
   CURRENT_DATE + 1, '17:00', 90,
   350, 350, 'confirmed', 'unpaid', 'website',
   (SELECT s.id FROM staff s JOIN profiles p ON p.id = s.profile_id
-   WHERE p.email = 'staff@befirstlady.com' LIMIT 1),
+   WHERE p.email = 'staff@thefirstlady.sa' LIMIT 1),
   'B-' || TO_CHAR(NOW(), 'YYYYMMDD') || '-001'
 WHERE NOT EXISTS (
   SELECT 1 FROM bookings
@@ -46,12 +46,12 @@ INSERT INTO bookings (
   source, staff_id, booking_number
 )
 SELECT
-  (SELECT id FROM profiles WHERE email = 'customer@befirstlady.com'),
+  (SELECT id FROM profiles WHERE email = 'customer@thefirstlady.sa'),
   'سارة الزهراني', '0504389329',
   CURRENT_DATE - 7, '15:30', 75,
   280, 280, 'completed', 'paid', 'website',
   (SELECT s.id FROM staff s JOIN profiles p ON p.id = s.profile_id
-   WHERE p.email = 'staff@befirstlady.com' LIMIT 1),
+   WHERE p.email = 'staff@thefirstlady.sa' LIMIT 1),
   'B-' || TO_CHAR(NOW() - INTERVAL '7 days', 'YYYYMMDD') || '-002'
 WHERE NOT EXISTS (
   SELECT 1 FROM bookings
@@ -59,7 +59,7 @@ WHERE NOT EXISTS (
 );
 
 -- ─── إسناد الخدمات للموظّفة هديل ────────────────────
-WITH staff_h AS (SELECT id FROM profiles WHERE email = 'staff@befirstlady.com')
+WITH staff_h AS (SELECT id FROM profiles WHERE email = 'staff@thefirstlady.sa')
 INSERT INTO staff_services (staff_id, service_id)
 SELECT (SELECT id FROM staff_h), s.id
 FROM services s
@@ -70,14 +70,14 @@ WHERE s.name_ar IN (
 ON CONFLICT DO NOTHING;
 
 -- ─── جدول عمل هديل (6 أيام في الأسبوع) ──────────────
-WITH staff_h AS (SELECT id FROM profiles WHERE email = 'staff@befirstlady.com')
+WITH staff_h AS (SELECT id FROM profiles WHERE email = 'staff@thefirstlady.sa')
 INSERT INTO staff_schedules (staff_id, day_of_week, start_time, end_time, is_working)
 SELECT (SELECT id FROM staff_h), d, '09:00', '18:00', true
 FROM generate_series(0, 5) d
 ON CONFLICT DO NOTHING;
 
 -- يوم إجازة ثابت (الاثنين = 1)
-WITH staff_h AS (SELECT id FROM profiles WHERE email = 'staff@befirstlady.com')
+WITH staff_h AS (SELECT id FROM profiles WHERE email = 'staff@thefirstlady.sa')
 INSERT INTO staff_schedules (staff_id, day_of_week, start_time, end_time, is_working)
 SELECT (SELECT id FROM staff_h), 1, '09:00', '18:00', false
 ON CONFLICT (staff_id, day_of_week) DO UPDATE SET is_working = false;

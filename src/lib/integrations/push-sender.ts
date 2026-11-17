@@ -6,7 +6,7 @@
  *   2. "Generate new private key" → حمّلي JSON
  *   3. أضيفي في .env.local:
  *      FCM_SERVICE_ACCOUNT_JSON={"type":"service_account",...}  (كله في سطر واحد)
- *      FCM_PROJECT_ID=befirstlady-xxxxx
+ *      FCM_PROJECT_ID=thefirstlady-xxxxx
  *
  * iOS: يحتاج APNs certificate مرفوع في Firebase (مرّة واحدة)
  */

@@ -48,7 +48,7 @@ export async function createTabbyCheckout(opts: {
         description: opts.description,
         buyer: {
           phone: opts.customer.phone,
-          email: opts.customer.email || `${opts.customer.phone}@befirstlady.phone`,
+          email: opts.customer.email || `${opts.customer.phone}@thefirstlady.phone`,
           name: opts.customer.name,
         },
         shipping_address: {

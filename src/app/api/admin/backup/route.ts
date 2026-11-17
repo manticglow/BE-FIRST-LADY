@@ -17,7 +17,7 @@ const configSchema = z.object({
   schedule: z.enum(['daily', 'weekly', 'monthly', 'manual']).default('daily'),
   time_of_day: z.string().regex(/^\d{2}:\d{2}(:\d{2})?$/).default('03:00'),
   credentials: z.record(z.string(), z.any()).optional(),
-  folder_path: z.string().max(500).default('BeFirstLady/Backups'),
+  folder_path: z.string().max(500).default('TheFirstLady/Backups'),
   include_db: z.boolean().default(true),
   include_uploads: z.boolean().default(true),
   retention_days: z.number().int().min(1).max(365).default(30),

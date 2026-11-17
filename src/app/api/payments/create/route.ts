@@ -201,7 +201,7 @@ export async function POST(req: NextRequest) {
   }
 
   // ─── جلب URL الموقع ───
-  const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'https://befirstlady.com';
+  const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'https://thefirstlady.sa';
   const callback = `${origin}/account/bookings/${d.booking_id}?payment=returning`;
   const successUrl = `${origin}/account/bookings/${d.booking_id}?payment=success`;
   const cancelUrl = `${origin}/account/bookings/${d.booking_id}?payment=cancelled`;

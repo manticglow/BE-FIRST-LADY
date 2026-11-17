@@ -134,8 +134,8 @@ export async function POST(req: NextRequest) {
       .eq('id', otp.id);
 
     // ─── هل المستخدم موجود؟ ───
-    // نستخدم إيميل افتراضي من الرقم: 966xxx@befirstlady.phone
-    const syntheticEmail = `${formattedPhone}@befirstlady.phone`;
+    // نستخدم إيميل افتراضي من الرقم: 966xxx@thefirstlady.phone
+    const syntheticEmail = `${formattedPhone}@thefirstlady.phone`;
 
     // محاولة جلب مستخدم موجود بهذا الإيميل الاصطناعي
     const { data: existingUsers } = await admin.auth.admin.listUsers();

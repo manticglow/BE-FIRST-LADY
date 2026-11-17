@@ -187,7 +187,7 @@ CREATE TABLE IF NOT EXISTS backup_configs (
 
   -- بيانات الاتّصال (مشفّرة في الـapp layer)
   credentials     JSONB,     -- refresh_token · client_id · folder_id · bucket · etc
-  folder_path     TEXT DEFAULT 'BeFirstLady/Backups',
+  folder_path     TEXT DEFAULT 'TheFirstLady/Backups',
 
   -- ماذا نشمل
   include_db      BOOLEAN DEFAULT TRUE,

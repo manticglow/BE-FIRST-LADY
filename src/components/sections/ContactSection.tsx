@@ -87,7 +87,7 @@ export default function ContactSection() {
 
           {/* Instagram */}
           <a
-            href="https://instagram.com/befirstlady"
+            href="https://instagram.com/thefirstlady"
             target="_blank"
             rel="noopener"
             className="group relative bg-gradient-to-br from-pink-500 via-rose-500 to-orange-400 text-white rounded-3xl p-6 overflow-hidden hover:scale-[1.02] transition-transform shadow-xl shadow-rose-500/20"
@@ -99,7 +99,7 @@ export default function ContactSection() {
               </div>
               <div className="editorial-eyebrow text-white/70 mb-1">FOLLOW US</div>
               <div className="font-ar-display text-xl font-bold mb-1">إنستقرام</div>
-              <div className="text-sm opacity-90 font-en-display">@befirstlady</div>
+              <div className="text-sm opacity-90 font-en-display">@thefirstlady</div>
               <div className="mt-4 pt-4 border-t border-white/20 text-xs opacity-80">
                 شاهدي أحدث أعمالنا · عروض خاصّة للمتابعات
               </div>
@@ -128,7 +128,7 @@ export default function ContactSection() {
 
           <button
             type="button"
-            onClick={() => copyToClipboard('info@befirstlady.com', 'email')}
+            onClick={() => copyToClipboard('info@thefirstlady.sa', 'email')}
             className="group bg-white/80 backdrop-blur-sm border border-gold-light/15 rounded-2xl p-4 flex items-center gap-3 text-right hover:border-gold-light/40 hover:bg-white transition-all"
           >
             <div className="w-10 h-10 rounded-xl bg-gold-light/15 text-gold-deep flex items-center justify-center">
@@ -137,7 +137,7 @@ export default function ContactSection() {
             <div className="flex-1 min-w-0">
               <div className="text-[10px] text-ink-soft">إيميل</div>
               <div className="font-en-display font-bold text-sm text-gold-deep truncate" dir="ltr">
-                info@befirstlady.com
+                info@thefirstlady.sa
               </div>
             </div>
             <Copy className={`w-4 h-4 ${copied === 'email' ? 'text-emerald-500' : 'text-ink-soft opacity-50 group-hover:opacity-100'} transition-colors`} />

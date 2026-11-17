@@ -26,7 +26,7 @@ interface Props {
   headless?: boolean;
 }
 
-const RECENT_KEY = 'bfl_recent_searches';
+const RECENT_KEY = 'tfl_recent_searches';
 
 export default function HeaderSearch({ services, packages, categories, headless }: Props) {
   const [open, setOpen] = useState(false);
@@ -59,10 +59,10 @@ export default function HeaderSearch({ services, packages, categories, headless 
       setOpen(true);
     }
     window.addEventListener('keydown', onKey);
-    window.addEventListener('bfl:open-search', onOpenEvent as EventListener);
+    window.addEventListener('tfl:open-search', onOpenEvent as EventListener);
     return () => {
       window.removeEventListener('keydown', onKey);
-      window.removeEventListener('bfl:open-search', onOpenEvent as EventListener);
+      window.removeEventListener('tfl:open-search', onOpenEvent as EventListener);
     };
   }, []);
 

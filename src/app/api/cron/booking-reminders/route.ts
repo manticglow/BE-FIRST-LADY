@@ -130,7 +130,7 @@ async function sendBatch(
 نراكِ قريباً · ننتظركِ 🌸
 
 لتعديل أو إلغاء الحجز:
-https://befirstlady.com/account/bookings`
+https://thefirstlady.sa/account/bookings`
       : `✨ *موعدكِ قريب · The First Lady*
 
 مرحباً ${b.customer_name || 'عميلتنا'} 💛

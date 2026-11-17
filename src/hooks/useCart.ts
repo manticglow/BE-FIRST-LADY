@@ -9,8 +9,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-const KEY = 'bfl_cart';
-const EVENT = 'bfl-cart-change';
+const KEY = 'tfl_cart';
+const EVENT = 'tfl-cart-change';
 
 function readCart(): string[] {
   if (typeof window === 'undefined') return [];

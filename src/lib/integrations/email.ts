@@ -7,7 +7,7 @@
  *   3. احصلي على API Key
  *   4. أضيفي في .env.local:
  *      RESEND_API_KEY=re_xxxxx
- *      RESEND_FROM=noreply@befirstlady.com
+ *      RESEND_FROM=noreply@thefirstlady.sa
  */
 
 interface SendEmailParams {
@@ -24,7 +24,7 @@ interface EmailResult {
 
 export async function sendEmail(params: SendEmailParams): Promise<EmailResult> {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM || 'noreply@befirstlady.com';
+  const from = process.env.RESEND_FROM || 'noreply@thefirstlady.sa';
 
   if (!apiKey) return { ok: false, error: 'Resend غير مُفعّل' };
 

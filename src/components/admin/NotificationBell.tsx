@@ -22,7 +22,7 @@ interface Notification {
   time: string;
 }
 
-const SOUND_ENABLED_KEY = 'bfl_sound_enabled';
+const SOUND_ENABLED_KEY = 'tfl_sound_enabled';
 const REMINDER_INTERVAL_MS = 3 * 60 * 1000; // 3 دقائق
 
 export default function NotificationBell() {
@@ -93,7 +93,7 @@ export default function NotificationBell() {
         body,
         icon: '/icons/icon-192.png',
         badge: '/icons/icon-96.png',
-        tag: 'bfl-booking',
+        tag: 'tfl-booking',
         requireInteraction: true,
       });
       n.onclick = () => {

@@ -43,7 +43,7 @@
 ```
 افتحي: https://accounts.google.com/signup
 الاسم: [اسم المالكة]
-الإيميل المقترح: raghadbfl@gmail.com أو befirstlady.spa@gmail.com
+الإيميل المقترح: raghadtfl@gmail.com أو thefirstlady.spa@gmail.com
 ```
 
 ### 1.2 · إنشاء حساب GitHub
@@ -76,7 +76,7 @@ Username: راجعي الأسماء المتاحة
 
 ```
 Dashboard → New Project
-الاسم: be-first-lady
+الاسم: the-first-lady
 المنطقة: Seoul (أقرب لنا بعد البحرين)
 كلمة مرور قاعدة البيانات: [عشوائيّة قويّة · احفظيها!]
 ```
@@ -117,7 +117,7 @@ Project Settings → API
 ### 3.1 · Fork المستودع لحسابك
 
 ```
-افتحي: https://github.com/[original-owner]/be-first-lady
+افتحي: https://github.com/[original-owner]/the-first-lady
 اضغطي: Fork → إلى حسابك الجديد
 ```
 
@@ -125,7 +125,7 @@ Project Settings → API
 
 ```
 Vercel Dashboard → Add New → Project
-اختاري: be-first-lady (من GitHub)
+اختاري: the-first-lady (من GitHub)
 اضغطي: Import
 ```
 
@@ -274,7 +274,7 @@ Secret: [عشوائي قوي] → MOYASAR_WEBHOOK_SECRET
 
 ```
 افتحي: https://ultramsg.com
-Sign Up → Create Instance → اسم: BFL-Salon
+Sign Up → Create Instance → اسم: TFL-Salon
 QR Code → امسحي برقم الصالون
 Instance Settings → انسخي:
   • Instance ID  → ULTRAMSG_INSTANCE_ID
@@ -324,7 +324,7 @@ Resend يعطيكِ MX records · ضيفيهم في DNS.
 
 ```
 افتحي: https://console.cloud.google.com
-Create Project: BFL-Backups
+Create Project: TFL-Backups
 Enable: Google Drive API
 ```
 
@@ -332,7 +332,7 @@ Enable: Google Drive API
 
 ```
 IAM & Admin → Service Accounts → Create
-Name: bfl-backup-bot
+Name: tfl-backup-bot
 Grant Role: (تخطّي)
 Done → Click Service Account → Keys → Add Key → JSON
 ```
@@ -343,7 +343,7 @@ Done → Click Service Account → Keys → Add Key → JSON
 
 ```
 افتحي: https://drive.google.com
-New Folder: BFL-Backups
+New Folder: TFL-Backups
 Share → ألصقي إيميل Service Account (من JSON)
 Role: Editor
 Copy folder ID من URL → GOOGLE_DRIVE_FOLDER_ID

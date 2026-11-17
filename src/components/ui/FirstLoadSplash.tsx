@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
-const SPLASH_KEY = 'bfl_first_splash_seen';
+const SPLASH_KEY = 'tfl_first_splash_seen';
 
 export default function FirstLoadSplash() {
   const [show, setShow] = useState(false);

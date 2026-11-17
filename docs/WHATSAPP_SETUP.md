@@ -98,7 +98,7 @@ WhatsApp Business Account ID: 987654321098765
 
 ### 4.2 Token دائم (للإنتاج) — موصى به
 1. **Settings** → **System Users** → **Add**
-2. **Name:** `befirstlady-api-user`
+2. **Name:** `thefirstlady-api-user`
 3. **Role:** `Admin`
 4. بعد الإنشاء → **Generate Token**
 5. اختاري:
@@ -216,7 +216,7 @@ The First Lady · 0504389329
 ## ⚙️ الخطوة 7 · إضافة البيانات في Vercel
 
 ### 7.1 افتحي إعدادات المشروع
-1. Vercel Dashboard → مشروع `befirstlady`
+1. Vercel Dashboard → مشروع `thefirstlady`
 2. **Settings** → **Environment Variables**
 
 ### 7.2 أضيفي هذي المتغيّرات
