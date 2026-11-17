@@ -57,11 +57,13 @@ export const metadata: Metadata = {
   manifest: '/manifest.webmanifest',
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
+    // 'black-translucent' يسمح للمحتوى يمتدّ تحت الـnotch/Dynamic Island
+    statusBarStyle: 'black-translucent',
+    // عنوان مختصر يظهر تحت الأيقونة في home screen
     title: 'Be First Lady',
     startupImage: '/apple-splash.png',
   },
-  applicationName: 'Be First Lady',
+  applicationName: 'Be First Lady · صالون السيّدة الأولى',
   formatDetection: {
     telephone: true,
   },
@@ -72,6 +74,8 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
+  // ⬅️ iOS Dynamic Island + notch · يسمح للخلفيّة تمتدّ لحواف الشاشة
+  viewportFit: 'cover',
 };
 
 // ═══════ Root Layout ═══════
