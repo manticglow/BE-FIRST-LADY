@@ -107,7 +107,7 @@ function PhoneLoginForm() {
         return;
       }
 
-      toast.success('🌸 أهلاً بكِ في بي فيرست ليدي');
+      toast.success('🌸 أهلاً بكِ في السيّدة الأولى');
       // Full page reload حتى تتفعّل الجلسة
       setTimeout(() => (window.location.href = redirect), 500);
     } catch (err: any) {
