@@ -25,7 +25,7 @@ import './globals.css';
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://thefirstlady.sa'),
   title: {
-    default: 'The First Lady — صالون السيدة الأولى · المدينة المنوّرة',
+    default: 'The First Lady — مشغل السيدة الأولى · المدينة المنوّرة',
     template: '%s · The First Lady',
   },
   description: 'مركز نسائي متكامل في قلب المدينة المنوّرة — ترفٌ يليق بك، وجمالٌ يُحكى عنه. مساج، حمّام مغربي، تنظيف بشرة، شعر، مكياج.',
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'ar_SA',
     url: '/',
-    title: 'The First Lady — صالون السيدة الأولى',
+    title: 'The First Lady — مشغل السيدة الأولى',
     description: 'نعتني بكِ لتُزهري · A Sanctuary for You to Bloom',
     siteName: 'The First Lady',
     images: [{ url: '/images/og-image.jpg', width: 1200, height: 630 }],
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     title: 'The First Lady',
     startupImage: '/apple-splash.png',
   },
-  applicationName: 'The First Lady · صالون السيّدة الأولى',
+  applicationName: 'The First Lady · مشغل السيدة الأولى',
   formatDetection: {
     telephone: true,
   },

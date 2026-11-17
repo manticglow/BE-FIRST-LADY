@@ -5,7 +5,7 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'The First Lady · صالون السيدة الأولى',
+    name: 'The First Lady · مشغل السيدة الأولى',
     short_name: 'The First Lady',
     description: 'سبا وصالون نسائي فاخر في المدينة المنوّرة — نعتني بكِ لتُزهري',
     start_url: '/',

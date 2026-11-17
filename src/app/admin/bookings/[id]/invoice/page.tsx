@@ -182,7 +182,7 @@ export default async function InvoicePage({ params }: { params: Promise<{ id: st
 
               <div className="relative z-10 flex items-start justify-between gap-4">
                 {/* الشعار + بيانات المنشأة */}
-                <div>
+                <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-12 h-12 rounded-full bg-cream-50/10 backdrop-blur-sm border border-gold-light/30 flex items-center justify-center">
                       <Image src="/images/logo-white.svg" alt={sellerName} width={32} height={32} />
@@ -190,22 +190,50 @@ export default async function InvoicePage({ params }: { params: Promise<{ id: st
                     <div>
                       <div className="font-en-label text-[8px] tracking-[0.3em] text-gold-light/90">SPA & SALON</div>
                       <div className="font-ar-display text-lg font-bold leading-tight">{sellerName}</div>
+                      {tax?.business_name_en && (
+                        <div className="font-en-display italic text-[10px] text-gold-light/80">
+                          {tax.business_name_en}
+                        </div>
+                      )}
                     </div>
                   </div>
-                  {tax?.address && <div className="text-[9px] text-gold-light/80 mt-1">{tax.address}</div>}
-                  {tax?.city && <div className="text-[9px] text-gold-light/80">{tax.city}</div>}
-                  <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                    {applyVAT && (
-                      <div className="text-[9px] font-en-display bg-white/15 px-2 py-0.5 rounded">
-                        VAT: {vatNumber}
-                      </div>
-                    )}
+
+                  {/* العنوان الكامل */}
+                  {tax?.address && (
+                    <div className="text-[9px] text-gold-light/80 mt-1">{tax.address}</div>
+                  )}
+                  {tax?.postal_code && tax?.city && (
+                    <div className="text-[9px] text-gold-light/80">
+                      {tax.city} {tax.postal_code}
+                    </div>
+                  )}
+
+                  {/* معرّفات المنشأة الرسميّة */}
+                  <div className="flex items-center gap-1.5 mt-2 flex-wrap">
                     {tax?.commercial_reg && (
                       <div className="text-[9px] font-en-display bg-white/15 px-2 py-0.5 rounded">
                         س.ت: {tax.commercial_reg}
                       </div>
                     )}
+                    {applyVAT && vatNumber !== '000000000000000' && (
+                      <div className="text-[9px] font-en-display bg-white/15 px-2 py-0.5 rounded">
+                        الرقم الضريبي: {vatNumber}
+                      </div>
+                    )}
+                    {tax?.national_address_short && (
+                      <div className="text-[9px] font-en-display bg-white/15 px-2 py-0.5 rounded">
+                        العنوان الوطني: {tax.national_address_short}
+                      </div>
+                    )}
                   </div>
+
+                  {/* بيانات التواصل */}
+                  {(tax?.phone || tax?.email) && (
+                    <div className="flex items-center gap-2 mt-1.5 text-[9px] text-gold-light/80">
+                      {tax?.phone && <span>📞 {tax.phone}</span>}
+                      {tax?.email && <span>✉️ {tax.email}</span>}
+                    </div>
+                  )}
                 </div>
 
                 {/* رقم الفاتورة + التاريخ */}
