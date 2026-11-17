@@ -46,12 +46,34 @@ export async function PUT(req: NextRequest) {
   const { data: existing } = await admin.from('tax_settings').select('id').eq('is_active', true).maybeSingle();
 
   const payload = {
+    // الهويّة الأساسيّة
     business_name_ar: body.business_name_ar,
     business_name_en: body.business_name_en || null,
     commercial_reg: body.commercial_reg || null,
     vat_number: body.vat_number || null,
+    // العنوان
     address: body.address || null,
     city: body.city || null,
+    national_address_short: body.national_address_short || null,
+    building_number: body.building_number || null,
+    street_name: body.street_name || null,
+    district: body.district || null,
+    secondary_number: body.secondary_number || null,
+    postal_code: body.postal_code || null,
+    // التواصل
+    phone: body.phone || null,
+    whatsapp: body.whatsapp || null,
+    email: body.email || null,
+    website: body.website || null,
+    // السوشيال ميديا
+    instagram: body.instagram || null,
+    snapchat: body.snapchat || null,
+    tiktok: body.tiktok || null,
+    twitter: body.twitter || null,
+    facebook: body.facebook || null,
+    youtube: body.youtube || null,
+    google_maps: body.google_maps || null,
+    // الضريبة
     apply_vat: body.apply_vat || false,
     vat_rate: body.vat_rate || 15.00,
     prices_include_vat: body.prices_include_vat ?? true,

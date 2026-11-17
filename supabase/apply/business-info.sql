@@ -4,16 +4,28 @@
 -- يُحدّث جدول tax_settings بالمعلومات الرسميّة من السجل التجاري والعنوان الوطني
 -- ═══════════════════════════════════════════════════════════
 
--- 1. التأكّد من وجود أعمدة إضافيّة للمعلومات التفصيليّة
+-- 1. التأكّد من وجود كل الأعمدة الجديدة
 ALTER TABLE tax_settings
+  -- العنوان الوطني
   ADD COLUMN IF NOT EXISTS national_address_short TEXT,     -- العنوان المختصر (DMAC3146)
   ADD COLUMN IF NOT EXISTS building_number TEXT,            -- رقم المبنى
   ADD COLUMN IF NOT EXISTS street_name TEXT,                -- اسم الشارع
   ADD COLUMN IF NOT EXISTS district TEXT,                   -- الحي
   ADD COLUMN IF NOT EXISTS secondary_number TEXT,           -- الرقم الفرعي
   ADD COLUMN IF NOT EXISTS postal_code TEXT,                -- الرمز البريدي
+  -- التواصل
   ADD COLUMN IF NOT EXISTS phone TEXT,                      -- الجوّال/هاتف الصالون
-  ADD COLUMN IF NOT EXISTS email TEXT;                      -- الإيميل الرسمي
+  ADD COLUMN IF NOT EXISTS whatsapp TEXT,                   -- رقم الواتساب (قد يختلف عن الجوّال)
+  ADD COLUMN IF NOT EXISTS email TEXT,                      -- الإيميل الرسمي
+  ADD COLUMN IF NOT EXISTS website TEXT,                    -- الموقع الإلكتروني
+  -- السوشيال ميديا
+  ADD COLUMN IF NOT EXISTS instagram TEXT,                  -- @username أو رابط كامل
+  ADD COLUMN IF NOT EXISTS snapchat TEXT,
+  ADD COLUMN IF NOT EXISTS tiktok TEXT,
+  ADD COLUMN IF NOT EXISTS twitter TEXT,                    -- X (Twitter)
+  ADD COLUMN IF NOT EXISTS facebook TEXT,
+  ADD COLUMN IF NOT EXISTS youtube TEXT,
+  ADD COLUMN IF NOT EXISTS google_maps TEXT;                -- رابط Google Maps للصالون
 
 -- 2. تحديث السجل الحالي بالبيانات الرسميّة
 UPDATE tax_settings
@@ -35,9 +47,16 @@ SET
   secondary_number       = '8449',
   postal_code            = '42312',
 
-  -- بيانات التواصل (تُحدّث لاحقاً)
-  phone                  = NULL,
-  email                  = NULL,
+  -- بيانات التواصل
+  phone                  = '0504134147',
+  whatsapp               = '0504134147',
+  email                  = 'thefirestladysalon@hotmail.com',
+  website                = 'https://thefirstlady.sa',
+
+  -- السوشيال ميديا (تُحدّث من لوحة الإدارة)
+  -- instagram            = '@thefirstlady_sa',
+  -- snapchat             = 'thefirstlady',
+  -- tiktok               = '@thefirstlady',
 
   invoice_prefix         = 'TFL',
   updated_at             = NOW()
@@ -48,6 +67,7 @@ INSERT INTO tax_settings (
   business_name_ar, business_name_en, commercial_reg,
   address, city, national_address_short, building_number,
   street_name, district, secondary_number, postal_code,
+  phone, email,
   apply_vat, vat_rate, prices_include_vat,
   invoice_prefix, is_active
 )
@@ -63,6 +83,8 @@ SELECT
   'حي الراية',
   '8449',
   '42312',
+  '0504134147',
+  'thefirestladysalon@hotmail.com',
   FALSE,
   15.00,
   TRUE,
