@@ -167,37 +167,39 @@ export default function ServiceDetailClient({ service, reviews, avgRating, isLog
         <div className="grid grid-cols-3 gap-2 mb-5">
           {/* المدّة */}
           <div className="bg-white rounded-2xl p-3 text-center border border-cream-200">
-            <div className="font-en-label text-[9px] tracking-[0.2em] text-ink-muted mb-1.5 flex items-center justify-center gap-1">
-              <Clock className="w-3 h-3" /> المدّة
+            <div className="font-ar-body text-[10px] text-ink-muted mb-1.5 flex items-center justify-center gap-1 font-bold">
+              <Clock className="w-3 h-3" />
+              <span>المدّة</span>
             </div>
-            <div className="font-en-display font-bold text-xl md:text-2xl text-gold-deep">
+            <div className="font-en-display font-bold text-xl md:text-2xl text-gold-deep tabular-nums">
               {service.duration_min}
             </div>
-            <div className="text-[9px] text-ink-muted">دقيقة</div>
+            <div className="font-ar-body text-[10px] text-ink-muted mt-0.5">دقيقة</div>
           </div>
 
           {/* السعر */}
           <div className="bg-gradient-to-br from-gold-light/15 to-cream-50 rounded-2xl p-3 text-center border border-gold-light/30">
-            <div className="font-en-label text-[9px] tracking-[0.2em] text-gold-deep mb-1.5 font-bold">
+            <div className="font-ar-body text-[10px] text-gold-deep mb-1.5 font-bold">
               السعر
             </div>
-            <div className="font-en-display font-bold text-xl md:text-2xl text-gold-deep">
+            <div className="font-en-display font-bold text-xl md:text-2xl text-gold-deep tabular-nums">
               {formatPrice(service.price, { showFrom: false })}
             </div>
-            <div className="text-[9px] text-ink-muted">
+            <div className="font-ar-body text-[10px] text-ink-muted mt-0.5">
               {service.price_from ? 'يبدأ من' : 'ريال'}
             </div>
           </div>
 
           {/* التقييم */}
           <div className="bg-white rounded-2xl p-3 text-center border border-cream-200">
-            <div className="font-en-label text-[9px] tracking-[0.2em] text-ink-muted mb-1.5 flex items-center justify-center gap-1">
-              <Star className="w-3 h-3 fill-current" /> التقييم
+            <div className="font-ar-body text-[10px] text-ink-muted mb-1.5 flex items-center justify-center gap-1 font-bold">
+              <Star className="w-3 h-3 fill-current" />
+              <span>التقييم</span>
             </div>
-            <div className="font-en-display font-bold text-xl md:text-2xl text-gold-deep">
+            <div className="font-en-display font-bold text-xl md:text-2xl text-gold-deep tabular-nums">
               {avgRating !== null ? avgRating.toFixed(1) : '—'}
             </div>
-            <div className="text-[9px] text-ink-muted">
+            <div className="font-ar-body text-[10px] text-ink-muted mt-0.5">
               {reviews.length > 0 ? `${reviews.length} تقييم` : 'جديدة'}
             </div>
           </div>
@@ -207,9 +209,15 @@ export default function ServiceDetailClient({ service, reviews, avgRating, isLog
         <div className="space-y-3 mb-6">
           {/* ماذا تتوقّعين */}
           <section className="bg-white rounded-2xl p-4 border border-cream-200">
-            <div className="font-en-label text-[10px] tracking-[0.3em] text-gold-deep mb-2 font-bold flex items-center gap-1.5">
-              <Sparkles className="w-3 h-3" />
-              WHAT TO EXPECT · ماذا تتوقّعين
+            <div className="mb-2 font-bold flex items-center gap-1.5">
+              <Sparkles className="w-3 h-3 text-gold-deep" />
+              <span className="font-en-label text-[10px] tracking-[0.3em] text-gold-deep uppercase">
+                What to Expect
+              </span>
+              <span className="text-gold-deep/40 text-[10px]">·</span>
+              <span className="font-ar-display text-[11px] text-gold-deep">
+                ماذا تتوقّعين
+              </span>
             </div>
             <p className="text-sm text-ink leading-relaxed">
               {getDescription(service)}
@@ -219,8 +227,14 @@ export default function ServiceDetailClient({ service, reviews, avgRating, isLog
           {/* مناسب لـ */}
           {service.category && (
             <section className="bg-white rounded-2xl p-4 border border-cream-200">
-              <div className="font-en-label text-[10px] tracking-[0.3em] text-gold-deep mb-2 font-bold">
-                GOOD FOR · مناسب لـ
+              <div className="mb-2 font-bold flex items-center gap-1.5">
+                <span className="font-en-label text-[10px] tracking-[0.3em] text-gold-deep uppercase">
+                  Good For
+                </span>
+                <span className="text-gold-deep/40 text-[10px]">·</span>
+                <span className="font-ar-display text-[11px] text-gold-deep">
+                  مناسب لـ
+                </span>
               </div>
               <p className="text-sm text-ink leading-relaxed">
                 جميع أنواع البشرة والشعر · في أجواء فاخرة وراحة تامّة · مع خبيرات في الصالون.
@@ -231,8 +245,15 @@ export default function ServiceDetailClient({ service, reviews, avgRating, isLog
           {/* الملاحظات (إذا موجودة) */}
           {service.notes_ar && (
             <section className="bg-amber-50 rounded-2xl p-4 border border-amber-200">
-              <div className="font-en-label text-[10px] tracking-[0.3em] text-amber-700 mb-2 font-bold">
-                ⚠ IMPORTANT · ملاحظات
+              <div className="mb-2 font-bold flex items-center gap-1.5">
+                <span className="text-amber-700">⚠</span>
+                <span className="font-en-label text-[10px] tracking-[0.3em] text-amber-700 uppercase">
+                  Important
+                </span>
+                <span className="text-amber-700/40 text-[10px]">·</span>
+                <span className="font-ar-display text-[11px] text-amber-700">
+                  ملاحظات
+                </span>
               </div>
               <p className="text-sm text-amber-900/90 leading-relaxed">
                 {service.notes_ar}
