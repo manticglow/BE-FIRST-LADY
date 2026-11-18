@@ -16,28 +16,32 @@ import BookingCard from '@/components/account/BookingCard';
 import PushNotificationManager from '@/components/account/PushNotificationManager';
 import {
   CalendarPlus, Clock, Heart, User as UserIcon, Award, Sparkles,
-  Gift, LogOut, Phone, MessageCircle, ChevronLeft, Crown, Star,
+  Gift, LogOut, Phone, MessageCircle, ChevronLeft, Crown, Star, Medal, Gem,
 } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 
+// 🎩 كل المستويات في عائلة ذهبيّة موحّدة · التمييز عبر tone + stroke opacity
 const TIER_INFO: Record<string, {
-  label: string; next: number | null; emoji: string;
+  label: string; next: number | null;
   gradient: string; glow: string; ringColor: string;
+  /** أيقونة متناسقة بدل الإيموجي */
+  iconName: 'medal' | 'award' | 'crown' | 'gem';
 }> = {
-  bronze:  { label: 'برونزية', next: 2000,  emoji: '🥉', gradient: 'from-amber-700 via-amber-500 to-amber-800', glow: 'shadow-amber-500/30', ringColor: 'stroke-amber-300' },
-  silver:  { label: 'فضيّة',   next: 5000,  emoji: '🥈', gradient: 'from-slate-500 via-slate-300 to-slate-600', glow: 'shadow-slate-400/30', ringColor: 'stroke-slate-200' },
-  gold:    { label: 'ذهبيّة',  next: 10000, emoji: '🥇', gradient: 'from-yellow-600 via-yellow-400 to-yellow-700', glow: 'shadow-yellow-400/40', ringColor: 'stroke-yellow-200' },
-  diamond: { label: 'ماسيّة',  next: null,  emoji: '💎', gradient: 'from-cyan-600 via-sky-400 to-blue-700', glow: 'shadow-cyan-400/40', ringColor: 'stroke-cyan-200' },
+  bronze:  { label: 'برونزيّة', next: 2000,  iconName: 'medal', gradient: 'from-[#a67d4e] via-[#c9a06b] to-[#8c6a3f]',    glow: 'shadow-[#c9a06b]/25', ringColor: 'stroke-[#c9a06b]/40' },
+  silver:  { label: 'شامپانيا', next: 5000,  iconName: 'award', gradient: 'from-[#c9b48a] via-[#e8dcc0] to-[#b89e72]',    glow: 'shadow-[#c9b48a]/25', ringColor: 'stroke-[#c9b48a]/50' },
+  gold:    { label: 'ذهبيّة',  next: 10000, iconName: 'crown', gradient: 'from-gold-deep via-gold-light to-[#8b6f3f]',   glow: 'shadow-gold-light/30', ringColor: 'stroke-gold-light/60' },
+  diamond: { label: 'بلاتينيّة', next: null, iconName: 'gem',   gradient: 'from-[#8b7b60] via-[#e8dcc0] to-[#8b7b60]',    glow: 'shadow-[#e8dcc0]/40', ringColor: 'stroke-[#e8dcc0]/70' },
 };
 
 export const dynamic = 'force-dynamic';
 
 function timeGreeting(): { ar: string; emoji: string } {
+  // استخدمنا توقيت السعودية في مكان آخر · هنا العرض فقط · نحذف الإيموجي
   const h = new Date().getHours();
-  if (h < 12) return { ar: 'صباح الخير', emoji: '☀️' };
-  if (h < 17) return { ar: 'مساء الخير', emoji: '🌤️' };
-  if (h < 20) return { ar: 'مساء النور', emoji: '🌅' };
-  return { ar: 'مساء الورد', emoji: '🌙' };
+  if (h < 12) return { ar: 'صباح الخير', emoji: '' };
+  if (h < 17) return { ar: 'مساء الخير', emoji: '' };
+  if (h < 20) return { ar: 'مساء النور', emoji: '' };
+  return { ar: 'مساء الورد', emoji: '' };
 }
 
 export default async function AccountPage() {
@@ -469,8 +473,11 @@ function LoyaltyCardPremium({ points, tier, totalSpent }: { points: number; tier
             </div>
           </div>
           <div className="text-left">
-            <div className="inline-flex items-center gap-1 px-3 py-1 bg-white/70 backdrop-blur rounded-full border border-gold-light/40">
-              <span className="text-sm">{info.emoji}</span>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/70 backdrop-blur border border-gold-light/40" style={{ borderRadius: '2px' }}>
+              {info.iconName === 'medal' && <Medal className="w-3.5 h-3.5 text-gold-deep" />}
+              {info.iconName === 'award' && <Award className="w-3.5 h-3.5 text-gold-deep" />}
+              {info.iconName === 'crown' && <Crown className="w-3.5 h-3.5 text-gold-deep" />}
+              {info.iconName === 'gem' && <Gem className="w-3.5 h-3.5 text-gold-deep" />}
               <span className="font-en-label text-[9px] tracking-[0.2em] text-gold-deep font-bold">
                 {tierLabelEn}
               </span>

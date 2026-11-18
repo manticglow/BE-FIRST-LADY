@@ -273,7 +273,8 @@ export default function ServiceDetailClient({ service, reviews, avgRating, isLog
           {!isLoggedIn ? (
             <Link
               href={`/login?redirect=/services/${service.id}`}
-              className="flex-1 bg-gradient-to-br from-gold-deep to-ink text-cream-50 font-ar-display font-bold py-3 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-gold-deep/20 hover:scale-[1.02] transition-transform"
+              className="flex-1 bg-ink text-cream-50 font-bold text-[13px] uppercase tracking-[0.15em] py-3.5 flex items-center justify-center gap-2 hover:bg-gold-deep transition-colors duration-500"
+              style={{ borderRadius: '2px' }}
             >
               <LogIn className="w-4 h-4" />
               سجّلي دخول للحجز
@@ -282,17 +283,19 @@ export default function ServiceDetailClient({ service, reviews, avgRating, isLog
             <>
               <button
                 onClick={handleAddToCart}
-                className={`flex-1 font-ar-display font-bold py-3 rounded-2xl flex items-center justify-center gap-2 transition-all ${
+                className={`flex-1 font-bold text-[13px] uppercase tracking-[0.15em] py-3.5 flex items-center justify-center gap-2 transition-colors duration-500 ${
                   inCart
-                    ? 'bg-gold-deep text-cream-50 shadow-lg shadow-gold-deep/20'
-                    : 'bg-cream-50 text-gold-deep border-2 border-gold-light hover:bg-gold-light/10'
+                    ? 'bg-gold-deep text-cream-50'
+                    : 'border border-ink text-ink hover:bg-ink hover:text-cream-50'
                 }`}
+                style={{ borderRadius: '2px' }}
               >
                 {inCart ? <><Check className="w-4 h-4" /> في السلة</> : <><Plus className="w-4 h-4" /> أضيفي للسلة</>}
               </button>
               <button
                 onClick={handleBookNow}
-                className="flex-1 bg-gradient-to-br from-gold-deep to-ink text-cream-50 font-ar-display font-bold py-3 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-gold-deep/20 hover:scale-[1.02] transition-transform"
+                className="flex-1 bg-ink text-cream-50 font-bold text-[13px] uppercase tracking-[0.15em] py-3.5 flex items-center justify-center gap-2 hover:bg-gold-deep transition-colors duration-500"
+                style={{ borderRadius: '2px' }}
               >
                 <Calendar className="w-4 h-4" />
                 احجزي الآن

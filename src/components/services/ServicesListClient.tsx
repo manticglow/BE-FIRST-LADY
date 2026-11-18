@@ -220,20 +220,24 @@ function ServiceRow({ service, isLoggedIn }: { service: Service & { category?: C
   return (
     <Link
       href={`/services/${service.id}`}
-      className={`bg-white rounded-2xl border overflow-hidden flex gap-3 shadow-sm transition-all hover:shadow-md ${
+      className={`bg-white border overflow-hidden flex gap-3 hover-lift boutique-image-wrap ${
         inCart ? 'border-gold-deep' : 'border-cream-200'
       }`}
+      style={{ borderRadius: '20px' }}
     >
-      {/* صورة */}
-      <div className="relative w-24 h-28 md:w-28 md:h-32 bg-gradient-to-br from-gold-light/15 to-cream-100 shrink-0">
+      {/* صورة · aspect-[4/5] بوتيكي */}
+      <div className="relative w-24 h-32 md:w-28 md:h-36 bg-gradient-to-br from-gold-light/15 to-cream-100 shrink-0 overflow-hidden">
         <Image
           src={currentSrc}
           alt={service.name_ar}
           fill
-          className="object-cover"
+          className="object-cover transition-[filter,transform] duration-700"
           sizes="112px"
+          style={{ filter: 'grayscale(12%)' }}
           onError={() => { if (currentSrc !== fallbackImg) setCurrentSrc(fallbackImg); }}
         />
+        {/* overlay ناعم من أسفل */}
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/15 to-transparent pointer-events-none" />
       </div>
 
       {/* معلومات */}

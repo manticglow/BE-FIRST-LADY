@@ -57,7 +57,7 @@ export default function HeroSection() {
               <span className="oversize-ar block text-[clamp(3rem,10vw,8rem)] text-ink -mt-3">
                 بـــكِ
               </span>
-              <span className="oversize-en block text-[clamp(2rem,6vw,5rem)] mt-2 italic gradient-text">
+              <span className="oversize-en block text-[clamp(2rem,6vw,5rem)] mt-2 italic text-gold-deep/80">
                 for you to bloom
               </span>
             </h1>
@@ -75,16 +75,18 @@ export default function HeroSection() {
             <div className="animate-in animate-in-delay-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-10">
               <Link
                 href="/booking"
-                className="group btn-shimmer btn-halo inline-flex items-center justify-center gap-2 bg-gradient-to-br from-gold-deep via-ink to-gold-deep text-cream-50 font-ar-display font-bold text-lg px-10 py-4 rounded-full shadow-xl shadow-gold-deep/25 hover:scale-[1.03] transition-transform"
+                className="group inline-flex items-center justify-center gap-2.5 bg-ink text-cream-50 font-bold text-[13px] uppercase px-10 py-4 hover:bg-gold-deep transition-colors duration-500"
+                style={{ borderRadius: '2px', letterSpacing: '0.15em' }}
               >
-                <Calendar className="w-5 h-5 group-hover:rotate-6 transition-transform relative z-10" />
-                <span className="relative z-10">احجزي موعدكِ</span>
+                <Calendar className="w-4 h-4" />
+                <span>احجزي موعدكِ</span>
               </Link>
               <Link
                 href="#services"
-                className="inline-flex items-center justify-center gap-2 bg-white/70 backdrop-blur text-gold-deep font-bold px-8 py-4 rounded-full border border-gold-light/40 hover:bg-white transition-colors"
+                className="inline-flex items-center justify-center gap-2.5 border border-ink text-ink font-bold text-[13px] uppercase px-10 py-4 hover:bg-ink hover:text-cream-50 transition-colors duration-500"
+                style={{ borderRadius: '2px', letterSpacing: '0.15em' }}
               >
-                تصفّحي الخدمات
+                <span>تصفّحي الخدمات</span>
                 <ArrowDown className="w-4 h-4" />
               </Link>
             </div>
@@ -103,13 +105,13 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* ═══ شريط تحتي · شهادات/ثقة ═══ */}
-        <div className="animate-in animate-in-delay-5 mt-16 pt-10 border-t border-gold-light/15">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <TrustBadge value="+500" label="عميلة سعيدة" />
-            <TrustBadge value="4.9" label="تقييم ⭐" />
-            <TrustBadge value="+40" label="خدمة فاخرة" />
-            <TrustBadge value="100%" label="نسائي بالكامل" />
+        {/* ═══ سطر editorial واحد · بدل 4 trust badges ═══ */}
+        <div className="animate-in animate-in-delay-5 mt-24 pt-10 border-t border-gold-light/20">
+          <div className="text-center">
+            <p className="font-en-display italic text-sm md:text-base tracking-[0.25em] text-ink-soft uppercase">
+              A private sanctuary &nbsp;·&nbsp; Al-Madinah &nbsp;·&nbsp; Est. MMXXVI
+            </p>
+            <div className="w-10 h-[1px] bg-gold-deep/40 mx-auto mt-5" />
           </div>
         </div>
       </div>
