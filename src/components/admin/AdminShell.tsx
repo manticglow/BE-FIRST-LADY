@@ -15,6 +15,7 @@ import {
   BarChart3, Settings, LogOut, Package, UserCircle, Tag, Star, Shield,
   Clock, Umbrella, Gift, Boxes, Banknote, Bell, BellRing, Inbox,
   MessageSquare, MessageCircle, Cloud, Palette, Activity, Menu, X, ChevronLeft,
+  Phone, Megaphone, TrendingUp, FileText,
 } from 'lucide-react';
 import NotificationBell from '@/components/admin/NotificationBell';
 import GlobalSearch from '@/components/admin/GlobalSearch';
@@ -26,6 +27,7 @@ const ICON_MAP = {
   BarChart3, Settings, Package, UserCircle, Tag, Star, Shield,
   Clock, Umbrella, Gift, Boxes, Banknote, Bell, BellRing, Inbox,
   MessageSquare, MessageCircle, Cloud, Palette, Activity,
+  Phone, Megaphone, TrendingUp, FileText,
 };
 
 export interface SidebarItem {
@@ -37,14 +39,20 @@ export interface SidebarItem {
   mobileNav?: boolean;
 }
 
-interface Props {
+export interface SidebarGroup {
+  label: string;      // English (for the eyebrow)
+  labelAr: string;    // عربي (tooltip / mobile section header)
   items: SidebarItem[];
+}
+
+interface Props {
+  groups: SidebarGroup[];
   role: Role;
   fullName: string;
   children: ReactNode;
 }
 
-export default function AdminShell({ items, role, fullName, children }: Props) {
+export default function AdminShell({ groups, role, fullName, children }: Props) {
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -67,9 +75,12 @@ export default function AdminShell({ items, role, fullName, children }: Props) {
   }, [drawerOpen]);
 
   const roleLabel = role === 'owner' ? 'المالكة' : role === 'manager' ? 'المديرة' : 'موظفة';
-  const roleEmoji = role === 'owner' ? '👑' : role === 'manager' ? '🛡' : '💼';
-  const visibleItems = items.filter((it) => it.roles.includes(role));
-  const mobileNavItems = visibleItems.filter((it) => it.mobileNav).slice(0, 4);
+  // Filter groups → keep only items the role can see, drop empty groups
+  const visibleGroups = groups
+    .map((g) => ({ ...g, items: g.items.filter((it) => it.roles.includes(role)) }))
+    .filter((g) => g.items.length > 0);
+  const allVisibleItems = visibleGroups.flatMap((g) => g.items);
+  const mobileNavItems = allVisibleItems.filter((it) => it.mobileNav).slice(0, 4);
 
   function isActive(href: string): boolean {
     if (href === '/admin') return pathname === '/admin';
@@ -91,17 +102,20 @@ export default function AdminShell({ items, role, fullName, children }: Props) {
           shadow-2xl lg:shadow-none
         `}
       >
-        {/* الهيدر داخل الـsidebar */}
+        {/* الهيدر داخل الـsidebar · boutique */}
         <div className="p-5 lg:p-6 border-b border-white/10 flex items-center justify-between">
           <div>
-            <div className="font-en-display italic text-2xl">The First Lady</div>
-            <div className="font-en-label text-[9px] tracking-[0.3em] text-gold-light mt-1">ADMIN PANEL</div>
+            <div className="font-en-display italic text-2xl tracking-tight">The First Lady</div>
+            <div className="w-8 h-[1px] bg-gold-light/60 mt-2 mb-2" />
+            <div className="font-en-label text-[9px] tracking-[0.3em] text-gold-light uppercase">
+              {role === 'owner' ? 'Owner Panel' : role === 'manager' ? 'Manager Panel' : 'Staff Panel'}
+            </div>
           </div>
-          {/* زر إغلاق · للموبايل فقط */}
           <button
             onClick={() => setDrawerOpen(false)}
-            className="lg:hidden p-2 -mr-2 text-cream-100 hover:bg-white/10 rounded-lg"
+            className="lg:hidden p-2 -mr-2 text-cream-100 hover:bg-white/10 transition-colors"
             aria-label="إغلاق القائمة"
+            style={{ borderRadius: '2px' }}
           >
             <X className="w-5 h-5" />
           </button>
@@ -112,55 +126,81 @@ export default function AdminShell({ items, role, fullName, children }: Props) {
           <GlobalSearch />
         </div>
 
-        {/* القائمة */}
-        <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-          {visibleItems.map((item) => {
-            const Icon = ICON_MAP[item.iconKey];
-            const active = isActive(item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`
-                  flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold
-                  transition-colors
-                  ${active
-                    ? 'bg-cream-50/15 text-white'
-                    : 'text-cream-100/90 hover:bg-white/10'}
-                `}
-              >
-                <Icon className="w-5 h-5 shrink-0" />
-                <span>{item.label}</span>
-                {active && <ChevronLeft className="w-4 h-4 mr-auto text-gold-light" />}
-              </Link>
-            );
-          })}
+        {/* القائمة · مجموعات بـeyebrows */}
+        <nav className="flex-1 py-3 overflow-y-auto">
+          {visibleGroups.map((group, gIdx) => (
+            <div key={group.label} className={gIdx > 0 ? 'mt-5' : ''}>
+              {/* Group eyebrow */}
+              <div className="px-5 mb-2">
+                <div className="font-en-label text-[9px] tracking-[0.3em] text-gold-light/70 uppercase font-bold">
+                  {group.label}
+                </div>
+                <div className="font-ar-body text-[9px] text-cream-100/40 mt-0.5">
+                  {group.labelAr}
+                </div>
+              </div>
+
+              {/* Group items */}
+              <div className="px-2 space-y-0.5">
+                {group.items.map((item) => {
+                  const Icon = ICON_MAP[item.iconKey];
+                  const active = isActive(item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`
+                        group relative flex items-center gap-3 px-3 py-2.5 text-sm
+                        transition-all duration-200
+                        ${active
+                          ? 'bg-cream-50/15 text-white font-bold'
+                          : 'text-cream-100/85 hover:bg-white/10 hover:text-white font-semibold'}
+                      `}
+                      style={{ borderRadius: '2px' }}
+                    >
+                      {/* شريط ذهبي على يمين البند النشط */}
+                      {active && (
+                        <span
+                          className="absolute right-0 top-1/2 -translate-y-1/2 w-[2px] h-5 bg-gold-light"
+                          aria-hidden="true"
+                        />
+                      )}
+                      <Icon className={`w-[18px] h-[18px] shrink-0 transition-colors ${active ? 'text-gold-light' : 'text-cream-100/70 group-hover:text-cream-100'}`} />
+                      <span className="flex-1">{item.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </nav>
 
-        {/* الأسفل · حضور + الاسم + خروج */}
+        {/* الأسفل · حضور + الاسم + خروج · boutique */}
         <div className="p-4 border-t border-white/10 space-y-2 shrink-0">
           <Link
             href="/account/attendance"
-            className="flex items-center gap-2 px-3 py-2.5 text-sm text-cream-100 bg-success/20 hover:bg-success/30 rounded-lg transition-colors border border-success/40"
+            className="flex items-center gap-2 px-3 py-2.5 text-xs text-cream-100 bg-success/20 hover:bg-success/30 transition-colors border border-success/40"
+            style={{ borderRadius: '2px' }}
           >
-            <span className="w-2 h-2 rounded-full bg-success animate-pulse shrink-0" />
-            <span>تسجيل حضور/انصراف</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse shrink-0" />
+            <span className="font-bold">تسجيل حضور/انصراف</span>
           </Link>
 
-          <div className="px-3 py-2 text-sm">
-            <div className="font-bold flex items-center gap-1 truncate">
-              <span className="truncate">{fullName}</span>
-              <span className="shrink-0">{roleEmoji}</span>
+          {/* الاسم والدور · بدون emoji */}
+          <div className="px-3 py-2 text-sm border-r-2 border-gold-light/40">
+            <div className="font-bold text-cream-50 truncate">{fullName}</div>
+            <div className="font-en-label text-[9px] tracking-[0.25em] text-gold-light/80 uppercase mt-0.5">
+              {roleLabel}
             </div>
-            <div className="text-xs text-gold-light">{roleLabel}</div>
           </div>
 
           <form action="/api/auth/logout" method="post">
             <button
               type="submit"
-              className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-cream-100 hover:bg-white/10 rounded-lg"
+              className="group w-full flex items-center gap-2 px-3 py-2.5 text-xs text-cream-100/80 hover:text-white hover:bg-white/10 transition-all font-bold"
+              style={{ borderRadius: '2px' }}
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-3.5 h-3.5 group-hover:translate-x-[-2px] transition-transform" />
               <span>تسجيل خروج</span>
             </button>
           </form>

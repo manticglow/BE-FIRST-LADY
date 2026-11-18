@@ -159,17 +159,17 @@ export default async function AdminDashboard() {
       <div className="mb-6 md:mb-8">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="min-w-0">
-            <div className="font-en-label text-[10px] tracking-[0.3em] text-gold-light mb-1">
-              OWNER DASHBOARD · {roleLabel.toUpperCase()}
+            <div className="font-en-label text-[10px] tracking-[0.3em] text-gold-light mb-1 uppercase">
+              {me?.role === 'owner' ? 'Owner Dashboard' : me?.role === 'manager' ? 'Manager Dashboard' : 'Staff Dashboard'}
             </div>
-            <h1 className="font-ar-display text-2xl md:text-4xl font-bold text-gold-deep dark:text-cream-50 flex items-center gap-2">
+            <h1 className="font-ar-display text-2xl md:text-4xl font-bold text-gold-deep dark:text-cream-50">
               {greeting.ar}، {myFirstName}
-              <span className="text-xl md:text-3xl">{roleEmoji}</span>
             </h1>
-            <p className="text-ink-soft dark:text-cream-100/60 text-sm mt-1.5">
+            <div className="w-10 h-[1px] bg-gold-deep/40 mt-3 mb-3" />
+            <p className="text-ink-soft dark:text-cream-100/60 text-sm">
               {new Intl.DateTimeFormat('ar-SA', { weekday: 'long', day: 'numeric', month: 'long', timeZone: SAUDI_TZ }).format(new Date())}
               {(todayBookings || 0) > 0 && (
-                <> · <span className="font-bold text-gold-deep dark:text-gold-light">{todayBookings}</span> حجز اليوم</>
+                <> · <span className="font-bold text-gold-deep dark:text-gold-light tabular-nums">{todayBookings}</span> حجز اليوم</>
               )}
             </p>
           </div>

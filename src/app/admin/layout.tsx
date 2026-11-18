@@ -1,43 +1,94 @@
 /**
  * Admin Layout — لوحة تحكم المالكة
  * ═══════════════════════════════════════════════════════════
- * - Server Component للمصادقة
- * - يسلّم للـAdminShell (Client) اللي يتعامل مع responsive + drawer
+ * السايدبار منظّم في 7 مجموعات منطقيّة · ليس قائمة مسطّحة من 30 بنداً
  */
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import AdminShell, { type SidebarItem } from '@/components/admin/AdminShell';
+import AdminShell, { type SidebarGroup } from '@/components/admin/AdminShell';
 import SessionHeartbeat from '@/components/admin/SessionHeartbeat';
 
-const SIDEBAR: SidebarItem[] = [
-  { href: '/admin',             label: 'الرئيسية',   iconKey: 'LayoutDashboard', roles: ['owner', 'manager', 'staff'], mobileNav: true },
-  { href: '/admin/bookings',    label: 'الحجوزات',   iconKey: 'CalendarCheck',   roles: ['owner', 'manager', 'staff'], mobileNav: true },
-  { href: '/admin/reminders',   label: 'التذكيرات',  iconKey: 'BellRing',        roles: ['owner', 'manager'],          mobileNav: true },
-  { href: '/admin/attendance',  label: 'الحضور',     iconKey: 'Clock',           roles: ['owner', 'manager'] },
-  { href: '/admin/requests',    label: 'طلبات الموظّفات', iconKey: 'Inbox',      roles: ['owner', 'manager'], mobileNav: true },
-  { href: '/admin/customers',   label: 'العميلات',   iconKey: 'Users',           roles: ['owner', 'manager'] },
-  { href: '/admin/staff',       label: 'الموظفات',   iconKey: 'UserCircle',      roles: ['owner', 'manager'] },
-  { href: '/admin/services',    label: 'الخدمات',    iconKey: 'Scissors',        roles: ['owner', 'manager'], mobileNav: true },
-  { href: '/admin/packages',    label: 'البكجات',    iconKey: 'Package',         roles: ['owner', 'manager'] },
-  { href: '/admin/inventory',   label: 'المخزون',    iconKey: 'Boxes',           roles: ['owner', 'manager'] },
-  { href: '/admin/coupons',     label: 'الكوبونات',  iconKey: 'Tag',             roles: ['owner', 'manager'] },
-  { href: '/admin/gift-cards',  label: 'بطاقات هدية', iconKey: 'Gift',           roles: ['owner', 'manager'] },
-  { href: '/admin/reviews',     label: 'التقييمات',  iconKey: 'Star',            roles: ['owner', 'manager'] },
-  { href: '/admin/gallery',     label: 'المعرض',     iconKey: 'ImageIcon',       roles: ['owner', 'manager'] },
-  { href: '/admin/payroll',     label: 'الرواتب',    iconKey: 'Banknote',        roles: ['owner'] },
-  { href: '/admin/expenses',    label: 'المصروفات',  iconKey: 'Banknote',        roles: ['owner', 'manager'] },
-  { href: '/admin/templates',   label: 'قوالب الرسائل', iconKey: 'MessageSquare', roles: ['owner', 'manager'] },
-  { href: '/admin/whatsapp',    label: 'سجلّ واتساب',   iconKey: 'MessageCircle', roles: ['owner', 'manager'] },
-  { href: '/admin/banners',     label: 'البنرات',    iconKey: 'ImageIcon',       roles: ['owner', 'manager'] },
-  { href: '/admin/themes',      label: 'ثيم الموقع',  iconKey: 'Palette',        roles: ['owner', 'manager'] },
-  { href: '/admin/push',        label: 'الإشعارات',  iconKey: 'Bell',            roles: ['owner', 'manager'] },
-  { href: '/admin/reports',     label: 'التقارير',   iconKey: 'BarChart3',       roles: ['owner'] },
-  { href: '/admin/backup',      label: 'النسخ الاحتياطيّة', iconKey: 'Cloud',    roles: ['owner'] },
-  { href: '/admin/health',      label: 'مراقبة النظام',   iconKey: 'Activity', roles: ['owner', 'manager'] },
-  { href: '/admin/salon-location', label: 'موقع الصالون', iconKey: 'LayoutDashboard', roles: ['owner', 'manager'] },
-  { href: '/admin/users',       label: 'اليوزرات',   iconKey: 'Shield',          roles: ['owner'] },
-  { href: '/admin/security',    label: 'الأمن',      iconKey: 'Shield',          roles: ['owner'] },
-  { href: '/admin/settings',    label: 'الإعدادات',  iconKey: 'Settings',        roles: ['owner'] },
+const GROUPS: SidebarGroup[] = [
+  {
+    label: 'OVERVIEW',
+    labelAr: 'نظرة عامّة',
+    items: [
+      { href: '/admin',             label: 'الرئيسيّة',      iconKey: 'LayoutDashboard', roles: ['owner', 'manager', 'staff'], mobileNav: true },
+      { href: '/admin/analytics',   label: 'التحليلات',       iconKey: 'BarChart3',       roles: ['owner', 'manager'] },
+      { href: '/admin/reports',     label: 'التقارير',        iconKey: 'TrendingUp',      roles: ['owner'] },
+      { href: '/admin/health',      label: 'صحّة النظام',     iconKey: 'Activity',        roles: ['owner', 'manager'] },
+    ],
+  },
+  {
+    label: 'BOOKINGS',
+    labelAr: 'الحجوزات',
+    items: [
+      { href: '/admin/bookings',    label: 'كل الحجوزات',     iconKey: 'CalendarCheck',   roles: ['owner', 'manager', 'staff'], mobileNav: true },
+      { href: '/admin/reminders',   label: 'التذكيرات',       iconKey: 'BellRing',        roles: ['owner', 'manager'],          mobileNav: true },
+      { href: '/admin/calls',       label: 'سجلّ المكالمات',  iconKey: 'Phone',           roles: ['owner', 'manager', 'staff'] },
+    ],
+  },
+  {
+    label: 'PEOPLE',
+    labelAr: 'العميلات والموظّفات',
+    items: [
+      { href: '/admin/customers',   label: 'العميلات',         iconKey: 'Users',           roles: ['owner', 'manager'] },
+      { href: '/admin/staff',       label: 'الموظّفات',        iconKey: 'UserCircle',      roles: ['owner', 'manager'] },
+      { href: '/admin/attendance',  label: 'الحضور',           iconKey: 'Clock',           roles: ['owner', 'manager'] },
+      { href: '/admin/requests',    label: 'طلبات الموظّفات',  iconKey: 'Inbox',           roles: ['owner', 'manager'], mobileNav: true },
+      { href: '/admin/payroll',     label: 'الرواتب',          iconKey: 'Banknote',        roles: ['owner'] },
+    ],
+  },
+  {
+    label: 'CATALOG',
+    labelAr: 'القائمة والمحتوى',
+    items: [
+      { href: '/admin/services',    label: 'الخدمات',         iconKey: 'Scissors',        roles: ['owner', 'manager'], mobileNav: true },
+      { href: '/admin/packages',    label: 'الباقات',         iconKey: 'Package',         roles: ['owner', 'manager'] },
+      { href: '/admin/inventory',   label: 'المخزون',         iconKey: 'Boxes',           roles: ['owner', 'manager'] },
+      { href: '/admin/gallery',     label: 'المعرض',          iconKey: 'ImageIcon',       roles: ['owner', 'manager'] },
+      { href: '/admin/reviews',     label: 'التقييمات',       iconKey: 'Star',            roles: ['owner', 'manager'] },
+    ],
+  },
+  {
+    label: 'MARKETING',
+    labelAr: 'التسويق والهدايا',
+    items: [
+      { href: '/admin/campaigns',   label: 'حملات تسويقيّة',  iconKey: 'Megaphone',       roles: ['owner', 'manager'] },
+      { href: '/admin/coupons',     label: 'الكوبونات',       iconKey: 'Tag',             roles: ['owner', 'manager'] },
+      { href: '/admin/gift-cards',  label: 'بطاقات هديّة',    iconKey: 'Gift',            roles: ['owner', 'manager'] },
+      { href: '/admin/banners',     label: 'البنرات',         iconKey: 'ImageIcon',       roles: ['owner', 'manager'] },
+      { href: '/admin/push',        label: 'إشعارات Push',    iconKey: 'Bell',            roles: ['owner', 'manager'] },
+    ],
+  },
+  {
+    label: 'FINANCE',
+    labelAr: 'الماليّة',
+    items: [
+      { href: '/admin/expenses',    label: 'المصروفات',       iconKey: 'Banknote',        roles: ['owner', 'manager'] },
+    ],
+  },
+  {
+    label: 'COMMUNICATIONS',
+    labelAr: 'الاتّصالات',
+    items: [
+      { href: '/admin/templates',   label: 'قوالب الرسائل',   iconKey: 'MessageSquare',   roles: ['owner', 'manager'] },
+      { href: '/admin/whatsapp',    label: 'سجلّ واتساب',     iconKey: 'MessageCircle',   roles: ['owner', 'manager'] },
+    ],
+  },
+  {
+    label: 'SYSTEM',
+    labelAr: 'النظام والأمان',
+    items: [
+      { href: '/admin/settings',       label: 'إعدادات المنشأة',   iconKey: 'Settings',        roles: ['owner'] },
+      { href: '/admin/salon-location', label: 'موقع الصالون',     iconKey: 'LayoutDashboard', roles: ['owner', 'manager'] },
+      { href: '/admin/themes',         label: 'ثيم الموقع',       iconKey: 'Palette',         roles: ['owner', 'manager'] },
+      { href: '/admin/users',          label: 'المستخدمون',       iconKey: 'Shield',          roles: ['owner'] },
+      { href: '/admin/security',       label: 'الأمن',            iconKey: 'Shield',          roles: ['owner'] },
+      { href: '/admin/audit-log',      label: 'سجلّ الأمان',     iconKey: 'FileText',        roles: ['owner'] },
+      { href: '/admin/backup',         label: 'النسخ الاحتياطيّة', iconKey: 'Cloud',          roles: ['owner'] },
+    ],
+  },
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -57,7 +108,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <AdminShell
-      items={SIDEBAR}
+      groups={GROUPS}
       role={profile.role as 'owner' | 'manager' | 'staff'}
       fullName={profile.full_name || ''}
     >
