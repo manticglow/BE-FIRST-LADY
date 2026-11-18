@@ -8,6 +8,7 @@ import type { Metadata, Viewport } from 'next';
 import { Toaster } from 'sonner';
 import PWARegister from '@/components/ui/PWARegister';
 import FirstLoadSplash from '@/components/ui/FirstLoadSplash';
+import CookieConsent from '@/components/legal/CookieConsent';
 import LoaderScreen from '@/components/ui/LoaderScreen';
 import ScrollToTop from '@/components/ui/ScrollToTop';
 import AdminModeGuard from '@/components/ui/AdminModeGuard';
@@ -147,6 +148,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Suspense fallback={null}><ScrollToTop /></Suspense>
         <ScrollProgress />
         <FirstLoadSplash />
+        <CookieConsent />
         <LoaderScreen />
         <ThemeProvider />
         {/* بنر "أنتِ تتصفّحين كـمديرة" لحسابات الإدارة · يظهر أعلى كل الصفحات ما عدا /admin و /staff */}

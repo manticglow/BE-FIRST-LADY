@@ -248,7 +248,19 @@ function MobileFooter() {
           <span className="text-gold-light">·</span>
           <Link href="/legal/refund" className="text-ink-soft hover:text-gold-deep">الاسترجاع</Link>
           <span className="text-gold-light">·</span>
+          <Link href="/legal/complaints" className="text-ink-soft hover:text-gold-deep">الشكاوى</Link>
+          <span className="text-gold-light">·</span>
           <Link href="/gift-cards" className="text-ink-soft hover:text-gold-deep">بطاقات هديّة</Link>
+        </div>
+
+        {/* 🏛 معلومات التسجيل · مطلب التجارة الإلكترونيّة */}
+        <div className="text-center mb-3 pb-3 border-b border-cream-200">
+          <div className="text-[9px] text-ink-soft font-en-display tabular-nums">
+            س.ت: 7013767020 · العنوان: شارع يزيد بن الحكم · حي الراية · المدينة المنوّرة
+          </div>
+          <div className="text-[9px] text-ink-soft mt-0.5">
+            ⚡ بوّابة دفع Moyasar · مرخّصة من ساما · 🧾 فواتير ZATCA معتمدة
+          </div>
         </div>
 
         {/* روابط التواصل · أيقونات */}
