@@ -30,8 +30,8 @@ export default function SignupPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (form.password.length < 6) {
-      toast.error('كلمة المرور يجب أن تكون 6 حروف على الأقل');
+    if (form.password.length < 8) {
+      toast.error('كلمة السر قصيرة · لتكن 8 أحرف على الأقل');
       return;
     }
 
@@ -51,7 +51,8 @@ export default function SignupPage() {
     });
 
     if (error) {
-      toast.error(error.message);
+      const { translateAuthError } = await import('@/lib/auth-errors');
+      toast.error(translateAuthError(error));
       setLoading(false);
       return;
     }
@@ -102,6 +103,8 @@ export default function SignupPage() {
                 <input
                   type="text"
                   required
+                  autoComplete="name"
+                  enterKeyHint="next"
                   value={form.full_name}
                   onChange={(e) => update('full_name', e.target.value)}
                   placeholder="هيا الزهراني"
@@ -120,10 +123,15 @@ export default function SignupPage() {
                 <input
                   type="tel"
                   required
+                  autoComplete="tel"
+                  inputMode="numeric"
+                  enterKeyHint="next"
+                  pattern="05[0-9]{8}"
                   value={form.phone}
                   onChange={(e) => update('phone', e.target.value)}
                   placeholder="05xxxxxxxx"
                   className="w-full pr-10 pl-3 py-3 rounded-xl border border-cream-200 bg-cream-50 focus:bg-white focus:border-gold outline-none transition-colors text-sm font-en-display"
+                  style={{ scrollMarginBottom: '120px' }}
                 />
               </div>
             </div>
@@ -138,10 +146,14 @@ export default function SignupPage() {
                 <input
                   type="email"
                   required
+                  autoComplete="email"
+                  inputMode="email"
+                  enterKeyHint="next"
                   value={form.email}
                   onChange={(e) => update('email', e.target.value)}
                   placeholder="you@example.com"
                   className="w-full pr-10 pl-3 py-3 rounded-xl border border-cream-200 bg-cream-50 focus:bg-white focus:border-gold outline-none transition-colors text-sm font-en-display"
+                  style={{ scrollMarginBottom: '120px' }}
                 />
               </div>
             </div>
@@ -156,10 +168,14 @@ export default function SignupPage() {
                 <input
                   type="password"
                   required
+                  autoComplete="new-password"
+                  enterKeyHint="go"
+                  minLength={8}
                   value={form.password}
                   onChange={(e) => update('password', e.target.value)}
-                  placeholder="6 حروف على الأقل"
+                  placeholder="8 حروف على الأقل"
                   className="w-full pr-10 pl-3 py-3 rounded-xl border border-cream-200 bg-cream-50 focus:bg-white focus:border-gold outline-none transition-colors text-sm"
+                  style={{ scrollMarginBottom: '120px' }}
                 />
               </div>
             </div>

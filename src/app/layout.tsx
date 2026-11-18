@@ -57,9 +57,9 @@ export const metadata: Metadata = {
   manifest: '/manifest.webmanifest',
   appleWebApp: {
     capable: true,
-    // 'black-translucent' يسمح للمحتوى يمتدّ تحت الـnotch/Dynamic Island
-    statusBarStyle: 'black-translucent',
-    // عنوان مختصر يظهر تحت الأيقونة في home screen
+    // 'default' = أيقونات شريط الحالة سوداء · تناسب خلفيّة كريم فاتحة
+    // (كانت 'black-translucent' = أيقونات بيضاء غير مرئيّة على كريم)
+    statusBarStyle: 'default',
     title: 'The First Lady',
     startupImage: '/apple-splash.png',
   },
@@ -70,11 +70,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#7d613b',
+  themeColor: '#fbf7ef',   // كريم يطابق خلفيّة الموقع · شريط الحالة ينسجم
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  // ⬅️ iOS Dynamic Island + notch · يسمح للخلفيّة تمتدّ لحواف الشاشة
+  // ⚠️ لا نضع maximumScale = 1 (ينتهك WCAG + Apple يمنعه في PWA)
+  // الـzoom على الـinputs محلول بـfont-size:16px في globals.css
   viewportFit: 'cover',
 };
 
@@ -91,7 +91,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;500;600;700;800&family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;500;600;700;800&family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Pinyon+Script&display=swap"
           rel="stylesheet"
         />
 

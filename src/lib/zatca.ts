@@ -82,11 +82,47 @@ export function generateZatcaQR(invoice: ZatcaInvoice): string {
 }
 
 /**
- * توليد URL لـ QR Code image (يحمل الـ base64)
+ * توليد Data URL للـ QR Code محلّياً (بدون أي طرف ثالث · امتثال كامل)
+ */
+export async function generateZatcaQRDataUrl(invoice: ZatcaInvoice, size = 180): Promise<string> {
+  const { default: QRCode } = await import('qrcode');
+  const data = generateZatcaQR(invoice);
+  return QRCode.toDataURL(data, {
+    width: size,
+    margin: 1,
+    errorCorrectionLevel: 'M',
+    color: { dark: '#2a2420', light: '#ffffff' },
+  });
+}
+
+/**
+ * @deprecated استخدمي generateZatcaQRDataUrl بدلاً من الخدمة الخارجيّة
  */
 export function generateZatcaQRImageUrl(invoice: ZatcaInvoice, size = 180): string {
   const data = generateZatcaQR(invoice);
   return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(data)}&margin=1`;
+}
+
+/**
+ * تنسيق العنوان الوطني السعودي الكامل (6 عناصر)
+ */
+export function formatNationalAddress(parts: {
+  building_number?: string | null;
+  street_name?: string | null;
+  district?: string | null;
+  city?: string | null;
+  postal_code?: string | null;
+  secondary_number?: string | null;
+}): string {
+  const bits = [
+    parts.building_number,
+    parts.street_name,
+    parts.district,
+    parts.city,
+    parts.postal_code,
+    parts.secondary_number,
+  ].filter(Boolean);
+  return bits.join(' · ');
 }
 
 /**

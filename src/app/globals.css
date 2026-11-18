@@ -123,6 +123,9 @@ textarea:-webkit-autofill {
 }
 
 @layer base {
+  :root {
+    --font-handwritten: 'Pinyon Script', 'Allura', cursive;
+  }
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
@@ -625,7 +628,8 @@ textarea:-webkit-autofill {
   100% { transform: scale(1.08) translate(-1%, 1%); }
 }
 .ken-burns {
-  animation: ken-burns 15s ease-in-out infinite alternate;
+  /* بطّئنا الحركة من 15s إلى 25s · فخامة هادئة */
+  animation: ken-burns 25s ease-in-out infinite alternate;
 }
 
 /* ─── Animated check draw ─── */

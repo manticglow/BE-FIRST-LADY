@@ -109,9 +109,12 @@ export default function Header() {
       {/* ═══════════════════════════════════════════════════════
        * Floating Pill Island · العنصر الرئيسي
        * ═══════════════════════════════════════════════════════ */}
-      <div className={`sticky z-50 transition-all duration-300 ${
-        scrolled ? 'top-2 py-2' : 'top-4 py-4'
-      }`}>
+      <div
+        className={`sticky z-50 transition-all duration-300 ${
+          scrolled ? 'top-2 py-2' : 'top-4 py-4'
+        }`}
+        style={{ paddingTop: `max(env(safe-area-inset-top, 0px), ${scrolled ? '0.5rem' : '1rem'})` }}
+      >
         {/* radial glow behind the pill */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-20 bg-gold-light/15 blur-3xl transition-opacity ${

@@ -11,6 +11,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { Home, Calendar, Plus, Heart, User } from 'lucide-react';
 import { haptic } from '@/lib/mobile/haptics';
 
@@ -24,6 +25,35 @@ const TABS = [
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const [hidden, setHidden] = useState(false);
+
+  // ─── إخفاء عند فتح الكيبورد (visualViewport API) ───
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.visualViewport) return;
+    const vv = window.visualViewport;
+    const checkKeyboard = () => {
+      const heightDiff = window.innerHeight - vv.height;
+      setKeyboardOpen(heightDiff > 150);
+    };
+    vv.addEventListener('resize', checkKeyboard);
+    checkKeyboard();
+    return () => vv.removeEventListener('resize', checkKeyboard);
+  }, []);
+
+  // ─── إخفاء عند التمرير للأسفل · إظهار عند الأعلى ───
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const currentY = window.scrollY;
+      if (Math.abs(currentY - lastY) < 10) return;
+      setHidden(currentY > lastY && currentY > 100);
+      lastY = currentY;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   // إخفاء في الصفحات اللي ما يناسبها الشريط
   const SERVICE_DETAIL_RE = /^\/services\/[^/]+$/;
@@ -38,9 +68,13 @@ export default function MobileBottomNav() {
     return null;
   }
 
+  if (keyboardOpen) return null;
+
   return (
     <nav
-      className="md:hidden fixed inset-x-0 z-40 flex justify-center pointer-events-none"
+      className={`md:hidden fixed inset-x-0 z-40 flex justify-center pointer-events-none transition-transform duration-300 ${
+        hidden ? 'translate-y-[150%]' : 'translate-y-0'
+      }`}
       style={{
         bottom: 'calc(env(safe-area-inset-bottom, 0px) + 12px)',
       }}

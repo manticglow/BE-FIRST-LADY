@@ -21,12 +21,14 @@ const IS_PRODUCTION = process.env.NODE_ENV === 'production' || process.env.VERCE
 
 type IntentRow = {
   id: string;
+  status: string;
   customer_id: string | null;
   amount: number;
   booking_id: string;
   loyalty_points_used: number | null;
   gift_card_code: string | null;
   gift_card_amount: number | null;
+  discounts_applied_at: string | null;
 };
 
 type UpdatePayload = {
@@ -110,7 +112,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, note: 'no state change' });
   }
 
-  // تحديث
+  // 🛡 IDEMPOTENCY: لا نعالج paid مرّتين (يحمي من double-discount)
+  if (newStatus === 'paid' && intent.status === 'paid') {
+    log.info('idempotent paid webhook · skipping', { intentId: intent.id });
+    return NextResponse.json({ ok: true, note: 'already_paid' });
+  }
+
+  // تحديث payment_intents
   const updates: UpdatePayload = {
     status: newStatus,
     gateway_response: data,
@@ -137,14 +145,45 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'update failed' }, { status: 500 });
   }
 
-  // لو ناجحة · صرف النقاط + البطاقة
-  if (newStatus === 'paid') {
+  // ✅ تحديث حالة الحجز نفسه (هذا كان مفقوداً · حرج)
+  if (intent.booking_id) {
+    if (newStatus === 'paid') {
+      await admin
+        .from('bookings')
+        .update({
+          payment_status: 'paid',
+          status: 'confirmed',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', intent.booking_id);
+    } else if (newStatus === 'refunded') {
+      await admin
+        .from('bookings')
+        .update({ payment_status: 'refunded', updated_at: new Date().toISOString() })
+        .eq('id', intent.booking_id);
+    } else if (newStatus === 'failed') {
+      await admin
+        .from('bookings')
+        .update({ payment_status: 'failed', updated_at: new Date().toISOString() })
+        .eq('id', intent.booking_id);
+    }
+  }
+
+  // صرف النقاط + البطاقة · idempotent عبر discounts_applied_at
+  if (newStatus === 'paid' && !intent.discounts_applied_at) {
     await applySuccessDiscounts(admin, intent);
+  }
+
+  // إرسال تأكيد واتساب (fire-and-forget)
+  if (newStatus === 'paid' && intent.booking_id) {
+    sendBookingPaidWhatsApp(admin, intent.booking_id).catch((e) =>
+      log.error('whatsapp send failed', e),
+    );
   }
 
   await auditLog({
     userId: intent.customer_id,
-    action: 'auth.login',  // placeholder action
+    action: newStatus === 'paid' ? 'order.pay' : 'booking.update',
     resourceType: 'payment',
     resourceId: intent.id,
     metadata: {
@@ -152,6 +191,7 @@ export async function POST(req: NextRequest) {
       new_status: newStatus,
       amount: intent.amount,
       gateway: 'moyasar',
+      booking_id: intent.booking_id,
     },
     ipAddress: ip,
     userAgent: ua,
@@ -161,7 +201,30 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ ok: true, status: newStatus });
 }
 
+async function sendBookingPaidWhatsApp(admin: SupabaseClient, bookingId: string) {
+  try {
+    const { data: b } = await admin
+      .from('bookings')
+      .select('customer_name, customer_phone, booking_date, booking_time, booking_number, total')
+      .eq('id', bookingId)
+      .single();
+    if (!b?.customer_phone) return;
+    const { sendWhatsAppText, formatPhoneForWhatsApp } = await import('@/lib/integrations/whatsapp');
+    const firstName = String((b as any).customer_name || '').split(' ')[0] || 'عزيزتي';
+    const msg = `🌸 شكراً لكِ ${firstName}\n\nاستلمنا دفعتكِ بأمان · جلستكِ محجوزة ✨\n\nرقم الحجز: ${(b as any).booking_number}\nالموعد: ${(b as any).booking_date} الساعة ${(b as any).booking_time}\nالمبلغ: ${(b as any).total} ريال\n\nنعدّ لكِ الخزامى 💛\nالسيّدة الأولى · المدينة المنوّرة`;
+    await sendWhatsAppText(formatPhoneForWhatsApp((b as any).customer_phone), msg);
+  } catch {
+    // silent · webhook ما يفشل بسبب واتساب
+  }
+}
+
 async function applySuccessDiscounts(admin: SupabaseClient, intent: IntentRow) {
+  // علامة idempotency قبل التنفيذ (لو webhook أجاء مرّتين بالتوازي · الثاني يرى الأوّل)
+  await admin
+    .from('payment_intents')
+    .update({ discounts_applied_at: new Date().toISOString() })
+    .eq('id', intent.id);
+
   // صرف نقاط الولاء
   if ((intent.loyalty_points_used ?? 0) > 0 && intent.customer_id) {
     const { data: pRaw } = await admin

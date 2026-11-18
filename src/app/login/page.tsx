@@ -31,7 +31,8 @@ function LoginForm() {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-      toast.error(error.message === 'Invalid login credentials' ? 'البريد أو كلمة المرور خاطئة' : error.message);
+      const { translateAuthError } = await import('@/lib/auth-errors');
+      toast.error(translateAuthError(error));
       setLoading(false);
       return;
     }
@@ -83,6 +84,9 @@ function LoginForm() {
                 <input
                   type="email"
                   required
+                  autoComplete="email"
+                  enterKeyHint="next"
+                  inputMode="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
@@ -101,6 +105,8 @@ function LoginForm() {
                 <input
                   type="password"
                   required
+                  autoComplete="current-password"
+                  enterKeyHint="go"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"

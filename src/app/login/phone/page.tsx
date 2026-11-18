@@ -166,6 +166,9 @@ function PhoneLoginForm() {
                   <input
                     type="tel"
                     inputMode="numeric"
+                    autoComplete="tel"
+                    enterKeyHint="send"
+                    pattern="05[0-9]{8}"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="05xxxxxxxx"
@@ -174,6 +177,7 @@ function PhoneLoginForm() {
                     dir="ltr"
                     className="w-full ps-10 pe-4 py-3 rounded-xl border border-cream-200 focus:border-gold-deep focus:ring-2 focus:ring-gold-deep/20 outline-none transition-all text-sm bg-white text-right"
                     disabled={loading}
+                    style={{ scrollMarginBottom: '120px' }}
                   />
                 </div>
                 <p className="text-[11px] text-ink-soft mt-1.5">
@@ -210,6 +214,8 @@ function PhoneLoginForm() {
                   ref={codeInputRef}
                   type="text"
                   inputMode="numeric"
+                  autoComplete="one-time-code"
+                  enterKeyHint="go"
                   pattern="[0-9]*"
                   maxLength={6}
                   value={code}
@@ -218,6 +224,7 @@ function PhoneLoginForm() {
                   dir="ltr"
                   className="w-full px-4 py-5 rounded-xl border-2 border-cream-200 focus:border-gold-deep focus:ring-2 focus:ring-gold-deep/20 outline-none transition-all text-center text-3xl font-bold tracking-[0.6em] bg-white"
                   disabled={loading}
+                  style={{ scrollMarginBottom: '120px' }}
                 />
 
                 {/* عرض الكود في وضع التطوير فقط */}
