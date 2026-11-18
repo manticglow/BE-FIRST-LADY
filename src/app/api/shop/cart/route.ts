@@ -76,7 +76,12 @@ export async function DELETE(req: NextRequest) {
   if (!user) return NextResponse.json({ ok: false, error: 'غير مصرح' }, { status: 401 });
 
   const itemId = new URL(req.url).searchParams.get('id');
+  if (!itemId) return NextResponse.json({ ok: false, error: 'missing id' }, { status: 400 });
+
+  // 🔒 IDOR fix: تحقّقي أنّ العنصر داخل عربتها فقط
   const admin = createAdminClient();
-  await admin.from('cart_items').delete().eq('id', itemId!);
+  const cart = await getOrCreateCart(user.id);
+  await admin.from('cart_items').delete().eq('id', itemId).eq('cart_id', cart.id);
+
   return NextResponse.json({ ok: true });
 }

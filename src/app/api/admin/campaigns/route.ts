@@ -75,7 +75,13 @@ export async function POST(req: NextRequest) {
 /* ═══════════════════════════════════════════════════════════ */
 
 async function buildAudience(admin: any, segment: string): Promise<any[]> {
-  let query = admin.from('profiles').select('id, phone, full_name, birthday, loyalty_tier').eq('role', 'customer').not('phone', 'is', null);
+  // 🔒 PDPL: لا نرسل حملات تسويقيّة إلا لمن منحت marketing_consent صريح
+  let query = admin
+    .from('profiles')
+    .select('id, phone, full_name, birthday, loyalty_tier')
+    .eq('role', 'customer')
+    .eq('marketing_consent', true)
+    .not('phone', 'is', null);
 
   switch (segment) {
     case 'inactive_60d':

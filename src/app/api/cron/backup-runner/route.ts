@@ -10,11 +10,10 @@ import { logger } from '@/lib/logger';
 const log = logger.scope('backup-cron');
 
 export async function GET(req: NextRequest) {
-  // تحقّق من الـCron Secret
-  const authHeader = req.headers.get('authorization');
-  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-  }
+  // 🔒 fail-closed cron auth
+  const { assertCronAuthorized } = await import('@/lib/cron-auth');
+  const _deny = assertCronAuthorized(req);
+  if (_deny) return _deny;
 
   const admin = createAdminClient();
   const { data: configs } = await admin.from('backup_configs').select('*').eq('is_active', true);

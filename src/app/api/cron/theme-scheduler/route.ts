@@ -9,10 +9,9 @@ import { logger } from '@/lib/logger';
 const log = logger.scope('theme-cron');
 
 export async function GET(req: NextRequest) {
-  const auth = req.headers.get('authorization');
-  if (process.env.CRON_SECRET && auth !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-  }
+  const { assertCronAuthorized } = await import('@/lib/cron-auth');
+  const _deny = assertCronAuthorized(req);
+  if (_deny) return _deny;
 
   const admin = createAdminClient();
 

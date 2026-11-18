@@ -23,12 +23,9 @@ export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get('authorization');
-  const isVercelCron = req.headers.get('x-vercel-cron') === '1';
-  const expected = process.env.CRON_SECRET;
-  if (!isVercelCron && expected && authHeader !== `Bearer ${expected}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const { assertCronAuthorized } = await import('@/lib/cron-auth');
+  const _deny = assertCronAuthorized(req);
+  if (_deny) return _deny;
 
   const now = new Date();
   const stats = { sent_24h: 0, sent_1h: 0, failed: 0, skipped: 0 };

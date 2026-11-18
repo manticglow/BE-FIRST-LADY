@@ -68,6 +68,31 @@ export async function POST(request: NextRequest) {
     }
     const data = parsed.data;
 
+    // 🛡 Rate limit · ضدّ mass-booking spam
+    const { checkRateLimit, getClientIp } = await import('@/lib/rate-limit');
+    const ip = getClientIp(request);
+    const phoneNorm = normalizePhone(data.customer_phone || '');
+
+    const ipLimit = await checkRateLimit({
+      key: ip || 'unknown',
+      category: 'booking-create-ip',
+      max: 10,
+      windowSec: 60,
+    });
+    if (!ipLimit.allowed) {
+      return NextResponse.json({ error: 'محاولات كثيرة · حاولي بعد قليل' }, { status: 429 });
+    }
+
+    const phoneLimit = await checkRateLimit({
+      key: phoneNorm || 'unknown',
+      category: 'booking-create-phone',
+      max: 5,
+      windowSec: 60 * 60,
+    });
+    if (!phoneLimit.allowed) {
+      return NextResponse.json({ error: 'عدد كبير من الحجوزات من هذا الرقم · حاولي لاحقاً' }, { status: 429 });
+    }
+
     // تحققات منطقية ───────────
     if (!data.package_id && data.service_ids.length === 0) {
       return NextResponse.json({ error: 'اختاري خدمة أو بكج على الأقل' }, { status: 400 });

@@ -73,6 +73,31 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  // 🔒 SECURITY: require owner/manager · ولا يُفعّل أبداً في الإنتاج بدون توكن اختبار
+  const { createClient } = await import('@/lib/supabase/server');
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ ok: false, error: 'غير مصرح' }, { status: 401 });
+  }
+  const { data: profile } = await supabase
+    .from('profiles').select('role').eq('id', user.id).single();
+  if (!profile || !['owner', 'manager'].includes((profile as any).role)) {
+    return NextResponse.json({ ok: false, error: 'للمالكة/المديرة فقط' }, { status: 403 });
+  }
+
+  // 🛡 Rate limit · 5/دقيقة لكل user
+  const { checkRateLimit } = await import('@/lib/rate-limit');
+  const rl = await checkRateLimit({
+    key: user.id,
+    category: 'whatsapp-test',
+    max: 5,
+    windowSec: 60,
+  });
+  if (!rl.allowed) {
+    return NextResponse.json({ ok: false, error: 'حاولي بعد قليل' }, { status: 429 });
+  }
+
   const body = await req.json().catch(() => ({}));
   const phone = body.phone as string | undefined;
   const text = body.text as string | undefined;

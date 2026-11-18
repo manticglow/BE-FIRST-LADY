@@ -53,7 +53,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'webhook not configured' }, { status: 500 });
   }
 
-  if (WEBHOOK_SECRET && headerSecret !== WEBHOOK_SECRET) {
+  const { verifySharedSecret } = await import('@/lib/webhook-security');
+  if (WEBHOOK_SECRET && !verifySharedSecret(headerSecret, WEBHOOK_SECRET)) {
     log.warn('invalid secret', { ip });
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }

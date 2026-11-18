@@ -65,16 +65,39 @@ export async function GET() {
   });
 }
 
-/** استخدام كود إحالة عند التسجيل */
+/** استخدام كود إحالة · يتطلّب تسجيل دخول أوّلاً */
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const { code, phone, email } = body;
+  // 🔒 يجب أن تكون العميلة مسجّلة
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ ok: false, error: 'سجّلي دخول أولاً' }, { status: 401 });
+  }
 
-  if (!code) return NextResponse.json({ ok: false, error: 'الكود مطلوب' }, { status: 400 });
+  // 🛡 rate limit · 5 محاولات/15 دقيقة لكل user (anti-bruteforce)
+  const { checkRateLimit } = await import('@/lib/rate-limit');
+  const rl = await checkRateLimit({
+    key: user.id,
+    category: 'referrals-apply',
+    max: 5,
+    windowSec: 15 * 60,
+  });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { ok: false, error: 'محاولات كثيرة · حاولي بعد قليل' },
+      { status: 429 },
+    );
+  }
+
+  const body = await req.json();
+  const code = (body?.code || '').toString().trim();
+
+  if (!code || code.length < 4 || code.length > 20) {
+    return NextResponse.json({ ok: false, error: 'الكود غير صحيح' }, { status: 400 });
+  }
 
   const admin = createAdminClient();
 
-  // ابحث عن صاحب الكود
   const { data: referrer } = await admin
     .from('profiles')
     .select('id, full_name')
@@ -85,13 +108,29 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: 'كود الإحالة غير صحيح' }, { status: 404 });
   }
 
-  // سجّل الإحالة pending
+  // 🚫 منع self-referral
+  if ((referrer as any).id === user.id) {
+    return NextResponse.json({ ok: false, error: 'لا يمكن استخدام كودكِ الخاص' }, { status: 400 });
+  }
+
+  // 🚫 منع التكرار · عميلة واحدة · إحالة واحدة
+  const { data: existing } = await admin
+    .from('referrals')
+    .select('id')
+    .eq('referred_id', user.id)
+    .maybeSingle();
+  if (existing) {
+    return NextResponse.json(
+      { ok: false, error: 'استخدمتِ كود إحالة من قبل' },
+      { status: 400 },
+    );
+  }
+
   const { error } = await admin.from('referrals').insert({
-    referrer_id: referrer.id,
-    referred_phone: phone,
-    referred_email: email,
+    referrer_id: (referrer as any).id,
+    referred_id: user.id,
     referral_code: code.toUpperCase(),
-    status: 'pending',
+    status: 'joined',
   });
 
   if (error) {
@@ -100,7 +139,7 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({
     ok: true,
-    message: `تمّ قبول كود الإحالة من ${referrer.full_name} · ستحصلين على 15% على أوّل حجز 💕`,
+    message: `تمّ قبول كود الإحالة من ${(referrer as any).full_name} · ستحصلين على 15% على أوّل حجز 💕`,
     discount: 15,
   });
 }

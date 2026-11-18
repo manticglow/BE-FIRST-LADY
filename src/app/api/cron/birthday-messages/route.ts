@@ -12,11 +12,10 @@ import { sendWhatsAppMessage, formatPhoneForWhatsApp } from '@/lib/integrations/
 import { saudiToday } from '@/lib/utils';
 
 export async function GET(req: NextRequest) {
-  // تحقّق من الـauth (Vercel Cron Secret)
-  const authHeader = req.headers.get('authorization');
-  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-  }
+  // 🔒 fail-closed cron auth · يرفض لو CRON_SECRET غير معيّن
+  const { assertCronAuthorized } = await import('@/lib/cron-auth');
+  const deny = assertCronAuthorized(req);
+  if (deny) return deny;
 
   const admin = createAdminClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

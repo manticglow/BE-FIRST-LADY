@@ -83,8 +83,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ─── توليد كود 6 أرقام ───
-    const code = String(Math.floor(100000 + Math.random() * 900000));
+    // ─── توليد كود 6 أرقام · CSPRNG (آمن تشفيرياً · ليس Math.random) ───
+    const crypto = await import('node:crypto');
+    const code = String(crypto.randomInt(100000, 1000000));
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 دقائق
 
     // ─── حفظ في قاعدة البيانات ───

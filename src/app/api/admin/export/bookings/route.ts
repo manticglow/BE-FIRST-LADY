@@ -60,7 +60,12 @@ export async function GET(req: NextRequest) {
   });
 
   const escape = (v: any) => {
-    const s = String(v ?? '');
+    let s = String(v ?? '');
+    // 🔒 CSV Injection fix · لو الحقل يبدأ بـ = + - @ TAB CR نضيف ' قبله
+    // (Excel يعاملها كـformulas تتنفّذ عند الفتح)
+    if (/^[=+\-@\t\r]/.test(s)) {
+      s = "'" + s;
+    }
     if (s.includes(',') || s.includes('"') || s.includes('\n')) {
       return `"${s.replace(/"/g, '""')}"`;
     }

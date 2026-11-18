@@ -23,13 +23,10 @@ const admin = createClient(
 
 export async function GET(req: NextRequest) {
   // ─── حماية الـcron ───
-  const authHeader = req.headers.get('authorization');
-  const isVercelCron = req.headers.get('x-vercel-cron') === '1';
-  const expectedToken = process.env.CRON_SECRET;
-
-  if (!isVercelCron && expectedToken && authHeader !== `Bearer ${expectedToken}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  // 🔒 fail-closed cron auth · لا تثقي بـx-vercel-cron وحده (قابل للتزوير خلف proxy)
+  const { assertCronAuthorized } = await import('@/lib/cron-auth');
+  const _deny = assertCronAuthorized(req);
+  if (_deny) return _deny;
 
   try {
     const today = new Date();

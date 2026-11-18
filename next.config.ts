@@ -41,13 +41,14 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: [
       "default-src 'self'",
-      // Next.js يحتاج inline scripts للـhydration
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.vercel-insights.com https://*.vercel-scripts.com",
+      // Next.js يحتاج inline scripts للـhydration · أزلنا 'unsafe-eval' (مش محتاجين)
+      "script-src 'self' 'unsafe-inline' https://*.vercel-insights.com https://*.vercel-scripts.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' data: https://fonts.gstatic.com",
-      "img-src 'self' data: https: blob:",
+      // 🔒 قيّدنا img-src · لا wildcard https:
+      "img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://pbs.twimg.com",
       "media-src 'self' blob:",
-      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.qrserver.com https://graph.facebook.com https://api.resend.com https://api.moyasar.com https://api.tabby.ai https://api.tamara.co https://api-sandbox.tamara.co https://api.twilio.com https://*.vercel-insights.com https://*.sentry.io",
+      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://graph.facebook.com https://api.resend.com https://api.moyasar.com https://api.tabby.ai https://api.tamara.co https://api-sandbox.tamara.co https://api.twilio.com https://*.vercel-insights.com https://*.sentry.io",
       "frame-src 'self' https://*.moyasar.com https://*.tabby.ai https://*.tamara.co",
       "frame-ancestors 'self'",
       "base-uri 'self'",
