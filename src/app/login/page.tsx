@@ -44,7 +44,12 @@ function LoginForm() {
       .eq('id', data.user.id)
       .single();
 
-    toast.success('أهلاً بكِ 💛');
+    // ✨ احتفل بدخولها قبل التحويل
+    try {
+      sessionStorage.removeItem('tfl-welcome-seen');  // اسمحي للـwelcome overlay يظهر
+      if ('vibrate' in navigator) navigator.vibrate(20);
+    } catch {}
+    toast.success('أهلاً بعودتكِ 🌸');
 
     if (profile?.role === 'owner' || profile?.role === 'manager' || profile?.role === 'staff') {
       router.push('/admin');

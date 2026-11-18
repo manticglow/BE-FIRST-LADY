@@ -107,6 +107,10 @@ function PhoneLoginForm() {
         return;
       }
 
+      try {
+        sessionStorage.removeItem('tfl-welcome-seen');
+        if ('vibrate' in navigator) navigator.vibrate([15, 30, 15]);
+      } catch {}
       toast.success('🌸 أهلاً بكِ في السيّدة الأولى');
       // Full page reload حتى تتفعّل الجلسة
       setTimeout(() => (window.location.href = redirect), 500);

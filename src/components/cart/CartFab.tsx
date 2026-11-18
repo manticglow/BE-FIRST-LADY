@@ -28,17 +28,19 @@ export default function CartFab() {
 
   return (
     <button
+      data-cart-badge
       onClick={goToCart}
-      className="fixed bottom-24 md:bottom-6 right-4 z-40 bg-gradient-to-br from-gold-deep to-ink text-cream-50 pr-4 pl-5 py-3 rounded-full shadow-2xl shadow-gold-deep/40 flex items-center gap-2 hover:scale-105 active:scale-95 transition-transform animate-in slide-in-from-bottom-4"
+      className="fixed bottom-24 md:bottom-6 right-4 z-40 bg-gold-deep text-cream-50 pr-4 pl-5 py-3 shadow-[0_12px_32px_-8px_rgba(201,169,110,0.5)] flex items-center gap-2 transition-all duration-300 hover:bg-ink active:scale-[0.95] animate-in slide-in-from-bottom-4"
       aria-label={`السلة · ${cart.count} خدمات`}
+      style={{ borderRadius: '2px' }}
     >
       <div className="relative">
         <ShoppingBag className="w-5 h-5" />
-        <span className="absolute -top-2 -right-2 bg-cream-50 text-gold-deep rounded-full min-w-[20px] h-[20px] flex items-center justify-center text-[11px] font-en-display font-bold shadow">
+        <span className="absolute -top-2 -right-2 bg-cream-50 text-gold-deep min-w-[20px] h-[20px] flex items-center justify-center text-[11px] font-en-display font-bold shadow" style={{ borderRadius: '10px' }}>
           {cart.count}
         </span>
       </div>
-      <span className="font-ar-display font-bold text-sm">عرض السلة</span>
+      <span className="font-bold text-[13px] uppercase" style={{ letterSpacing: '0.1em' }}>عرض السلة</span>
     </button>
   );
 }

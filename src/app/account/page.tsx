@@ -14,6 +14,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import BookingCard from '@/components/account/BookingCard';
 import PushNotificationManager from '@/components/account/PushNotificationManager';
+import WelcomeOverlay from '@/components/fx/WelcomeOverlay';
 import {
   CalendarPlus, Clock, Heart, User as UserIcon, Award, Sparkles,
   Gift, LogOut, Phone, MessageCircle, ChevronLeft, Crown, Star, Medal, Gem,
@@ -97,6 +98,7 @@ export default async function AccountPage() {
 
   return (
     <>
+      <WelcomeOverlay firstName={firstName !== 'عزيزتي' ? firstName : null} />
       <Header />
       <main className="min-h-screen bg-cream-50 pt-20 md:pt-24 pb-20">
         <div className="max-w-5xl mx-auto px-4 py-6 md:py-10">
@@ -152,22 +154,24 @@ export default async function AccountPage() {
             <StatTile icon={Crown} label="عضوة منذ" value={String(memberSince)} color="violet" />
           </div>
 
-          {/* ═══ إجراء سريع · حجز جديد ═══ */}
+          {/* ═══ إجراء سريع · حجز جديد · boutique + micro-interaction ═══ */}
           <div className="mb-6">
             <Link
               href="/booking"
-              className="block group relative overflow-hidden rounded-2xl p-5 bg-gradient-to-br from-gold-deep via-ink to-gold-dark text-cream-50 shadow-lg hover:shadow-xl transition-all"
+              className="block group relative overflow-hidden tap-lift bg-ink text-cream-50 p-5 hover:bg-gold-deep transition-colors duration-500"
+              style={{ borderRadius: '20px' }}
             >
-              <div className="absolute top-0 left-0 w-40 h-40 rounded-full bg-white/10 -translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
+              {/* شريط ذهبي يمرّ عند الـhover */}
+              <div className="absolute inset-0 bg-gradient-to-l from-transparent via-gold-light/15 to-transparent translate-x-full group-hover:-translate-x-full transition-transform duration-[1200ms] pointer-events-none" />
               <div className="relative z-10 flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center shrink-0">
+                <div className="w-14 h-14 bg-white/10 backdrop-blur flex items-center justify-center shrink-0 icon-pulse-hover" style={{ borderRadius: '2px' }}>
                   <CalendarPlus className="w-7 h-7 text-cream-50" />
                 </div>
                 <div className="flex-1">
-                  <div className="font-ar-display text-xl font-bold italic">احجزي موعداً جديداً</div>
-                  <div className="text-xs opacity-85 mt-0.5">خدمات مختارة بعناية خاصّة</div>
+                  <div className="font-ar-display text-xl font-bold">احجزي موعداً جديداً</div>
+                  <div className="text-xs opacity-80 mt-0.5">خدمات مختارة بعناية خاصّة</div>
                 </div>
-                <ChevronLeft className="w-5 h-5 opacity-70 group-hover:opacity-100 group-hover:-translate-x-1 transition-all" />
+                <ChevronLeft className="w-5 h-5 opacity-60 group-hover:opacity-100 group-hover:-translate-x-1 transition-all" />
               </div>
             </Link>
           </div>

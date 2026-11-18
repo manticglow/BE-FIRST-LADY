@@ -155,28 +155,37 @@ textarea:-webkit-autofill {
   .container-brand {
     @apply max-w-6xl mx-auto px-5;
   }
-  /* 🎩 Boutique CTA · Aesop/COS style · مستطيل حادّ · لا يرتفع عند الهاڤر */
+  /* 🎩 Boutique CTA · Aesop/COS style
+     + حيويّة: press feedback (0.97 scale) + shimmer عند hover
+     + :active:transform scale لاستجابة فوريّة */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 px-10 py-3.5
+    @apply relative overflow-hidden inline-flex items-center justify-center gap-2 px-10 py-3.5
            bg-ink text-cream-50 font-bold uppercase text-[13px]
-           transition-colors duration-500 hover:bg-gold-deep;
+           transition-all duration-300 hover:bg-gold-deep
+           active:scale-[0.97] select-none;
     border-radius: 2px;
     letter-spacing: 0.15em;
+    -webkit-tap-highlight-color: transparent;
+    transform-origin: center;
+    will-change: transform;
   }
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 px-10 py-3.5
+    @apply relative overflow-hidden inline-flex items-center justify-center gap-2 px-10 py-3.5
            border border-ink text-ink font-bold uppercase text-[13px]
-           transition-colors duration-500 hover:bg-ink hover:text-cream-50;
+           transition-all duration-300 hover:bg-ink hover:text-cream-50
+           active:scale-[0.97] select-none;
     border-radius: 2px;
     letter-spacing: 0.15em;
+    -webkit-tap-highlight-color: transparent;
   }
-  /* 🎩 Boutique CTA · Gold variant · للـCTA الذهبي */
   .btn-gold {
-    @apply inline-flex items-center justify-center gap-2 px-10 py-3.5
+    @apply relative overflow-hidden inline-flex items-center justify-center gap-2 px-10 py-3.5
            bg-gold-deep text-cream-50 font-bold uppercase text-[13px]
-           transition-colors duration-500 hover:bg-ink;
+           transition-all duration-300 hover:bg-ink
+           active:scale-[0.97] select-none;
     border-radius: 2px;
     letter-spacing: 0.15em;
+    -webkit-tap-highlight-color: transparent;
   }
   /* 🧘 Section padding · editorial breathing room (was py-16 md:py-24) */
   .section-pad {
@@ -743,4 +752,149 @@ textarea:-webkit-autofill {
 @keyframes fade-in-quick {
   from { opacity: 0; }
   to   { opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ✨ MICRO-INTERACTIONS · طبقة الحيويّة
+   ═══════════════════════════════════════════════════════════ */
+
+/* 🫧 Ripple عند النقر (gold) · يُطبّق عبر class .ripple-container */
+.ripple-container {
+  position: relative;
+  overflow: hidden;
+}
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: scale(0);
+  animation: ripple-expand 0.7s cubic-bezier(.19, 1, .22, 1);
+  background: radial-gradient(circle, rgba(255, 215, 150, 0.45) 0%, rgba(255, 215, 150, 0) 70%);
+}
+@keyframes ripple-expand {
+  to {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+/* ✨ Shimmer يمرّ من اليمين لليسار على :hover (للـboutique buttons) */
+.btn-primary::before,
+.btn-gold::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.15) 50%,
+    transparent 70%
+  );
+  transform: translateX(100%);
+  transition: transform 0.9s cubic-bezier(.19, 1, .22, 1);
+  pointer-events: none;
+}
+.btn-primary:hover::before,
+.btn-gold:hover::before {
+  transform: translateX(-100%);
+}
+
+/* 🌟 Sparkle burst · ينفجر من نقطة (للـ add-to-cart) */
+.sparkle {
+  position: absolute;
+  pointer-events: none;
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle, #e8c88a 0%, #d4a860 40%, transparent 70%);
+  border-radius: 50%;
+  animation: sparkle-fly 0.9s cubic-bezier(.17, .89, .32, 1.28) forwards;
+  will-change: transform, opacity;
+}
+@keyframes sparkle-fly {
+  0%   { transform: translate(0, 0) scale(0); opacity: 0; }
+  20%  { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { transform: translate(var(--sx, 30px), var(--sy, -40px)) scale(0.3); opacity: 0; }
+}
+
+/* 💓 Heartbeat لمّا يصير شي مهمّ (login success · booking confirmed) */
+@keyframes heartbeat-gold {
+  0%, 100% { transform: scale(1); }
+  20%      { transform: scale(1.08); }
+  40%      { transform: scale(0.98); }
+  60%      { transform: scale(1.04); }
+  80%      { transform: scale(0.99); }
+}
+.heartbeat {
+  animation: heartbeat-gold 0.9s ease-out;
+}
+
+/* 🎀 Gentle pulse للـicons على :hover */
+@keyframes icon-pulse {
+  0%, 100% { transform: scale(1) rotate(0); }
+  50%      { transform: scale(1.1) rotate(-3deg); }
+}
+.icon-pulse-hover:hover svg {
+  animation: icon-pulse 0.5s ease-in-out;
+}
+
+/* 🌸 Welcome glow · gradient ناعم يظهر لحظة ثم يختفي */
+@keyframes welcome-glow-anim {
+  0%   { opacity: 0; transform: scale(0.95); }
+  20%  { opacity: 1; transform: scale(1); }
+  80%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.02); }
+}
+.welcome-glow {
+  animation: welcome-glow-anim 2.5s ease-in-out;
+}
+
+/* ✅ Checkmark draw animation · للـform submit */
+@keyframes check-draw-anim {
+  from { stroke-dashoffset: 48; }
+  to   { stroke-dashoffset: 0; }
+}
+.check-draw {
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: check-draw-anim 0.5s cubic-bezier(.19, 1, .22, 1) 0.1s forwards;
+}
+@keyframes circle-draw-anim {
+  from { stroke-dashoffset: 170; }
+  to   { stroke-dashoffset: 0; }
+}
+.circle-draw {
+  stroke-dasharray: 170;
+  stroke-dashoffset: 170;
+  animation: circle-draw-anim 0.6s cubic-bezier(.19, 1, .22, 1) forwards;
+}
+
+/* ⤴ Tap-lift للـcards القابلة للنقر */
+.tap-lift {
+  transition: transform 0.2s ease, box-shadow 0.4s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.tap-lift:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 12px -4px rgba(201, 169, 110, 0.3);
+}
+
+/* 🪄 Flying-to-cart · يطير العنصر نحو زرّ السلّة */
+@keyframes fly-to-cart {
+  0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+  40%  { transform: translate(calc(var(--fly-x) * 0.3), calc(var(--fly-y) * 0.5)) scale(0.8); opacity: 1; }
+  100% { transform: translate(var(--fly-x, 300px), var(--fly-y, -200px)) scale(0.15); opacity: 0; }
+}
+.fly-to-cart {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  animation: fly-to-cart 0.8s cubic-bezier(.47, .13, .75, .55) forwards;
+}
+
+/* 🎵 Reduce motion safety */
+@media (prefers-reduced-motion: reduce) {
+  .ripple, .sparkle, .heartbeat, .welcome-glow, .check-draw, .circle-draw, .fly-to-cart {
+    animation: none !important;
+  }
+  .btn-primary::before, .btn-gold::before { display: none; }
 }

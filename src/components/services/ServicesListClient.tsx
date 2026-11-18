@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { Plus, Check, Clock, Star, Search, ArrowRight } from 'lucide-react';
 import { formatPrice, formatDuration } from '@/lib/utils';
 import { useCart } from '@/hooks/useCart';
+import { sparkleBurst, flyToCart, haptic } from '@/components/fx/InteractiveFx';
 import type { Category, Service } from '@/types/database';
 
 // صور المعرض كـfallback
@@ -200,9 +201,11 @@ function ServiceRow({ service, isLoggedIn }: { service: Service & { category?: C
   const fallbackImg = pickFallback(service.id, service.name_en, service.category?.slug);
   const [currentSrc, setCurrentSrc] = useState(service.image_url || localImg);
 
-  function handleToggle(e: React.MouseEvent) {
+  function handleToggle(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     e.stopPropagation();
+    const btn = e.currentTarget;
+
     if (!isLoggedIn) {
       toast.error('لازم تسجّلي دخول أولاً', { icon: '🔒' });
       setTimeout(() => { window.location.href = `/login?redirect=/services/${service.id}`; }, 800);
@@ -210,9 +213,14 @@ function ServiceRow({ service, isLoggedIn }: { service: Service & { category?: C
     }
     if (inCart) {
       cart.remove(service.id);
-      toast('تم الإزالة من السلة', { icon: '🗑️' });
+      haptic(10);
+      toast('تم الإزالة من السلة');
     } else {
       cart.add(service.id);
+      haptic(15);
+      // ✨ انفجار شرارات + طيران العنصر نحو السلّة
+      sparkleBurst(btn, 12);
+      flyToCart(btn, currentSrc);
       toast.success(`أُضيفت للسلة · ${cart.count + 1} خدمات 🌸`);
     }
   }
@@ -265,11 +273,12 @@ function ServiceRow({ service, isLoggedIn }: { service: Service & { category?: C
 
         <button
           onClick={handleToggle}
-          className={`mt-2 inline-flex items-center justify-center gap-1 text-[11px] font-bold py-1.5 px-3 rounded-lg transition-colors self-start ${
+          className={`mt-2 relative overflow-hidden inline-flex items-center justify-center gap-1 text-[11px] font-bold py-1.5 px-4 transition-all duration-300 self-start active:scale-[0.92] select-none ripple-container ${
             inCart
               ? 'bg-gold-deep text-cream-50'
-              : 'bg-cream-50 text-gold-deep border border-gold-light/40 hover:bg-cream-100'
+              : 'bg-cream-50 text-gold-deep border border-gold-light/40 hover:bg-gold-deep hover:text-cream-50 hover:border-gold-deep'
           }`}
+          style={{ borderRadius: '2px', WebkitTapHighlightColor: 'transparent' }}
         >
           {inCart ? (
             <>
