@@ -55,10 +55,14 @@ export async function PATCH(req: NextRequest) {
 
   const admin = createAdminClient();
 
-  // جلب التفاصيل قبل التحديث
+  // جلب التفاصيل قبل التحديث + أسماء الطرفين (للـblock reason)
   const { data: current } = await admin
     .from('shift_swap_requests')
-    .select('requester_id, recipient_id, requester_date, recipient_date')
+    .select(`
+      requester_id, recipient_id, requester_date, recipient_date,
+      requester:profiles!shift_swap_requests_requester_id_fkey(full_name),
+      recipient:profiles!shift_swap_requests_recipient_id_fkey(full_name)
+    `)
     .eq('id', parsed.data.id)
     .single();
 
@@ -77,11 +81,57 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'فشل التحديث' }, { status: 500 });
   }
 
-  // إشعار لكلا الطرفين
   const row = current as {
     requester_id: string; recipient_id: string | null;
     requester_date: string; recipient_date: string | null;
+    requester: { full_name: string | null } | null;
+    recipient: { full_name: string | null } | null;
   } | null;
+
+  // ✨ عند الموافقة · طبّق التبديل فعليّاً على جدول الموظّفات
+  // كل طرف يُحجب عن يومه الأصلي · الطرف الآخر يغطّيه
+  if (parsed.data.status === 'approved' && row) {
+    const requesterName = row.requester?.full_name || 'الطالبة';
+    const recipientName = row.recipient?.full_name || 'الزميلة';
+
+    // جلب staff.id لكل طرف
+    const [reqStaffRes, recStaffRes] = await Promise.all([
+      admin.from('staff').select('id').eq('profile_id', row.requester_id).maybeSingle(),
+      row.recipient_id
+        ? admin.from('staff').select('id').eq('profile_id', row.recipient_id).maybeSingle()
+        : Promise.resolve({ data: null }),
+    ]);
+
+    const blocks: any[] = [];
+
+    // 1. الطالبة لا تداوم في يومها · تغطّيها الزميلة
+    const reqStaffId = (reqStaffRes.data as { id: string } | null)?.id;
+    if (reqStaffId && row.requester_date) {
+      blocks.push({
+        date: row.requester_date,
+        reason: `تبديل · تغطّيها ${recipientName}`,
+        all_day: true,
+        staff_id: reqStaffId,
+      });
+    }
+
+    // 2. الزميلة لا تداوم في يومها · تغطّيها الطالبة
+    const recStaffId = (recStaffRes.data as { id: string } | null)?.id;
+    if (recStaffId && row.recipient_date) {
+      blocks.push({
+        date: row.recipient_date,
+        reason: `تبديل · تغطّيها ${requesterName}`,
+        all_day: true,
+        staff_id: recStaffId,
+      });
+    }
+
+    if (blocks.length > 0) {
+      await admin.from('blocked_dates').insert(blocks);
+    }
+  }
+
+  // إشعار لكلا الطرفين
   if (row) {
     const summary = `تبديل ${row.requester_date}${row.recipient_date ? ` ↔ ${row.recipient_date}` : ''}`;
     notifyRequestReview(row.requester_id, 'swap', parsed.data.status, summary).catch(() => {});
