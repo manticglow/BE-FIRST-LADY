@@ -24,7 +24,10 @@ export default function LogoutButton({ className, label = 'تسجيل الخرو
   async function confirm() {
     setBusy(true);
     try {
-      const res = await fetch('/api/auth/logout', { method: 'POST' });
+      const res = await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+      });
       const data = await res.json();
       toast.success(data.message || AUTH.LOGOUT_SUCCESS);
       // تأخير بسيط عشان العميلة تشوف التوست

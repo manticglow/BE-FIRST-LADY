@@ -15,6 +15,7 @@ import Footer from '@/components/layout/Footer';
 import BookingCard from '@/components/account/BookingCard';
 import PushNotificationManager from '@/components/account/PushNotificationManager';
 import WelcomeOverlay from '@/components/fx/WelcomeOverlay';
+import LogoutButton from '@/components/auth/LogoutButton';
 import {
   CalendarPlus, Clock, Heart, User as UserIcon, Award, Sparkles,
   Gift, LogOut, Phone, MessageCircle, ChevronLeft, Crown, Star, Medal, Gem,
@@ -120,16 +121,10 @@ export default async function AccountPage() {
               </p>
             </div>
 
-            <form action="/api/auth/logout" method="post">
-              <button
-                type="submit"
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-cream-200 text-ink-soft hover:text-danger hover:border-danger/40 transition-colors text-xs font-semibold shrink-0"
-                title="تسجيل الخروج"
-              >
-                <LogOut className="w-4 h-4" />
-                <span className="hidden sm:inline">خروج</span>
-              </button>
-            </form>
+            <LogoutButton
+              label="خروج"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-cream-200 text-ink-soft hover:text-danger hover:border-danger/40 transition-colors text-xs font-semibold shrink-0"
+            />
           </div>
 
           {/* ═══ موعدكِ القادم (إذا موجود) ═══ */}

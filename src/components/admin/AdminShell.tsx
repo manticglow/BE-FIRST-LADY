@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import NotificationBell from '@/components/admin/NotificationBell';
 import GlobalSearch from '@/components/admin/GlobalSearch';
+import AdminLogoutButton from '@/components/admin/AdminLogoutButton';
 
 type Role = 'owner' | 'manager' | 'staff';
 
@@ -198,16 +199,7 @@ export default function AdminShell({ groups, role, fullName, children }: Props) 
             </div>
           </div>
 
-          <form action="/api/auth/logout" method="post">
-            <button
-              type="submit"
-              className="group w-full flex items-center gap-2 px-3 py-2.5 text-xs text-cream-100/80 hover:text-white hover:bg-white/10 transition-all font-bold"
-              style={{ borderRadius: '2px' }}
-            >
-              <LogOut className="w-3.5 h-3.5 group-hover:translate-x-[-2px] transition-transform" />
-              <span>تسجيل خروج</span>
-            </button>
-          </form>
+          <AdminLogoutButton />
         </div>
       </aside>
 
