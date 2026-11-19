@@ -157,13 +157,13 @@ export default async function LiveStaffStatus() {
     <div className="bg-white rounded-3xl border border-cream-200 shadow-sm overflow-hidden">
 
       {/* Header */}
-      <div className="px-5 py-4 border-b border-cream-200 bg-gradient-to-l from-gold-light/5 to-transparent">
+      <div className="px-4 py-3.5 border-b border-cream-200 bg-gradient-to-l from-gold-light/5 to-transparent">
         <div className="flex items-center justify-between gap-2 mb-3">
-          <h3 className="font-ar-display text-base sm:text-lg font-bold text-gold-deep flex items-center gap-2 min-w-0">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-            <span className="truncate">حالة الموظفات الآن</span>
+          <h3 className="font-ar-display text-sm md:text-base font-bold text-gold-deep flex items-center gap-1.5 min-w-0">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            <span className="whitespace-nowrap">الموظّفات الآن</span>
           </h3>
-          <span className="text-[10px] text-ink-soft font-en-display shrink-0" dir="ltr">
+          <span className="text-[10px] text-ink-soft font-en-display tabular-nums shrink-0" dir="ltr">
             {now.toLocaleTimeString('en-GB', {
               hour: '2-digit',
               minute: '2-digit',
@@ -173,12 +173,12 @@ export default async function LiveStaffStatus() {
           </span>
         </div>
 
-        {/* ملخّص عددي */}
-        <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
-          <StatusPill count={counts.busy} label="مشغولة" color="rose" />
-          <StatusPill count={counts.available} label="متاحة" color="emerald" />
-          <StatusPill count={counts.break} label="استراحة" color="amber" />
-          <StatusPill count={counts.off} label="خارج الدوام" color="slate" />
+        {/* ملخّص عددي · 4 pills مع labels قصيرة */}
+        <div className="grid grid-cols-4 gap-1">
+          <StatusPill count={counts.busy}      label="مشغولة" color="rose" />
+          <StatusPill count={counts.available} label="متاحة"  color="emerald" />
+          <StatusPill count={counts.break}     label="استراحة" color="amber" />
+          <StatusPill count={counts.off}       label="خارج"   color="slate" />
         </div>
       </div>
 
@@ -205,14 +205,14 @@ function StaffRow({ staff }: { staff: StaffWithBooking }) {
   const Icon = statusConfig.icon;
 
   return (
-    <li className="px-4 py-3 flex items-center gap-3 hover:bg-cream-50/50 transition-colors">
+    <li className="px-3 py-2.5 flex items-center gap-2.5 hover:bg-cream-50/50 transition-colors">
 
-      {/* Avatar مع status dot */}
+      {/* Avatar مع status dot · أصغر عشان ينفسح مكان للاسم */}
       <div className="relative shrink-0">
-        <div className="w-11 h-11 rounded-full bg-gradient-to-br from-gold-light/30 to-cream-100 flex items-center justify-center text-sm font-bold text-gold-deep">
+        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gold-light/30 to-cream-100 flex items-center justify-center text-xs font-bold text-gold-deep">
           {staff.name.charAt(0)}
         </div>
-        <div className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full ${statusConfig.color} border-2 border-white`} />
+        <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full ${statusConfig.color} border-2 border-white`} />
       </div>
 
       {/* الاسم والحالة */}
@@ -255,9 +255,9 @@ function StatusPill({ count, label, color }: { count: number; label: string; col
   }[color];
 
   return (
-    <div className={`${colors} rounded-xl border px-1.5 py-2 text-center min-w-0`}>
-      <div className="font-en-display font-bold text-base sm:text-lg leading-none">{count}</div>
-      <div className="text-[9px] font-semibold mt-1 truncate">{label}</div>
+    <div className={`${colors} border px-1 py-1.5 text-center min-w-0 flex flex-col items-center justify-center`} style={{ borderRadius: '2px' }}>
+      <div className="font-en-display font-bold text-base leading-none tabular-nums">{count}</div>
+      <div className="text-[9px] font-bold mt-0.5 whitespace-nowrap">{label}</div>
     </div>
   );
 }
