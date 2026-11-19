@@ -4,100 +4,101 @@
 
 ---
 
-## 🚀 التثبيت السريع (مشروع جديد)
+## 🚀 التثبيت السريع · ملفّان فقط
 
-لقاعدة بيانات Supabase جديدة تماماً:
+### الخطوة 1 · الـschema الأساسي
 
 ```sql
--- شغّلي هذا الملف الواحد في SQL Editor:
+-- للمشاريع الجديدة · schema كامل (23 جدول · 90+ RLS):
 combined-all.sql
 ```
-
-يُنشئ:
-- 23 جدول · كل الـschema
-- 90+ سياسة RLS
-- كل الـfunctions والـtriggers
-- كل الـviews والـmaterialized views
 
 **الوقت المتوقّع:** 10-30 ثانية
 
 ---
 
-## 🔄 التحديثات (مشروع موجود)
-
-### آخر تحديث أمني · يجب تطبيقه:
+### الخطوة 2 · الإعداد الشامل (Launch Setup)
 
 ```sql
--- يُضيف حماية لـgift_cards + reviews
-security-gift-cards.sql
+-- يدمج 4 ملفّات في واحد · شغّليه مرّة واحدة:
+00-full-setup.sql
 ```
+
+يُطبّق:
+- 🔒 Security Hardening (12 ثغرة محسومة)
+- 📋 Compliance Tables (PDPL · شكاوى · طلبات بيانات)
+- 📸 Service Images Bucket (رفع صور الخدمات)
+- 👥 Test Accounts (رغد · ريناد · غيداء)
+
+**idempotent · آمن للتشغيل مرّات متعدّدة.**
 
 ---
 
-## 📁 ملفات أخرى
+## 🔐 حسابات الاختبار (من 00-full-setup.sql)
 
-| الملف | الاستخدام |
-|-------|-----------|
-| `combined-all.sql` | ✅ **الوحيد المطلوب** لمشروع جديد |
-| `security-gift-cards.sql` | 🔒 تحديث أمني إلزامي |
-| `fix-payments.sql` | 🛠️ إصلاح جدول payment_intents (موجود في combined) |
-| `whatsapp-log.sql` | 📱 جدول whatsapp_log (موجود في combined) |
-| `safe-latest.sql` | 🔄 تحديث آخر migration بأمان لو شي ناقص |
-| `safe-themes.sql` | 🎨 تحديث themes فقط |
-| `latest-only.sql` | 📝 آخر migration لوحده (مرجعي) |
+| الدور | الاسم | البريد | كلمة السر |
+|---|---|---|---|
+| 👑 المالكة | رغد الزهراني | owner@thefirstlady.sa | `Raghad@2026!` |
+| 👩‍💼 الموظّفة | ريناد السالم | renad@thefirstlady.sa | `Renad@2026!` |
+| 🌸 العميلة | غيداء العتيبي | ghaida@thefirstlady.sa | `Ghaida@2026!` |
+
+> **مهمّ:** غيّري كلمات السرّ بعد أوّل دخول من الإعدادات.
+
+---
+
+## 📁 الملفّات الأخرى (مرجعيّة · لا تحتاجينها عادة)
+
+| الملف | متى تستخدمينه |
+|-------|-------------|
+| `combined-all.sql` | ✅ التثبيت الأوّل (schema كامل) |
+| `00-full-setup.sql` | ✅ **الإعداد الشامل الجديد** (يستبدل الـ4 ملفات أدناه) |
+| `SECURITY-HARDENING.sql` | منفرد · داخل 00-full-setup |
+| `compliance-tables.sql` | منفرد · داخل 00-full-setup |
+| `service-images-bucket.sql` | منفرد · داخل 00-full-setup |
+| `test-accounts.sql` | منفرد · داخل 00-full-setup |
+| `safe-latest.sql` | تحديث جزئي لمشاريع قديمة |
+| `security-gift-cards.sql` | تحديث أمني إضافي (gift cards) |
+| `safe-themes.sql` | تحديث الـthemes فقط |
+| `CLEANUP-for-launch.sql` | حذف البيانات التجريبيّة قبل الإطلاق |
 
 ---
 
 ## 🎯 سيناريوهات شائعة
 
-### 1. تنصيب لأوّل مرّة
-```sql
--- في Supabase SQL Editor:
--- Step 1: تطبيق الـschema الكامل
-   → combined-all.sql
-
--- Step 2: التحديث الأمني الأخير
-   → security-gift-cards.sql
+### 1. مشروع Supabase جديد تماماً
+```
+→ combined-all.sql       (الـschema كامل)
+→ 00-full-setup.sql      (الأمان + الامتثال + الـbucket + الحسابات)
 ```
 
-### 2. تحديث من نسخة سابقة
-```sql
--- طبّقي فقط التحديثات الجديدة بالترتيب:
--- 1. safe-latest.sql       ← يضيف ما نقص
--- 2. security-gift-cards.sql  ← الأمان
+### 2. مشروع فيه بيانات قديمة
+```
+→ 00-full-setup.sql      (آمن · ما يحذف شيء)
 ```
 
-### 3. مشكلة في جدول معيّن
-```sql
--- شغّلي الملف المناسب:
--- payments مفقود:     fix-payments.sql
--- whatsapp_log مفقود: whatsapp-log.sql
--- themes متضاربة:     safe-themes.sql
+### 3. قبل الإطلاق للجمهور
+```
+→ CLEANUP-for-launch.sql  (يحذف بيانات تجريبيّة)
 ```
 
 ---
 
-## ⚠️ تحذير · قبل التنفيذ
+## ⚠️ قبل التنفيذ · احتياطات
 
-قبل تشغيل أي migration على قاعدة بيانات موجودة:
-
-1. ✅ خذي نسخة احتياطيّة:
+1. ✅ **خذي نسخة احتياطيّة:**
    ```
    Supabase → Database → Backups → Create Backup
    ```
 
-2. ✅ اختبري على بيئة التطوير أوّلاً
+2. ✅ **اختبري على بيئة التطوير أوّلاً** (لو عندكِ project ثاني)
 
-3. ✅ تحقّقي من رسالة النجاح:
-   ```
-   Success. No rows returned
-   ```
+3. ✅ **تحقّقي من النجاح:** رسالة `Success. No rows returned` أو جدول النتائج النهائي يطلع
 
 ---
 
-## 📚 التاريخ · Migrations الأصليّة
+## 📚 التاريخ الكامل · Migrations الأصليّة
 
-الـcombined-all.sql يحتوي على كل هذي بالترتيب:
+الـ`combined-all.sql` يحتوي على كلّ هذي بالترتيب:
 
 | # | الملف | الوصف |
 |---|-------|--------|
@@ -114,4 +115,6 @@ security-gift-cards.sql
 | 2026-10 | customer_experience.sql | تجربة العميلة · OTP |
 | 2026-11 | security + beauty + payments | تحديثات نوفمبر |
 
-كلّها مُدمجة في `combined-all.sql` · ما تحتاجين تطبّقينها فرديّاً.
+---
+
+**آخر تحديث:** 2026-11-20 · 00-full-setup.sql جديد

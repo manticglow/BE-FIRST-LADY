@@ -15,7 +15,7 @@ import {
   BarChart3, Settings, LogOut, Package, UserCircle, Tag, Star, Shield,
   Clock, Umbrella, Gift, Boxes, Banknote, Bell, BellRing, Inbox,
   MessageSquare, MessageCircle, Cloud, Palette, Activity, Menu, X, ChevronLeft,
-  Phone, Megaphone, TrendingUp, FileText,
+  Phone, Megaphone, TrendingUp, FileText, SlidersHorizontal, Sparkles,
 } from 'lucide-react';
 import NotificationBell from '@/components/admin/NotificationBell';
 import GlobalSearch from '@/components/admin/GlobalSearch';
@@ -38,6 +38,8 @@ export interface SidebarItem {
   roles: Role[];
   /** يظهر في الـbottom nav على الموبايل · 4 عناصر فقط */
   mobileNav?: boolean;
+  /** يُخفى في الوضع المبسّط · يظهر فقط لمّا يفعّلي "عرض الأدوات المتقدّمة" */
+  advanced?: boolean;
 }
 
 export interface SidebarGroup {
@@ -56,6 +58,23 @@ interface Props {
 export default function AdminShell({ groups, role, fullName, children }: Props) {
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  // 🧩 الوضع المبسّط · يُحفظ في localStorage · يبدأ مبسّط
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('tfl_admin_advanced');
+      if (saved === 'true') setShowAdvanced(true);
+    } catch {}
+  }, []);
+
+  function toggleAdvanced() {
+    setShowAdvanced((v) => {
+      const next = !v;
+      try { localStorage.setItem('tfl_admin_advanced', String(next)); } catch {}
+      return next;
+    });
+  }
 
   // أغلقي الـdrawer عند تغيير الصفحة
   useEffect(() => {
@@ -76,12 +95,25 @@ export default function AdminShell({ groups, role, fullName, children }: Props) 
   }, [drawerOpen]);
 
   const roleLabel = role === 'owner' ? 'المالكة' : role === 'manager' ? 'المديرة' : 'موظفة';
-  // Filter groups → keep only items the role can see, drop empty groups
+  // Filter groups → keep only items the role can see, respect advanced toggle, drop empty groups
+  // ملاحظة: البند النشط دائماً يظهر حتى لو كان متقدّم (ما نخفيه فجأة عن المستخدمة)
   const visibleGroups = groups
-    .map((g) => ({ ...g, items: g.items.filter((it) => it.roles.includes(role)) }))
+    .map((g) => ({
+      ...g,
+      items: g.items.filter((it) => {
+        if (!it.roles.includes(role)) return false;
+        if (it.advanced && !showAdvanced && !pathname?.startsWith(it.href)) return false;
+        return true;
+      }),
+    }))
     .filter((g) => g.items.length > 0);
   const allVisibleItems = visibleGroups.flatMap((g) => g.items);
   const mobileNavItems = allVisibleItems.filter((it) => it.mobileNav).slice(0, 4);
+
+  // عدّ البنود المتقدّمة المخفيّة (لعرضه على الـtoggle)
+  const hiddenAdvancedCount = groups.reduce((acc, g) => {
+    return acc + g.items.filter((it) => it.roles.includes(role) && it.advanced).length;
+  }, 0);
 
   function isActive(href: string): boolean {
     if (href === '/admin') return pathname === '/admin';
@@ -172,12 +204,36 @@ export default function AdminShell({ groups, role, fullName, children }: Props) 
                       )}
                       <Icon className={`w-[18px] h-[18px] shrink-0 transition-colors ${active ? 'text-gold-light' : 'text-cream-100/70 group-hover:text-cream-100'}`} />
                       <span className="flex-1">{item.label}</span>
+                      {item.advanced && (
+                        <Sparkles className="w-3 h-3 text-gold-light/50" aria-label="متقدّم" />
+                      )}
                     </Link>
                   );
                 })}
               </div>
             </div>
           ))}
+
+          {/* 🧩 Toggle الأدوات المتقدّمة */}
+          {hiddenAdvancedCount > 0 && (
+            <div className="mt-5 px-2">
+              <button
+                onClick={toggleAdvanced}
+                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-[11px] font-bold border border-gold-light/30 text-gold-light/90 hover:text-cream-50 hover:border-gold-light/60 hover:bg-white/5 transition-colors"
+                style={{ borderRadius: '2px', letterSpacing: '0.05em' }}
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5" />
+                <span>
+                  {showAdvanced ? 'إخفاء الأدوات المتقدّمة' : `عرض الأدوات المتقدّمة (${hiddenAdvancedCount})`}
+                </span>
+              </button>
+              {!showAdvanced && (
+                <p className="text-[10px] text-cream-100/40 text-center mt-2 px-2 leading-relaxed">
+                  القائمة مبسّطة لليومي · اضغطي لعرض كلّ الأدوات
+                </p>
+              )}
+            </div>
+          )}
         </nav>
 
         {/* الأسفل · حضور + الاسم + خروج · boutique */}
