@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
     duration_min: body.duration_min,
     is_active: body.is_active ?? true,
     display_order: body.display_order || 0,
+    image_url: body.image_url || null,
   }).select().single();
   if (err) return NextResponse.json({ error: err.message }, { status: 400 });
   return NextResponse.json({ service: data });

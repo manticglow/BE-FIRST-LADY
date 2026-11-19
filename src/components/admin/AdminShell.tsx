@@ -88,12 +88,13 @@ export default function AdminShell({ groups, role, fullName, children }: Props) 
   }
 
   return (
-    <div data-admin-root className="min-h-screen bg-cream-50 dark:bg-ink flex transition-colors">
+    <div data-admin-root className="h-screen overflow-hidden bg-cream-50 dark:bg-ink flex transition-colors">
       {/* ═══════════ Sidebar · Desktop (lg+) + Drawer للموبايل ═══════════ */}
       <aside
         className={`
-          fixed lg:static inset-y-0 right-0 z-50
-          w-72 lg:w-64
+          fixed lg:relative inset-y-0 right-0 z-50
+          w-72 lg:w-64 shrink-0
+          h-screen lg:h-full
           bg-gradient-to-b from-gold-deep to-ink dark:from-ink dark:to-black
           text-cream-50
           flex flex-col
@@ -126,8 +127,11 @@ export default function AdminShell({ groups, role, fullName, children }: Props) 
           <GlobalSearch />
         </div>
 
-        {/* القائمة · مجموعات بـeyebrows */}
-        <nav className="flex-1 py-3 overflow-y-auto">
+        {/* القائمة · مجموعات بـeyebrows · scroll ناعم على الموبايل والكمبيوتر */}
+        <nav
+          className="flex-1 min-h-0 py-3 overflow-y-auto overscroll-contain admin-sidebar-scroll"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
           {visibleGroups.map((group, gIdx) => (
             <div key={group.label} className={gIdx > 0 ? 'mt-5' : ''}>
               {/* Group eyebrow */}

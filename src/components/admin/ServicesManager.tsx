@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Scissors, Plus, Clock, Edit2, Trash2, X, Loader2, Eye, EyeOff } from 'lucide-react';
 import Modal from '@/components/ui/Modal';
+import ImageUploader from '@/components/admin/ImageUploader';
 import type { Category, Service } from '@/types/database';
 import { formatPrice, formatDuration } from '@/lib/utils';
 
@@ -282,6 +283,15 @@ export default function ServicesManager({ categories, services }: Props) {
                   placeholder="وصف قصير يظهر للعميلة"
                 />
               </Field>
+
+              {/* ✨ صورة الخدمة · التحكّم الكامل */}
+              <ImageUploader
+                value={editing.service.image_url}
+                onChange={(url) => setEditing({ ...editing, service: { ...editing.service, image_url: url } })}
+                folder="services"
+                label="صورة الخدمة"
+                aspectRatio="4/5"
+              />
 
               <label className="flex items-center gap-2 text-sm text-ink">
                 <input
