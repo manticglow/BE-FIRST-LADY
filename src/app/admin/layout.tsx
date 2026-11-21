@@ -85,6 +85,7 @@ const GROUPS: SidebarGroup[] = [
     labelAr: 'النظام والأمان',
     items: [
       { href: '/admin/settings',       label: 'إعدادات المنشأة',   iconKey: 'Settings',        roles: ['owner'] },
+      { href: '/admin/compliance',     label: 'تقرير الامتثال',   iconKey: 'Shield',          roles: ['owner', 'manager'] },
       { href: '/admin/salon-location', label: 'موقع الصالون',     iconKey: 'LayoutDashboard', roles: ['owner', 'manager'], advanced: true },
       { href: '/admin/themes',         label: 'ثيم الموقع',       iconKey: 'Palette',         roles: ['owner', 'manager'], advanced: true },
       { href: '/admin/users',          label: 'المستخدمون',       iconKey: 'Shield',          roles: ['owner'], advanced: true },
